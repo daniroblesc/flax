@@ -1,32 +1,32 @@
 #include "Gates.h"
 
-bool NANDGate::execute(const bool a, const bool b)
+Bit NANDGate::execute(const Bit& a, const Bit& b)
 {
-    if ((a == true) &&  (b == true))
+    if ((a == 1) &&  (b == 1))
     {
-        return false;
+        return Bit(0);  
     }
 
-    return true;
+    return Bit(1);
 }
 
-bool NOTGate::execute(const bool a)
+Bit NOTGate::execute(const Bit& a)
 {
     if (a == true)
     {
-        return false;
+        return Bit(0);   
     }
 
-    return true;
+    return Bit(1);
 }
 
-bool ANDGate::execute(const bool a, const bool b)
+Bit ANDGate::execute(const Bit& a, const Bit& b)
 {
-    if ((a == true) &&  (b == true))
+    if ((a == 1) &&  (b == 1))
     {
-        return true;
+        return Bit(1);
     }
 
-    return false;    
+    return Bit(0);    
 }
 

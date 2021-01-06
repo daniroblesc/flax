@@ -1,22 +1,24 @@
 #ifndef GATES_H_
 #define GATES_H_
 
+#include "Bit.h"
+
 class NANDGate
 {
 public:
-    bool execute(const bool a, const bool b);
+    Bit execute(const Bit& a, const Bit& b);
 };
 
 class NOTGate
 {
 public:
-    bool execute(const bool a);
+    Bit execute(const Bit& a);
 };
 
 class ANDGate
 {
 public:
-    bool execute(const bool a, const bool b);
+    Bit execute(const Bit& a, const Bit& b);
 };
 
 

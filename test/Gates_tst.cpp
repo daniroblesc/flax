@@ -2,33 +2,34 @@
 #include "gmock/gmock.h"
 
 #include "Gates.h"
+#include "Bit.h"
 
 using ::testing::Return;
 
-class NANDGateTest : public ::testing::TestWithParam<std::tuple<bool, bool, bool>>
+class NANDGateTest : public ::testing::TestWithParam<std::tuple<int, int, int>>
 {
 };
 
 TEST_P(NANDGateTest, execute) 
 {
-  NANDGate gate;
+  NANDGate NAND;
 
-  bool a = std::get<0>(GetParam());
-  bool b = std::get<1>(GetParam());
-  bool expected = std::get<2>(GetParam());
+  int a = std::get<0>(GetParam());
+  int b = std::get<1>(GetParam());
+  int expected = std::get<2>(GetParam());
 
-  bool c = gate.execute(a, b);
-  EXPECT_EQ(expected, c);
+  Bit c = NAND.execute(Bit(a), Bit(b));
+  EXPECT_TRUE(Bit(expected) == c);
 }
 
 INSTANTIATE_TEST_CASE_P(
         execute,
         NANDGateTest,
         ::testing::Values(
-                std::make_tuple(false, false, true),
-                std::make_tuple(false, true,  true),
-                std::make_tuple(true,  false, true),
-                std::make_tuple(true,  true,  false)));
+                std::make_tuple(0, 0, 1),
+                std::make_tuple(0, 1, 1),
+                std::make_tuple(1, 0, 1),
+                std::make_tuple(1, 1, 0)));
 
 class NOTGateTest : public testing::Test 
 {
@@ -36,36 +37,38 @@ class NOTGateTest : public testing::Test
 
 TEST_F(NOTGateTest, execute) 
 {
-  NOTGate gate;
+  NOTGate Not;
 
-  bool c = gate.execute(true);
-  EXPECT_FALSE(c);
+  Bit c = Not.execute(Bit(1));
+  EXPECT_TRUE(c == 0);
+  EXPECT_TRUE(c.get() == 0);
 
-  c = gate.execute(false);
-  EXPECT_TRUE(c);
+  c = Not.execute(Bit(0));
+  EXPECT_TRUE(c == 1);
+  EXPECT_TRUE(c.get() == 1);
 }        
 
-class ANDGateTest : public ::testing::TestWithParam<std::tuple<bool, bool, bool>>
+class ANDGateTest : public ::testing::TestWithParam<std::tuple<int, int, int>>
 {
 };
 
 TEST_P(ANDGateTest, execute) 
 {
-  ANDGate gate;
+  ANDGate And;
 
-  bool a = std::get<0>(GetParam());
-  bool b = std::get<1>(GetParam());
-  bool expected = std::get<2>(GetParam());
+  int a = std::get<0>(GetParam());
+  int b = std::get<1>(GetParam());
+  int expected = std::get<2>(GetParam());
 
-  bool c = gate.execute(a, b);
-  EXPECT_EQ(expected, c);
+  Bit c = And.execute(Bit(a), Bit(b));
+  EXPECT_TRUE(Bit(expected) == c);
 }
 
 INSTANTIATE_TEST_CASE_P(
         execute,
         ANDGateTest,
         ::testing::Values(
-                std::make_tuple(false, false, false),
-                std::make_tuple(false, true,  false),
-                std::make_tuple(true,  false, false),
-                std::make_tuple(true,  true,  true)));
+                std::make_tuple(0, 0, 0),
+                std::make_tuple(0, 1, 0),
+                std::make_tuple(1, 0, 0),
+                std::make_tuple(1, 1, 1)));

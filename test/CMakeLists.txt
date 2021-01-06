@@ -1,6 +1,9 @@
 set(BINARY ${CMAKE_PROJECT_NAME}_tst)
 
-set(TEST_SOURCES main.cpp Gates_tst.cpp MemoryBit_tst.cpp)
+set(TEST_SOURCES    main.cpp 
+                    Gates_tst.cpp 
+                    MemoryBit_tst.cpp 
+                    Bit_tst.cpp)
 
 add_executable(${BINARY} ${TEST_SOURCES})
 

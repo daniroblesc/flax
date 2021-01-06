@@ -1,16 +1,18 @@
 #ifndef MEMORY_BIT_H_
 #define MEMORY_BIT_H_
 
+#include "Bit.h"
+
 class MemoryBit
 {
 public:
 
-    void save(const bool I);
-    bool get();
+    void save(const Bit& I);
+    Bit get() const;
 
 private:
 
-    bool O_ = false; // output of the remembered bit
+    Bit O_; // output of the remembered bit
 };
 
 

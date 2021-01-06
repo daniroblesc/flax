@@ -23,18 +23,18 @@ protected:
 
 TEST_F(MemoryBitTest, saveTrue) 
 {
-    bool I = true; // bit the we want to remember
+    Bit I(true); // bit the we want to remember
     m_.save(I);
     
-    bool O = m_.get(); // output of the remembered bit
-    EXPECT_TRUE(O);
+    Bit O = m_.get(); // output of the remembered bit
+    EXPECT_TRUE(O == true);
 }
 
 TEST_F(MemoryBitTest, saveFalse) 
 {
-    bool I = false; ; // bit the we want to remember
+    Bit I(false); // bit the we want to remember
     m_.save(I);
     
-    bool O = m_.get(); // output of the remembered bit
-    EXPECT_FALSE(O);
+    Bit O = m_.get(); // output of the remembered bit
+    EXPECT_TRUE(O == false);
 }
