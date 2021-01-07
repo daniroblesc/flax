@@ -7,8 +7,8 @@ class MemoryBit
 {
 public:
 
-    void save(const Bit& I);
-    Bit get() const;
+    void write(const Bit& I);
+    Bit read() const;
 
 private:
 

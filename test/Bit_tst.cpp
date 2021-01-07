@@ -10,23 +10,23 @@ class BitTest : public testing::Test
 
 TEST_F(BitTest, enable) 
 {
-    Bit bit(0);
+    Bit bit(Bit::ZERO);
 
-    bit.on();
-    EXPECT_EQ(1, bit.get());
+    bit.set(Bit::ONE);
+    EXPECT_EQ(Bit::ONE, bit.get());
 }
 
 TEST_F(BitTest, disable) 
 {
-    Bit bit(1);
+    Bit bit(Bit::ONE);
 
-    bit.off();
-    EXPECT_EQ(0, bit.get());
+    bit.set(Bit::ZERO);
+    EXPECT_EQ(Bit::ZERO, bit.get());
 }
 
 TEST_F(BitTest, assignment) 
 {
-    Bit bit0(1);
+    Bit bit0(Bit::ONE);
     Bit bit1;
 
     bit1 = bit0;
@@ -36,21 +36,14 @@ TEST_F(BitTest, assignment)
 
 TEST_F(BitTest, assignmentUsingInt) 
 {
-    Bit bit = 1;
+    Bit bit = Bit::ONE;
     
-    EXPECT_EQ(bit.get(), 1);
-}
-
-TEST_F(BitTest, assignmentUsingBool) 
-{
-    Bit bit = true;
-    
-    EXPECT_EQ(bit.get(), 1);
+    EXPECT_EQ(bit.get(), Bit::ONE);
 }
 
 TEST_F(BitTest, copyConstructor) 
 {
-    Bit bit0(1);
+    Bit bit0(Bit::ONE);
     Bit bit1(bit0);
 
     EXPECT_EQ(bit0.get(), bit1.get());
@@ -58,7 +51,7 @@ TEST_F(BitTest, copyConstructor)
 
 TEST_F(BitTest, equals) 
 {
-    Bit bit0(1);
+    Bit bit0(Bit::ONE);
     Bit bit1(bit0);
 
     EXPECT_TRUE(bit0 == bit1);
@@ -66,36 +59,22 @@ TEST_F(BitTest, equals)
 
 TEST_F(BitTest, NotEquals) 
 {
-    Bit bit0(1);
-    Bit bit1(0);
+    Bit bit0(Bit::ONE);
+    Bit bit1(Bit::ZERO);
 
     EXPECT_FALSE(bit0 == bit1);
 }
 
 TEST_F(BitTest, equalsUsingInt) 
 {
-    Bit bit0(1);
+    Bit bit(Bit::ONE);
 
-    EXPECT_TRUE(bit0 == 1);
+    EXPECT_TRUE(bit == Bit::ONE);
 }
 
 TEST_F(BitTest, NotEqualsUsingInt) 
 {
-    Bit bit0(1);
+    Bit bit(Bit::ONE);
 
-    EXPECT_FALSE(bit0 == 0);
-}
-
-TEST_F(BitTest, equalsUsingBool) 
-{
-    Bit bit0(1);
-
-    EXPECT_TRUE(bit0 == true);
-}
-
-TEST_F(BitTest, NotEqualsUsingBool) 
-{
-    Bit bit0(1);
-
-    EXPECT_FALSE(bit0 == false);
+    EXPECT_FALSE(bit == Bit::ZERO);
 }

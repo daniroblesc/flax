@@ -1,9 +1,9 @@
 #include "MemoryBit.h"
 #include "Gates.h"
 
-void MemoryBit::save(const Bit& I)
+void MemoryBit::write(const Bit& I)
 {
-    Bit S(1); // set the memory
+    Bit S(Bit::ONE); // set the memory
 
     NANDGate G1;
     NANDGate G2;
@@ -16,7 +16,7 @@ void MemoryBit::save(const Bit& I)
     O_     = G3.execute(a, c);
 }
 
-Bit MemoryBit::get() const
+Bit MemoryBit::read() const
 {
     return O_;
 }

@@ -3,19 +3,16 @@
 
 #include "Gates.h"
 #include "Byte.h"
-#include <vector>
 
 class ByteEnabler
 {
 public:
-
-    ByteEnabler();
-    ~ByteEnabler();
-
-    Byte execute(const Byte& I, const Bit& E = 1);
-
+    void load(const Byte& input);
+    Byte enable();
+    
 private:
-    std::vector<ANDGate> gatesCollection_;
+    ANDGate gatesCollection_[8];
+    Byte input_;
 };
 
 #endif // BYTE_ENABLER_H_  

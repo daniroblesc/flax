@@ -2,9 +2,10 @@
 #include "gmock/gmock.h"
 
 #include "Byte.h"
+#include <iostream>
 
 using ::testing::Return;
-
+/*
 class ByteEnableBitTest : public ::testing::TestWithParam<std::tuple<int, int, int>>
 {};
 
@@ -61,11 +62,19 @@ INSTANTIATE_TEST_CASE_P(
                 std::make_tuple(0xFF, 5, 0xDF),
                 std::make_tuple(0xFF, 6, 0xBF),
                 std::make_tuple(0xFF, 7, 0x7F)));                
-
+*/
 class ByteTest : public testing::Test 
 {};
 
-TEST_F(ByteTest, copyConstructor) 
+TEST_F(ByteTest, constructor) 
+{
+    Byte byte(0xAB); // 1010 1011
+    std::string msg = byte.toString();
+    EXPECT_STREQ(msg.c_str(), "10101011");
+    EXPECT_EQ(byte.get(), 0xAB);
+}
+
+TEST_F(ByteTest, copyConstructor)  
 {
     Byte byte0(0xAB);
     Byte byte1(byte0);
@@ -117,20 +126,27 @@ TEST_F(ByteTest, getPosition)
 {
     Byte byte0(0xAB); // 1010 1011
 
-    EXPECT_TRUE(byte0.get(0) == Bit(1));
-    EXPECT_TRUE(byte0.get(1) == Bit(1));
-    EXPECT_TRUE(byte0.get(2) == Bit(0));
-    EXPECT_TRUE(byte0.get(3) == Bit(1));
-    EXPECT_TRUE(byte0.get(4) == Bit(0));
-    EXPECT_TRUE(byte0.get(5) == Bit(1));
-    EXPECT_TRUE(byte0.get(6) == Bit(0));
-    EXPECT_TRUE(byte0.get(7) == Bit(1));
+    EXPECT_TRUE(byte0.get(0) == Bit(Bit::ONE));
+    EXPECT_TRUE(byte0.get(1) == Bit(Bit::ONE));
+    EXPECT_TRUE(byte0.get(2) == Bit(Bit::ZERO));
+    EXPECT_TRUE(byte0.get(3) == Bit(Bit::ONE));
+    EXPECT_TRUE(byte0.get(4) == Bit(Bit::ZERO));
+    EXPECT_TRUE(byte0.get(5) == Bit(Bit::ONE));
+    EXPECT_TRUE(byte0.get(6) == Bit(Bit::ZERO));
+    EXPECT_TRUE(byte0.get(7) == Bit(Bit::ONE));
 }
 
 TEST_F(ByteTest, setPosition) 
 {
     Byte byte(0xAB); // 1010 1011
 
-    byte.set(Bit(0), 1);
+    byte.set(Bit::ZERO, 1);
     EXPECT_TRUE(byte.get() == 0xA9);
+}
+
+TEST_F(ByteTest, getPositionOutOfRange) 
+{
+    Byte byte(0xAB); // 1010 1011
+
+    EXPECT_TRUE(byte.get(8) == Bit::ZERO);
 }

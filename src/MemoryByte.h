@@ -3,20 +3,15 @@
 
 #include "MemoryBit.h"
 #include "Byte.h"
-#include <vector>
 
 class MemoryByte
 {
 public:
-
-    MemoryByte();
-    ~MemoryByte();
-
-    void save(const Byte& I);
-    Byte get() const;
+    void write(const Byte& I);
+    Byte read() const;
 
 private:
-    std::vector<MemoryBit> memoryBitCollection_;
+    MemoryBit memoryBitCollection_[8];
 };
 
 

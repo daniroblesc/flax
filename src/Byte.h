@@ -2,6 +2,7 @@
 #define BYTE_H_
 
 #include "Bit.h"
+#include <string>
 
 class Byte
 {
@@ -10,6 +11,7 @@ public:
     static const int NUM_BITS;
 
     Byte(); // default constructor
+    Byte(const Byte &that);
     Byte(const int val);
     
     Byte& operator=(const Byte &that); // assignment operator
@@ -21,13 +23,14 @@ public:
     int get() const;
     Bit get(const int position) const;
 
-    void on(const int position);
-    void off(const int position);
-
     void set(Bit value, const int position);
 
+    std::string toString();
+
 private:
-    int val_ = 0; 
+    Bit::e_BitValue bitCollection_[8];
+
+    void setBitCollection(const int val, Bit::e_BitValue* bitCollection);
 };
 
 

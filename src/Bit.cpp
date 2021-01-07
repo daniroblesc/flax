@@ -1,69 +1,51 @@
 #include "Bit.h"
 
 Bit::Bit()
-{
+{}
 
-}
 
-Bit::Bit(const int val)
+Bit::Bit(const e_BitValue val)
 {
-    val_ = val;
-}
-
-Bit::Bit(const bool val)
-{
-    val_ = static_cast<int>(val);
+    value_ = val;
 }
 
 Bit::Bit(const Bit &b)
 {
-    val_ = b.val_;
+    value_ = b.value_;
 }
 
-int Bit::get() const
+Bit::~Bit()
+{}
+
+
+Bit::e_BitValue Bit::get() const
 {
-    return val_;
+    return value_;
 }
     
-void Bit::on()
+void Bit::set(const e_BitValue val)
 {
-    val_ = 1;
-}
-
-void Bit::off()
-{
-    val_ = 0;
+    value_ = val;
 }
 
 Bit& Bit::operator=(const Bit &a) 
 {
-    this->val_ = a.val_;
+    this->value_ = a.value_;
     return *this;  // Return a reference to myself.
 }
 
-Bit& Bit::operator=(const int &val)
+Bit& Bit::operator=(const e_BitValue &val)
 {
-    this->val_ = val;
-    return *this;  // Return a reference to myself.
-}
-
-Bit& Bit::operator=(const bool &val)
-{
-    this->val_ = static_cast<int>(val);
+    this->value_ = val;
     return *this;  // Return a reference to myself.
 }
 
 bool Bit::operator==(const Bit &that) const
 {
-    return (this->val_ == that.val_);
+    return (this->value_ == that.value_);
 }
 
-bool Bit::operator==(const int &val) const
+bool Bit::operator==(const e_BitValue &val) const
 {
-    return (this->val_ == val);
-}
-
-bool Bit::operator==(const bool &val) const
-{
-    return (this->val_ == val);
+    return (this->value_ == val);
 }

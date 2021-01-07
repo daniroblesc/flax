@@ -4,27 +4,31 @@
 class Bit
 {
 public:
+    typedef enum e_BitValue
+    {
+        ZERO = 0x0,
+        ONE  = 0x1
+    } BitValue;
 
-    Bit(); // default constructor
-    Bit(const int val);
-    Bit(const bool val);
+
+    Bit();
+    ~Bit();
+
+    Bit(const e_BitValue val);
     Bit(const Bit &b); // copy constructor
     
     Bit& operator=(const Bit &that); // assignment operator
-    Bit& operator=(const int &val); // assignment operator
-    Bit& operator=(const bool &val); // assignment operator
+    Bit& operator=(const e_BitValue &val); // assignment operator
 
     bool operator==(const Bit &that) const; // equals operator
-    bool operator==(const int &val) const; // equals operator
-    bool operator==(const bool &val) const; // equals operator
+    bool operator==(const e_BitValue &val) const; // equals operator
 
-    int get() const;
+    e_BitValue get() const;
+    void set(const e_BitValue val);
 
-    void on();
-    void off();
 
 private:
-    int val_ = 0; 
+    e_BitValue value_ = ZERO; 
 };
 
 

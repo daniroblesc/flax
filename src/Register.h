@@ -13,8 +13,8 @@ public:
 
 private:
 
-    ByteEnabler E_;
-    MemoryByte B_;
+    ByteEnabler enabler_;
+    MemoryByte memoryByte_;
 };
 
 #endif // REGISTER_H_  

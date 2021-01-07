@@ -1,33 +1,21 @@
 #include "MemoryByte.h"
 
-MemoryByte::MemoryByte()
-{
-    memoryBitCollection_.reserve(Byte::NUM_BITS);
-    for ( int position = 0; position < Byte::NUM_BITS; ++position )
-    {
-        memoryBitCollection_.push_back(MemoryBit());
-    }
-}
-
-MemoryByte::~MemoryByte()
-{}
-
-void MemoryByte::save(const Byte& I)
+void MemoryByte::write(const Byte& I)
 {
     for ( int position = 0; position < Byte::NUM_BITS; ++position )
     {
         Bit bit = I.get(position);
-        memoryBitCollection_[position].save(bit);
+        memoryBitCollection_[position].write(bit);
     }
 }
     
-Byte MemoryByte::get() const
+Byte MemoryByte::read() const
 {
     Byte retval;
 
     for ( int position = 0; position < Byte::NUM_BITS; ++position )
     {
-        Bit bit = memoryBitCollection_[position].get();
+        Bit bit = memoryBitCollection_[position].read();
         retval.set(bit, position);
     }
 

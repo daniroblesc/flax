@@ -2,31 +2,31 @@
 
 Bit NANDGate::execute(const Bit& a, const Bit& b)
 {
-    if ((a == 1) &&  (b == 1))
+    if ((a == Bit::ONE) && (b == Bit::ONE))
     {
-        return Bit(0);  
+        return Bit(Bit::ZERO);  
     }
 
-    return Bit(1);
+    return Bit(Bit::ONE);
 }
 
 Bit NOTGate::execute(const Bit& a)
 {
-    if (a == true)
+    if (a == Bit::ONE)
     {
-        return Bit(0);   
+        return Bit(Bit::ZERO);   
     }
 
-    return Bit(1);
+    return Bit(Bit::ONE);
 }
 
 Bit ANDGate::execute(const Bit& a, const Bit& b)
 {
-    if ((a == 1) &&  (b == 1))
+    if ((a == Bit::ONE) &&  (b == Bit::ONE))
     {
-        return Bit(1);
+        return Bit(Bit::ONE);
     }
 
-    return Bit(0);    
+    return Bit(Bit::ZERO);
 }
 
