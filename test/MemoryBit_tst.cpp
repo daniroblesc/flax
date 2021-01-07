@@ -8,16 +8,6 @@ using ::testing::Return;
 class MemoryBitTest : public testing::Test 
 {
 protected:
-    // Remember that SetUp() is run immediately before a test starts.
-    void SetUp() override 
-    {
-    }
-
-    // TearDown() is invoked immediately after a test finishes.  
-    void TearDown() override 
-    { 
-    }    
-
     MemoryBit m_;
 };
 
