@@ -41,6 +41,18 @@ Bit& Bit::operator=(const Bit &a)
     return *this;  // Return a reference to myself.
 }
 
+Bit& Bit::operator=(const int &val)
+{
+    this->val_ = val;
+    return *this;  // Return a reference to myself.
+}
+
+Bit& Bit::operator=(const bool &val)
+{
+    this->val_ = static_cast<int>(val);
+    return *this;  // Return a reference to myself.
+}
+
 bool Bit::operator==(const Bit &that) const
 {
     return (this->val_ == that.val_);

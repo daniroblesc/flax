@@ -83,6 +83,13 @@ TEST_F(ByteTest, assignment)
     EXPECT_EQ(byte0.get(), byte1.get());
 }
 
+TEST_F(ByteTest, assignmentUsingInt) 
+{
+    Byte byte = 0xAB;
+    
+    EXPECT_EQ(byte.get(), 0xAB);
+}
+
 TEST_F(ByteTest, equals) 
 {
     Byte byte0(0xAB);

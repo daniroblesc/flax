@@ -5,7 +5,8 @@ set(TEST_SOURCES    main.cpp
                     MemoryBit_tst.cpp
                     MemoryByte_tst.cpp 
                     Bit_tst.cpp
-                    Byte_tst.cpp)
+                    Byte_tst.cpp
+                    ByteEnabler_tst.cpp)
 
 add_executable(${BINARY} ${TEST_SOURCES})
 

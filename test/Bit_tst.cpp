@@ -34,6 +34,20 @@ TEST_F(BitTest, assignment)
     EXPECT_EQ(bit0.get(), bit1.get());
 }
 
+TEST_F(BitTest, assignmentUsingInt) 
+{
+    Bit bit = 1;
+    
+    EXPECT_EQ(bit.get(), 1);
+}
+
+TEST_F(BitTest, assignmentUsingBool) 
+{
+    Bit bit = true;
+    
+    EXPECT_EQ(bit.get(), 1);
+}
+
 TEST_F(BitTest, copyConstructor) 
 {
     Bit bit0(1);

@@ -10,7 +10,10 @@ public:
     Bit(const bool val);
     Bit(const Bit &b); // copy constructor
     
-    Bit& operator=(const Bit &a); // assignment operator
+    Bit& operator=(const Bit &that); // assignment operator
+    Bit& operator=(const int &val); // assignment operator
+    Bit& operator=(const bool &val); // assignment operator
+
     bool operator==(const Bit &that) const; // equals operator
     bool operator==(const int &val) const; // equals operator
     bool operator==(const bool &val) const; // equals operator

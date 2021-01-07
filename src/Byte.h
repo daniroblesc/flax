@@ -13,6 +13,8 @@ public:
     Byte(const int val);
     
     Byte& operator=(const Byte &that); // assignment operator
+    Byte& operator=(const int &val); // assignment operator
+
     bool operator==(const Byte &that) const; // equals operator
     bool operator==(const int &val) const; // equals operator    
 
