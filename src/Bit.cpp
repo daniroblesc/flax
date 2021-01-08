@@ -1,4 +1,5 @@
 #include "Bit.h"
+#include <sstream>      // std::stringstream
 
 Bit::Bit()
 {}
@@ -48,4 +49,11 @@ bool Bit::operator==(const Bit &that) const
 bool Bit::operator==(const e_BitValue &val) const
 {
     return (this->value_ == val);
+}
+
+std::string Bit::toString() const
+{
+    std::stringstream ss;
+    ss << value_;
+    return ss.str();
 }

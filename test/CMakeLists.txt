@@ -7,7 +7,8 @@ set(TEST_SOURCES    main.cpp
                     Bit_tst.cpp
                     Byte_tst.cpp
                     ByteEnabler_tst.cpp
-                    Register_tst.cpp)
+                    Register_tst.cpp
+                    Decoder_tst.cpp)
 
 add_executable(${BINARY} ${TEST_SOURCES})
 

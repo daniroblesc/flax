@@ -72,3 +72,29 @@ INSTANTIATE_TEST_CASE_P(
                 std::make_tuple(Bit::ZERO, Bit::ONE,  Bit::ZERO),
                 std::make_tuple(Bit::ONE,  Bit::ZERO, Bit::ZERO),
                 std::make_tuple(Bit::ONE,  Bit::ONE,  Bit::ONE)));
+
+TEST_F(ANDGateTest, executeInputVectorReturnTrue)
+{
+  std::vector<Bit> inputs;
+  inputs.push_back(Bit(Bit::ONE));
+  inputs.push_back(Bit(Bit::ONE));
+  inputs.push_back(Bit(Bit::ONE));
+  inputs.push_back(Bit(Bit::ONE));
+
+  ANDGate And;
+  Bit c = And.execute(inputs);
+  EXPECT_TRUE(Bit(Bit::ONE) == c);
+}
+
+TEST_F(ANDGateTest, executeInputVectorReturnFalse)
+{
+  std::vector<Bit> inputs;
+  inputs.push_back(Bit(Bit::ONE));
+  inputs.push_back(Bit(Bit::ONE));
+  inputs.push_back(Bit(Bit::ONE));
+  inputs.push_back(Bit(Bit::ZERO));
+
+  ANDGate And;
+  Bit c = And.execute(inputs);
+  EXPECT_TRUE(Bit(Bit::ZERO) == c);
+}

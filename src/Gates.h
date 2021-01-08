@@ -2,6 +2,7 @@
 #define GATES_H_
 
 #include "Bit.h"
+#include <vector>
 
 class NANDGate
 {
@@ -19,6 +20,10 @@ class ANDGate
 {
 public:
     Bit execute(const Bit& a, const Bit& b);
+    Bit execute(const Bit& a, const Bit& b, const Bit& c);
+    Bit execute(const Bit& a, const Bit& b, const Bit& c, const Bit& d);
+    Bit execute(const std::vector<Bit>& inputs);
+
 };
 
 

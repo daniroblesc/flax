@@ -1,6 +1,8 @@
 #ifndef BIT_H_
 #define BIT_H_
 
+#include <string>
+
 class Bit
 {
 public:
@@ -26,6 +28,7 @@ public:
     e_BitValue get() const;
     void set(const e_BitValue val);
 
+    std::string toString() const;
 
 private:
     e_BitValue value_ = ZERO; 
