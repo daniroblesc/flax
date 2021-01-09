@@ -19,7 +19,8 @@ TEST_P(Decoder2X4Test, execute)
     inputs.push_back(Bit(a));
     inputs.push_back(Bit(b));
 
-    std::vector<Bit> output = decoder.execute(inputs);
+    decoder.update(inputs);
+    std::vector<Bit> output = decoder.output();
 
     Bit::e_BitValue _0_0 = std::get<2>(GetParam());
     Bit::e_BitValue _0_1 = std::get<3>(GetParam());
@@ -30,6 +31,12 @@ TEST_P(Decoder2X4Test, execute)
     EXPECT_TRUE(output[1].get() == _0_1);
     EXPECT_TRUE(output[2].get() == _1_0);
     EXPECT_TRUE(output[3].get() == _1_1);
+    
+    EXPECT_TRUE(decoder.output(0) == _0_0);
+    EXPECT_TRUE(decoder.output(1) == _0_1);
+    EXPECT_TRUE(decoder.output(2) == _1_0);
+    EXPECT_TRUE(decoder.output(3) == _1_1);
+
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -60,7 +67,8 @@ TEST_P(Decoder3X8Test, execute)
     inputs.push_back(Bit(b));
     inputs.push_back(Bit(c));
 
-    std::vector<Bit> output = decoder.execute(inputs);
+    decoder.update(inputs);
+    std::vector<Bit> output = decoder.output();
 
     Bit::e_BitValue _0_0_0 = std::get<3>(GetParam());
     Bit::e_BitValue _0_0_1 = std::get<4>(GetParam());
@@ -117,7 +125,8 @@ TEST_P(Decoder4X16TestFirstByte, execute)
     inputs.push_back(Bit(c));
     inputs.push_back(Bit(d));
 
-    std::vector<Bit> output = decoder.execute(inputs);
+    decoder.update(inputs);
+    std::vector<Bit> output = decoder.output();
 
     Bit::e_BitValue _0_0_0_0 = std::get<4>(GetParam());
     Bit::e_BitValue _0_0_0_1 = std::get<5>(GetParam());
@@ -173,7 +182,8 @@ TEST_P(Decoder4X16TestSecondByte, execute)
     inputs.push_back(Bit(c));
     inputs.push_back(Bit(d));
 
-    std::vector<Bit> output = decoder.execute(inputs);
+    decoder.update(inputs);
+    std::vector<Bit> output = decoder.output();
 
     Bit::e_BitValue _1_0_0_0 = std::get<4>(GetParam());
     Bit::e_BitValue _1_0_0_1 = std::get<5>(GetParam());

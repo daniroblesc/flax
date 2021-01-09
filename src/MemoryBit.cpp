@@ -1,22 +1,29 @@
 #include "MemoryBit.h"
-#include "Gates.h"
 
-void MemoryBit::write(const Bit& I)
+void MemoryBit::update(const Bit& input)
 {
-    Bit S(Bit::ONE); // set the memory
-
-    NANDGate G1;
-    NANDGate G2;
-    NANDGate G3;
-    NANDGate G4;
-
-    Bit a = G1.execute(I, S);
-    Bit b = G2.execute(a, S);
-    Bit c = G4.execute(b, O_);
-    O_     = G3.execute(a, c);
+    input_ = input;
 }
 
-Bit MemoryBit::read() const
+void MemoryBit::set(const Bit& s)
 {
-    return O_;
+    s_ = s;
+}
+
+Bit MemoryBit::output()
+{
+    G1_.update(input_, s_);
+    Bit a = G1_.output();
+
+    G2_.update(a, s_);
+    Bit b = G2_.output();
+
+    Bit o;
+    G4_.update(b, o);
+    Bit c = G4_.output();
+
+    G3_.update(a, c);
+    o = G3_.output();
+
+    return o;
 }

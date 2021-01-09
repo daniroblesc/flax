@@ -1,61 +1,84 @@
 #include "Gates.h"
 
-Bit NANDGate::execute(const Bit& a, const Bit& b)
-{
-    if ((a == Bit::ONE) && (b == Bit::ONE))
-    {
-        return Bit(Bit::ZERO);  
-    }
+//
+// NANDGate implementation
+//
 
-    return Bit(Bit::ONE);
+void NANDGate::update(const Bit& a, const Bit& b)
+{
+    a_ = a;
+    b_ = b;
 }
 
-Bit NOTGate::execute(const Bit& a)
+Bit NANDGate::output()
 {
-    if (a == Bit::ONE)
+    if ((a_ == Bit::ONE) && (b_ == Bit::ONE))
     {
-        return Bit(Bit::ZERO);   
+        return Bit::ZERO;          
     }
 
-    return Bit(Bit::ONE);
+    return Bit::ONE;
 }
 
-Bit ANDGate::execute(const Bit& a, const Bit& b)
+//
+// NOTGate implementation
+//
+
+void NOTGate::update(const Bit& a)
 {
-    if ((a == Bit::ONE) &&  (b == Bit::ONE))
+    a_ = a;
+}
+
+Bit NOTGate::output()
+{
+    if (a_ == Bit::ONE)
     {
-        return Bit(Bit::ONE);
+        return Bit::ZERO;  
     }
 
-    return Bit(Bit::ZERO);
+    return  Bit::ONE;
 }
 
-Bit ANDGate::execute(const Bit& a, const Bit& b, const Bit& c)
-{
-    if ((a == Bit::ONE) &&  (b == Bit::ONE) &&  (c == Bit::ONE))
-    {
-        return Bit(Bit::ONE);
-    }
+//
+// ANDGate implementation
+//
 
-    return Bit(Bit::ZERO);
+void ANDGate::update(const Bit& a, const Bit& b)
+{
+    inputs_.clear();
+    inputs_.push_back(a);
+    inputs_.push_back(b);
 }
 
-Bit ANDGate::execute(const Bit& a, const Bit& b, const Bit& c, const Bit& d)
+void ANDGate::update(const Bit& a, const Bit& b, const Bit& c)
 {
-    if ((a == Bit::ONE) &&  (b == Bit::ONE) &&  (c == Bit::ONE) &&  (d == Bit::ONE))
-    {
-        return Bit(Bit::ONE);
-    }
-
-    return Bit(Bit::ZERO);
+    inputs_.clear();
+    inputs_.push_back(a);
+    inputs_.push_back(b);
+    inputs_.push_back(c);
 }
 
-Bit ANDGate::execute(const std::vector<Bit>& inputs)
+void ANDGate::update(const Bit& a, const Bit& b, const Bit& c, const Bit& d)
 {
-    size_t n = inputs.size();
+    inputs_.clear();
+    inputs_.push_back(a);
+    inputs_.push_back(b);
+    inputs_.push_back(c);
+    inputs_.push_back(d);
+}
+
+void ANDGate::update(const std::vector<Bit>& inputs)
+{
+    inputs_.clear();
+    inputs_ = inputs;
+}
+
+Bit ANDGate::output()
+{
+    size_t n = inputs_.size();
     for (int i = 0; i < n; ++i)
     {
-        if (inputs[i].get() == Bit::ZERO)
+        if (inputs_[i].get() == Bit::ZERO)
         {
             return Bit(Bit::ZERO);
         }

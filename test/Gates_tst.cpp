@@ -18,7 +18,8 @@ TEST_P(NANDGateTest, execute)
   Bit::e_BitValue b = std::get<1>(GetParam());
   Bit::e_BitValue expected = std::get<2>(GetParam());
 
-  Bit c = NAND.execute(Bit(a), Bit(b));
+  NAND.update(Bit(a), Bit(b));
+  Bit c = NAND.output();
   EXPECT_TRUE(Bit(expected) == c);
 }
 
@@ -39,11 +40,13 @@ TEST_F(NOTGateTest, execute)
 {
   NOTGate Not;
 
-  Bit c = Not.execute(Bit(Bit::ONE));
+  Not.update(Bit(Bit::ONE));
+  Bit c = Not.output();
   EXPECT_TRUE(c == Bit::ZERO);
   EXPECT_TRUE(c.get() == Bit::ZERO);
 
-  c = Not.execute(Bit(Bit::ZERO));
+  Not.update(Bit(Bit::ZERO));
+  c = Not.output();
   EXPECT_TRUE(c == Bit::ONE);
   EXPECT_TRUE(c.get() == Bit::ONE);
 }        
@@ -60,7 +63,8 @@ TEST_P(ANDGateTest, execute)
   Bit::e_BitValue b = std::get<1>(GetParam());
   Bit::e_BitValue expected = std::get<2>(GetParam());
 
-  Bit c = And.execute(Bit(a), Bit(b));
+  And.update(Bit(a), Bit(b));
+  Bit c = And.output();
   EXPECT_TRUE(Bit(expected) == c);
 }
 
@@ -82,7 +86,8 @@ TEST_F(ANDGateTest, executeInputVectorReturnTrue)
   inputs.push_back(Bit(Bit::ONE));
 
   ANDGate And;
-  Bit c = And.execute(inputs);
+  And.update(inputs);
+  Bit c = And.output();
   EXPECT_TRUE(Bit(Bit::ONE) == c);
 }
 
@@ -95,6 +100,7 @@ TEST_F(ANDGateTest, executeInputVectorReturnFalse)
   inputs.push_back(Bit(Bit::ZERO));
 
   ANDGate And;
-  Bit c = And.execute(inputs);
+  And.update(inputs);
+  Bit c = And.output();
   EXPECT_TRUE(Bit(Bit::ZERO) == c);
 }

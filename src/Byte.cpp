@@ -75,7 +75,7 @@ Bit Byte::get(const int position) const
     return bitCollection_[position];
 }
 
-void Byte::set(Bit value, const int position)
+void Byte::set(const int position, Bit value)
 {
     bitCollection_[position] = value.get();
 }

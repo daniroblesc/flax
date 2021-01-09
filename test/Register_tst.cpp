@@ -2,23 +2,38 @@
 #include "gmock/gmock.h"
 
 #include "Register.h"
+#include "Bus.h"
 
 using ::testing::Return;
 
 class RegisterTest : public testing::Test 
-{};
-
-TEST_F(RegisterTest, write) 
 {
-    Register r;
 
-    Byte input = 0xAB;
-    r.write(input);
+protected:
+  // Remember that SetUp() is run immediately before a test starts.
+  void SetUp() override 
+  {
+    // init bus
+    Byte value = 0xA0;
+    bus_.set(value);
+  }
 
-    Byte output = r.read();
-    EXPECT_TRUE(output == 0xAB);
+  // TearDown() is invoked immediately after a test finishes.  
+  void TearDown() override 
+  { 
+  }
 
-    r.write(Byte(0xCC));
-    output = r.read();
-    EXPECT_TRUE(output == 0xCC);
+  Bus bus_;
+};
+
+TEST_F(RegisterTest, basic_operation) 
+{
+    Register reg(&bus_);
+
+    reg.set();    // reg content is refreshed with the bus content
+    EXPECT_TRUE(bus_.get() == 0xA0);
+
+    bus_.set(0xA1); // someone refresh bus content
+    reg.enable(); // register's content is written to the bus
+    EXPECT_TRUE(bus_.get() == 0xA0); // check that bus content is refreshed with register's content
 }

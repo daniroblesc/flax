@@ -23,7 +23,7 @@ public:
     int get() const;
     Bit get(const int position) const;
 
-    void set(Bit value, const int position);
+    void set(const int position, Bit value);
 
     std::string toString();
 

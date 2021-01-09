@@ -5,64 +5,7 @@
 #include <iostream>
 
 using ::testing::Return;
-/*
-class ByteEnableBitTest : public ::testing::TestWithParam<std::tuple<int, int, int>>
-{};
 
-TEST_P(ByteEnableBitTest, enableBit) 
-{
-    int input = std::get<0>(GetParam());
-    int position = std::get<1>(GetParam());
-    int output = std::get<2>(GetParam());
-
-    Byte byte(input);
-
-    byte.on(position);
-    EXPECT_EQ(output, byte.get());
-}
-
-INSTANTIATE_TEST_CASE_P(
-        enable,
-        ByteEnableBitTest,
-        ::testing::Values(
-                std::make_tuple(0xF0, 0, 0xF1),
-                std::make_tuple(0xF0, 1, 0xF2),
-                std::make_tuple(0xF0, 2, 0xF4),
-                std::make_tuple(0xF0, 3, 0xF8),
-                std::make_tuple(0x0F, 4, 0x1F),
-                std::make_tuple(0x0F, 5, 0x2F),
-                std::make_tuple(0x0F, 6, 0x4F),
-                std::make_tuple(0x0F, 7, 0x8F)));
-
-
-class ByteDisableBitTest : public ::testing::TestWithParam<std::tuple<int, int, int>>
-{};
-
-TEST_P(ByteDisableBitTest, disableBit) 
-{
-    int input = std::get<0>(GetParam());
-    int position = std::get<1>(GetParam());
-    int output = std::get<2>(GetParam());
-
-    Byte byte(input);
-
-    byte.off(position);
-    EXPECT_EQ(output, byte.get());
-}
-
-INSTANTIATE_TEST_CASE_P(
-        disable,
-        ByteDisableBitTest,
-        ::testing::Values(
-                std::make_tuple(0xFF, 0, 0xFE),
-                std::make_tuple(0xFF, 1, 0xFD),
-                std::make_tuple(0xFF, 2, 0xFB),
-                std::make_tuple(0xFF, 3, 0xF7),
-                std::make_tuple(0xFF, 4, 0xEF),
-                std::make_tuple(0xFF, 5, 0xDF),
-                std::make_tuple(0xFF, 6, 0xBF),
-                std::make_tuple(0xFF, 7, 0x7F)));                
-*/
 class ByteTest : public testing::Test 
 {};
 
@@ -140,7 +83,7 @@ TEST_F(ByteTest, setPosition)
 {
     Byte byte(0xAB); // 1010 1011
 
-    byte.set(Bit::ZERO, 1);
+    byte.set(1, Bit::ZERO);
     EXPECT_TRUE(byte.get() == 0xA9);
 }
 

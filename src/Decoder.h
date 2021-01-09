@@ -10,8 +10,11 @@ public:
 
     IDecoder(const int numInputs);
     virtual ~IDecoder();
+    
+    virtual void update(const std::vector<Bit>& inputs) = 0;
 
-    virtual std::vector<Bit> execute(const std::vector<Bit>& inputs) = 0;
+    virtual std::vector<Bit> output() = 0;
+    virtual Bit output(const int n) = 0;
 
 protected:
 
@@ -20,6 +23,7 @@ protected:
 
     std::vector<NOTGate> not_;
     std::vector<ANDGate> and_;
+    std::vector<Bit> output_;
 
     std::string toString(const std::vector<Bit>& inputs);
 };
@@ -31,7 +35,10 @@ public:
     Decoder2X4();
     ~Decoder2X4();
 
-    std::vector<Bit> execute(const std::vector<Bit>& inputs);
+    void update(const std::vector<Bit>& inputs);
+
+    std::vector<Bit> output();
+    Bit output(const int n);
 };
 
 class Decoder3X8 : public IDecoder
@@ -41,7 +48,10 @@ public:
     Decoder3X8();
     ~Decoder3X8();
 
-    std::vector<Bit> execute(const std::vector<Bit>& inputs);
+    void update(const std::vector<Bit>& inputs);
+
+    std::vector<Bit> output();
+    Bit output(const int n);
 };
 
 
@@ -52,7 +62,10 @@ public:
     Decoder4X16();
     ~Decoder4X16();
 
-    std::vector<Bit> execute(const std::vector<Bit>& inputs);
+    void update(const std::vector<Bit>& inputs);
+
+    std::vector<Bit> output();
+    Bit output(const int n);
 };
 
 

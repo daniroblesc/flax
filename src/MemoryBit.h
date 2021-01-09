@@ -2,17 +2,30 @@
 #define MEMORY_BIT_H_
 
 #include "Bit.h"
+#include "Gates.h"
 
 class MemoryBit
 {
 public:
 
-    void write(const Bit& I);
-    Bit read() const;
+    // update the input
+    void update(const Bit& input);
+
+    // enable/disable 's' bit
+    void set(const Bit& s = Bit::ONE);
+
+    // get the output
+    Bit output();
 
 private:
 
-    Bit O_; // output of the remembered bit
+    Bit input_;
+    Bit s_;
+
+    NANDGate G1_;
+    NANDGate G2_;
+    NANDGate G3_;
+    NANDGate G4_;
 };
 
 

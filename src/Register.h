@@ -3,13 +3,17 @@
 
 #include "ByteEnabler.h"
 #include "MemoryByte.h"
+#include "Bus.h"
 
-class Register
+class Register : public IBusNode
 {
 public:
 
-    void write(const Byte& input);
-    Byte read();
+    Register(Bus *bus);
+    ~Register();
+
+    void enable(const Bit& e = Bit::ONE);  // register's content is written to the bus
+    void set(const Bit& s = Bit::ONE);  // register content is refreshed with the bus content
 
 private:
 

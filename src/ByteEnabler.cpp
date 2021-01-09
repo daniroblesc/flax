@@ -1,19 +1,36 @@
 #include "ByteEnabler.h"
 
+ByteEnabler::ByteEnabler()
+{
+    gatesCollection_.reserve(Byte::NUM_BITS);
+    for ( int n = 0; n < Byte::NUM_BITS; ++n )
+    {
+        gatesCollection_.push_back(ANDGate());
+    }
+}
 
-void ByteEnabler::load(const Byte& input)
+ByteEnabler::~ByteEnabler()
+{}
+
+void ByteEnabler::update(const Byte& input)
 {
     input_ = input;
 }
 
-Byte ByteEnabler::enable()
+void ByteEnabler::enable(const Bit& e)
+{
+    e_ = e;
+}
+
+Byte ByteEnabler::output()
 {
     Byte retval;
-    for ( int position = 0; position < Byte::NUM_BITS; ++position )
+    for ( int n = 0; n < Byte::NUM_BITS; ++n )
     {
-        Bit InputBit = input_.get(position);
-        Bit OutputBit = gatesCollection_[position].execute(InputBit, Bit::ONE);
-        retval.set(OutputBit, position);
+        Bit InputBit = input_.get(n);
+        gatesCollection_[n].update(InputBit, e_);
+        Bit OutputBit = gatesCollection_[n].output();
+        retval.set(n, OutputBit);
     }
     return retval;
 }

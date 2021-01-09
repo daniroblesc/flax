@@ -13,18 +13,26 @@ protected:
 
 TEST_F(MemoryBitTest, saveTrue) 
 {
-    Bit I(Bit::ONE); // bit the we want to remember
-    m_.write(I);
-    
-    Bit O = m_.read(); // output of the remembered bit
+    Bit input(Bit::ONE); // bit the we want to remember
+
+    // update input
+    m_.update(input);
+    // enable set bit
+    m_.set();
+
+    Bit O = m_.output(); // output of the remembered bit
     EXPECT_TRUE(O == Bit::ONE);
 }
 
 TEST_F(MemoryBitTest, saveFalse) 
 {
-    Bit I(Bit::ZERO); // bit the we want to remember
-    m_.write(I);
+    Bit input(Bit::ZERO); // bit the we want to remember
+
+    // update input
+    m_.update(input);
+    // enable set bit
+    m_.set();
     
-    Bit O = m_.read(); // output of the remembered bit
+    Bit O = m_.output(); // output of the remembered bit
     EXPECT_TRUE(O == Bit::ZERO);
 }

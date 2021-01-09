@@ -3,15 +3,27 @@
 
 #include "MemoryBit.h"
 #include "Byte.h"
+#include <vector>
 
 class MemoryByte
 {
 public:
-    void write(const Byte& I);
-    Byte read() const;
+    
+    MemoryByte();
+    ~MemoryByte();
+
+    // update the input
+    void update(const Byte& input);
+
+    // enable/disable 's' bit
+    void set(const Bit& s = Bit::ONE);
+
+    // get the output
+    Byte output();
 
 private:
-    MemoryBit memoryBitCollection_[8];
+
+    std::vector<MemoryBit> memoryBitCollection_;
 };
 
 

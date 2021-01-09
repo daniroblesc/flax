@@ -7,23 +7,36 @@
 class NANDGate
 {
 public:
-    Bit execute(const Bit& a, const Bit& b);
+    void update(const Bit& a, const Bit& b);
+    Bit output();
+    
+private:
+    Bit a_;    
+    Bit b_;    
 };
 
 class NOTGate
 {
 public:
-    Bit execute(const Bit& a);
+    void update(const Bit& a);
+    Bit output();
+
+private:
+    Bit a_;    
 };
 
 class ANDGate
 {
 public:
-    Bit execute(const Bit& a, const Bit& b);
-    Bit execute(const Bit& a, const Bit& b, const Bit& c);
-    Bit execute(const Bit& a, const Bit& b, const Bit& c, const Bit& d);
-    Bit execute(const std::vector<Bit>& inputs);
+    void update(const Bit& a, const Bit& b);
+    void update(const Bit& a, const Bit& b, const Bit& c);
+    void update(const Bit& a, const Bit& b, const Bit& c, const Bit& d);
+    void update(const std::vector<Bit>& inputs);
 
+    Bit output();
+
+private:
+    std::vector<Bit> inputs_;
 };
 
 
