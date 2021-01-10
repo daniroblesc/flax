@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include "RAM.h"
+#include "memory/RAM.h"
 #include <iostream>
 
 using ::testing::Return;
