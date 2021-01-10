@@ -1,8 +1,8 @@
 #ifndef BYTE_ENABLER_H_
 #define BYTE_ENABLER_H_
 
-#include "Gates.h"
-#include "Byte.h"
+#include "circuit/Gates.h"
+#include "circuit/Byte.h"
 #include <vector>
 
 class ByteEnabler

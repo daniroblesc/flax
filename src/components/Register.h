@@ -2,8 +2,8 @@
 #define REGISTER_H_
 
 #include "ByteEnabler.h"
-#include "MemoryByte.h"
-#include "Bus.h"
+#include "memory/MemoryByte.h"
+#include "circuit/Bus.h"
 
 class Register 
 {

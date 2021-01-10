@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include "Register.h"
-#include "Bus.h"
+#include "components/Register.h"
+#include "circuit/Bus.h"
 
 using ::testing::Return;
 

@@ -3,7 +3,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include "MemoryByte.h"
+#include "memory/MemoryByte.h"
 
 using ::testing::Return;
 

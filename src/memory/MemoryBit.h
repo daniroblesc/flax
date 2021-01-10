@@ -1,8 +1,8 @@
 #ifndef MEMORY_BIT_H_
 #define MEMORY_BIT_H_
 
-#include "Bit.h"
-#include "Gates.h"
+#include "circuit/Bit.h"
+#include "circuit/Gates.h"
 
 class MemoryBit
 {

@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include "ByteEnabler.h"
+#include "components/ByteEnabler.h"
 
 using ::testing::Return;
 
@@ -10,7 +10,7 @@ class ByteEnablerTest : public testing::Test
 
 TEST_F(ByteEnablerTest, getEoutputOnceBitEIsEnabled) 
 {
-    ByteEnabler E;
+     ByteEnabler E;
     Byte input = 0xAB;
 
     // update the input

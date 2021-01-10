@@ -1,10 +1,10 @@
 #ifndef RAM_H_
 #define RAM_H_
 
-#include "Gates.h"
-#include "Bus.h"
-#include "Register.h"
-#include "Decoder.h"
+#include "circuit/Gates.h"
+#include "circuit/Bus.h"
+#include "components/Register.h"
+#include "components/Decoder.h"
 
 class RAMCell 
 {

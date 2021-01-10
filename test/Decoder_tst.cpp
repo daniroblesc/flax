@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include "Decoder.h"
+#include "components/Decoder.h"
 
 using ::testing::Return;
 

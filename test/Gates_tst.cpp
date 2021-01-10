@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include "Gates.h"
-#include "Bit.h"
+#include "circuit/Gates.h"
+#include "circuit/Bit.h"
 
 using ::testing::Return;
 

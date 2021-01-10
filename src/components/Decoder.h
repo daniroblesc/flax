@@ -1,8 +1,8 @@
 #ifndef DECODER_H_
 #define DECODER_H_
 
-#include "Gates.h"
-#include "Byte.h"
+#include "circuit/Gates.h"
+#include "circuit/Byte.h"
 #include <vector>
 
 class IDecoder
