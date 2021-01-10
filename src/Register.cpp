@@ -1,14 +1,18 @@
 #include "Register.h"
 
-Register::Register(Bus *bus) : IBusNode(bus)
+Register::Register(Bus *bus) 
 {
+    inputBus_ = outputBus_ = bus;
+}
 
+Register::Register(Bus *inputBus, Bus *outputBus) 
+{
+    inputBus_ = inputBus;
+    outputBus_ = outputBus;
 }
 
 Register::~Register()
-{
-
-}
+{}
 
 void Register::enable(const Bit& e)
 {
@@ -17,13 +21,13 @@ void Register::enable(const Bit& e)
     // get the E's outputs
     Byte output = enabler_.output();
     // save E's outputs to the bus
-    bus_->set(output);
+    outputBus_->set(output);
 }
 
 void Register::set(const Bit& s)
 {
     // get bus content
-    Byte input = bus_->get();
+    Byte input = inputBus_->get();
 
     // update B's inputs with bus content
     memoryByte_.update(input);

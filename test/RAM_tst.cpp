@@ -90,7 +90,6 @@ TEST_F(RAMTest, cannotReadCellContentIfHasNotBeenSet)
     EXPECT_FALSE(bus_.get() == 0xAB); 
 }
 
-
 TEST_F(RAMTest, cannotReadCellContentIfEnableBitIsZeroed) 
 {
     updateCellContent(0xAB);
@@ -103,4 +102,56 @@ TEST_F(RAMTest, cannotReadCellContentIfEnableBitIsZeroed)
 
     // check that bus content is refreshed with cell's content
     EXPECT_FALSE(bus_.get() == 0xAB); 
+}
+
+TEST_F(RAMTest, RAMSingleTest)
+{
+    RAM ram(&bus_);
+
+    /* Write the @1 */
+    updateBus(0xAB); // set memory address
+    ram.setAddress();
+    updateBus(0x22); // set data to save in ram
+    ram.set();
+
+    /* Write the @2 */
+    updateBus(0xAC); // set memory address
+    ram.setAddress();
+    updateBus(0x23); // set data to save in ram
+    ram.set();
+
+    /* Read the @1 */
+    updateBus(0xAB); // set memory address
+    ram.setAddress();
+    ram.enable();
+    EXPECT_TRUE(bus_.get() == 0x22); 
+
+    /* Read the @2 */
+    updateBus(0xAC); // set memory address
+    ram.setAddress();
+    ram.enable();
+    EXPECT_TRUE(bus_.get() == 0x23); 
+}
+
+TEST_F(RAMTest, RAMFullTest)
+{
+    RAM ram(&bus_);
+
+    /* Write the entire RAM */
+    for (int addr=0; addr < 0xFF; ++addr)
+    {
+        updateBus(addr); // set memory address
+        ram.setAddress();
+        updateBus((0xFF-addr)); // set data to save in ram
+        ram.set();
+    }
+
+    /* Read the entire RAM */
+    for (int addr=0; addr < 0xFF; ++addr)
+    {
+        updateBus(addr); // set memory address
+        ram.setAddress();
+        ram.enable();
+        EXPECT_TRUE(bus_.get() == (0xFF-addr)); 
+    }
 }

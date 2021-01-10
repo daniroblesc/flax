@@ -20,7 +20,7 @@ TEST_F(ByteEnablerTest, getEoutputOnceBitEIsEnabled)
     // get the output
     Byte output = E.output();
 
-    EXPECT_EQ(output.get(), 0xAB);
+    EXPECT_EQ(output.toInt(), 0xAB);
 }
 
 TEST_F(ByteEnablerTest, doNotGetOutputIfEBitIsNotSet) 
@@ -35,5 +35,5 @@ TEST_F(ByteEnablerTest, doNotGetOutputIfEBitIsNotSet)
     // get the output
     Byte output = E.output();
 
-    EXPECT_FALSE(output.get() == 0xAB);
+    EXPECT_FALSE(output.toInt() == 0xAB);
 }

@@ -15,7 +15,7 @@ TEST_F(MemoryByteTest, constructor)
     MemoryByte mb;
 
     Byte read = mb.output();
-    EXPECT_EQ(read.get(), 0x00);
+    EXPECT_EQ(read.toInt(), 0x00);
 }
 
 TEST_F(MemoryByteTest, saveAByte) 

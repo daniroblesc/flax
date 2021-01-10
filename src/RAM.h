@@ -4,8 +4,9 @@
 #include "Gates.h"
 #include "Bus.h"
 #include "Register.h"
+#include "Decoder.h"
 
-class RAMCell : public IBusNode
+class RAMCell 
 {
 public:
     RAMCell(Bus *bus);
@@ -27,6 +28,30 @@ private:
     ANDGate X2_;
     Register* R_ = nullptr;
     Bus* bus_ = nullptr;
+};
+
+class RAM 
+{
+public:
+    RAM(Bus *bus);
+    ~RAM();
+
+    void setAddress(const Bit& sa = Bit::ONE);
+    void enable(const Bit& e = Bit::ONE);
+    void set(const Bit& s = Bit::ONE); 
+
+private:
+    Bus* systemBus_ = nullptr;
+    Bus* MAROutputBus_ = nullptr;
+    Register* MAR_ = nullptr;
+    Decoder4X16 selectCol_;
+    Decoder4X16 selectRow_;
+
+    RAMCell* cells_[16][16];
+
+
+    std::string toString(const std::vector<Bit>& v);
+    RAMCell* getSelectedCell();
 
 };
 

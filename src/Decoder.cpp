@@ -27,14 +27,28 @@ IDecoder::IDecoder(const int numInputs)
 IDecoder::~IDecoder()
 {}
 
-std::string IDecoder::toString(const std::vector<Bit>& inputs)
+std::string IDecoder::toString(const std::vector<Bit>& v)
 {
-    std::stringstream ss_input;
-    for (int i = 0; i < inputs.size(); ++i)
+    std::stringstream ss;
+    for (int i = 0; i < v.size(); ++i)
     {
-        ss_input << inputs[i].toString();
+        ss << v[i].toString();
     }
-    return ss_input.str();
+    return ss.str();
+}
+
+int IDecoder::outputToInt()
+{
+    int retval = 0;
+    for (int i = 0; i < output_.size(); ++i )
+    {
+        if (output_[i] == Bit::ONE)
+        {
+            return i;
+        }
+    }
+
+    return 0;
 }
 
 //
@@ -47,12 +61,9 @@ Decoder2X4::Decoder2X4() : IDecoder(2)
 Decoder2X4::~Decoder2X4()
 {}
 
-void Decoder2X4::update(const std::vector<Bit>& inputs)
+void Decoder2X4::update(const Bit& A, const Bit& B)
 {
-   // std::cout << "Decoder2X4::execute( input : " << toString(inputs) << ")" << std::endl;
-
-    Bit A = inputs[0];
-    Bit B = inputs[1];
+    //std::cout << "Decoder2X4::update( A: " << A.get() << " B: " << B.get() << ")" << std::endl;
 
     // Update NOT gates inputs
     not_[0].update(A);
@@ -62,11 +73,11 @@ void Decoder2X4::update(const std::vector<Bit>& inputs)
     Bit notA = not_[0].output();
     Bit notB = not_[1].output();
 
-    // Update AND gates inputs
-    and_[0].update(notA, notB);
-    and_[1].update(notA, B);
-    and_[2].update(A, notB);
-    and_[3].update(A, B);
+    //Update AND gates inputs
+    and_[0].update(notB, notA);
+    and_[1].update(notB, A);
+    and_[2].update(B,    notA);
+    and_[3].update(B,    A);
 
     output_.clear();    
     output_.push_back( and_[0].output() );
@@ -74,7 +85,8 @@ void Decoder2X4::update(const std::vector<Bit>& inputs)
     output_.push_back( and_[2].output() );
     output_.push_back( and_[3].output() );
 
-   // std::cout << "Decoder2X4::execute( output : " << toString(output_) << ")" << std::endl;
+    //std::cout << "Decoder2X4::update( output : " << toString(output_) << ")" << std::endl;
+    //std::cout << "Decoder2X4::update( outputToInt : " << outputToInt() << ")" << std::endl;
 }
 
 std::vector<Bit> Decoder2X4::output()
@@ -83,68 +95,6 @@ std::vector<Bit> Decoder2X4::output()
 }
 
 Bit Decoder2X4::output(const int n)
-{
-    return output_[n];
-}
-
-
-//
-// Decoder3X8
-//
-
-Decoder3X8::Decoder3X8() : IDecoder(3)
-{}
-
-Decoder3X8::~Decoder3X8()
-{}
-
-void Decoder3X8::update(const std::vector<Bit>& inputs)
-{
-    //std::cout << "Decoder3X8::execute( input : " << toString(inputs) << ")" << std::endl;
-
-    Bit A = inputs[0];
-    Bit B = inputs[1];
-    Bit C = inputs[2];
-
-    // Update NOT gates inputs
-    not_[0].update(A);
-    not_[1].update(B);
-    not_[2].update(C);
-
-    // Get NOT gates outputs
-    Bit notA = not_[0].output();
-    Bit notB = not_[1].output();
-    Bit notC = not_[2].output();
-
-    // Update AND gates inputs
-    and_[0].update(notA, notB, notC);// 000
-    and_[1].update(notA, notB, C);   // 001       
-    and_[2].update(notA, B, notC);   // 010
-    and_[3].update(notA, B, C);      // 011
-    and_[4].update(A, notB, notC);   // 100
-    and_[5].update(A, notB, C);      // 101
-    and_[6].update(A, B, notC);      // 110
-    and_[7].update(A, B, C);         // 111
-
-    output_.clear();
-    output_.push_back(and_[0].output());
-    output_.push_back(and_[1].output());
-    output_.push_back(and_[2].output());
-    output_.push_back(and_[3].output());
-    output_.push_back(and_[4].output());
-    output_.push_back(and_[5].output());
-    output_.push_back(and_[6].output());
-    output_.push_back(and_[7].output());
-
-    //std::cout << "Decoder3X8::execute( output : " << toString(output) << ")" << std::endl;
-}
-
-std::vector<Bit> Decoder3X8::output()
-{
-    return output_;
-}
-
-Bit Decoder3X8::output(const int n)
 {
     return output_[n];
 }
@@ -160,14 +110,14 @@ Decoder4X16::Decoder4X16() : IDecoder(4)
 Decoder4X16::~Decoder4X16()
 {}
 
-void Decoder4X16::update(const std::vector<Bit>& inputs)
+void Decoder4X16::update(const Byte& input)
 {
-//std::cout << "Decoder4X16::execute( inputs : " << toString(inputs) << ")" << std::endl;
+    update(input.get(0), input.get(1), input.get(2), input.get(3));
+}
 
-    Bit A = inputs[0];
-    Bit B = inputs[1];
-    Bit C = inputs[2];
-    Bit D = inputs[3];
+void Decoder4X16::update(const Bit& A, const Bit& B, const Bit& C, const Bit& D)
+{
+    //std::cout << "Decoder4X16::update( A: " << A.get() << " B: " << B.get() << " C: " << C.get() << " D: " << D.get() << ")" << std::endl;
 
     // Update NOT gates inputs
     not_[0].update(A);
@@ -181,23 +131,26 @@ void Decoder4X16::update(const std::vector<Bit>& inputs)
     Bit notC = not_[2].output();
     Bit notD = not_[3].output();
 
-    // Update AND gates inputs
-    /* 0000 */and_[0].update(notA, notB, notC, notD);
-    /* 0001 */and_[1].update(notA, notB, notC, D);
-    /* 0010 */and_[2].update(notA, notB, C, notD);
-    /* 0011 */and_[3].update(notA, notB, C, D);
-    /* 0100 */and_[4].update(notA, B, notC, notD);
-    /* 0101 */and_[5].update(notA, B, notC, D);
-    /* 0110 */and_[6].update(notA, B, C, notD);
-    /* 0111 */and_[7].update(notA, B, C, D);
-    /* 1000 */and_[8].update(A, notB, notC, notD);
-    /* 1001 */and_[9].update(A, notB, notC, D);
-    /* 1010 */and_[10].update(A, notB, C, notD);
-    /* 1011 */and_[11].update(A, notB, C, D);
-    /* 1100 */and_[12].update(A, B, notC, notD);
-    /* 1101 */and_[13].update(A, B, notC, D);
-    /* 1110 */and_[14].update(A, B, C, notD);
-    /* 1111 */and_[15].update(A, B, C, D);
+    // Update AND gates inputs    
+    /* 0000 */and_[0].update(notD, notC, notB, notA);
+    /* 0001 */and_[1].update(notD, notC, notB, A);
+    /* 0010 */and_[2].update(notD, notC, B,    notA);
+    /* 0011 */and_[3].update(notD, notC, B,    A);
+
+    /* 0100 */and_[4].update(notD, C, notB, notA);
+    /* 0101 */and_[5].update(notD, C, notB, A);
+    /* 0110 */and_[6].update(notD, C, B,    notA);
+    /* 0111 */and_[7].update(notD, C, B,    A);
+
+    /* 1000 */and_[8].update( D, notC, notB, notA);
+    /* 1001 */and_[9].update( D, notC, notB, A);
+    /* 1010 */and_[10].update(D, notC, B,    notA);
+    /* 1011 */and_[11].update(D, notC, B,    A);
+
+    /* 1100 */and_[12].update(D, C, notB, notA);
+    /* 1101 */and_[13].update(D, C, notB, A);
+    /* 1110 */and_[14].update(D, C, B,    notA);
+    /* 1111 */and_[15].update(D, C, B,    A);
 
     output_.clear();
     /* 0000 */output_.push_back(and_[0].output());
@@ -217,7 +170,8 @@ void Decoder4X16::update(const std::vector<Bit>& inputs)
     /* 1110 */output_.push_back(and_[14].output());
     /* 1111 */output_.push_back(and_[15].output());
 
-    //std::cout << "Decoder4X16::execute( output : " << toString(output) << ")" << std::endl;
+    //std::cout << "Decoder4X16::update( output : " << toString(output_) << ")" << std::endl;
+    //std::cout << "Decoder4X16::update( outputToInt : " << outputToInt() << ")" << std::endl;
 }
 
 std::vector<Bit> Decoder4X16::output()
@@ -229,3 +183,4 @@ Bit Decoder4X16::output(const int n)
 {
     return output_[n];
 }
+

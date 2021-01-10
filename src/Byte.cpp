@@ -2,52 +2,68 @@
 #include "Byte.h"
 #include <sstream>      // std::stringstream
 #include <string.h>
+#include <iostream>      
 
 const int Byte::NUM_BITS = 8;
 
+void Byte::initBitCollection()
+{
+    bitCollection_.reserve(NUM_BITS);
+    for (int n = 0; n < NUM_BITS; ++n)
+    {
+        bitCollection_.push_back(Bit::ZERO);
+    }
+}
+
+void Byte::setBitCollection(const int val)
+{
+    for (int i = 0; i < NUM_BITS; ++i )
+    {
+        int b = (val >> i) & 1U;
+        bitCollection_[i] = static_cast<Bit::e_BitValue>(b);
+    }
+}
+
 Byte::Byte()
 {
+    initBitCollection();
 }
-    
+
 Byte::Byte(const int val)
 {
-    setBitCollection(val, bitCollection_);     
+    initBitCollection();
+    setBitCollection(val); 
 }
 
 Byte::Byte(const Byte &that)
 {
-    memcpy(this->bitCollection_, that.bitCollection_, sizeof(this->bitCollection_));
+    initBitCollection();
+    bitCollection_ = that.bitCollection_;
 }
     
 Byte& Byte::operator=(const Byte &that)
 {
-    memcpy(this->bitCollection_, that.bitCollection_, sizeof(this->bitCollection_));
+    bitCollection_ = that.bitCollection_;
     return *this;
 }
 
 Byte& Byte::operator=(const int &val)
 {
-    setBitCollection(val, bitCollection_);
+    setBitCollection(val);
     return *this;
 }
         
 bool Byte::operator==(const Byte &that) const
-{
-   int n = memcmp(this->bitCollection_, that.bitCollection_, sizeof(this->bitCollection_));
-   if (n == 0)
-   {
-       return true;
-   }
-
-   return false;
+{  
+   return (toInt() == that.toInt());
 }
 
 bool Byte::operator==(const int &val) const
 {
-    return (val == get());
+    return (val == toInt());
 }
 
-int Byte::get() const
+int Byte::toInt() const
 {
     int retval = 0;
     for (int i = 0; i < NUM_BITS; ++i )
@@ -78,15 +94,6 @@ Bit Byte::get(const int position) const
 void Byte::set(const int position, Bit value)
 {
     bitCollection_[position] = value.get();
-}
-
-void Byte::setBitCollection(const int val, Bit::e_BitValue* bitCollection)
-{
-    for (int i = 0; i < NUM_BITS; ++i )
-    {
-        int b = (val >> i) & 1U;
-        bitCollection[i] = static_cast<Bit::e_BitValue>(b);
-    }
 }
 
 std::string Byte::toString()

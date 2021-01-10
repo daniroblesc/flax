@@ -3,6 +3,7 @@
 
 #include "Bit.h"
 #include <string>
+#include <vector>
 
 class Byte
 {
@@ -20,17 +21,17 @@ public:
     bool operator==(const Byte &that) const; // equals operator
     bool operator==(const int &val) const; // equals operator    
 
-    int get() const;
-    Bit get(const int position) const;
-
-    void set(const int position, Bit value);
-
+    int toInt() const;
     std::string toString();
 
-private:
-    Bit::e_BitValue bitCollection_[8];
+    Bit get(const int position) const;
+    void set(const int position, Bit value);  
 
-    void setBitCollection(const int val, Bit::e_BitValue* bitCollection);
+private:
+    std::vector<Bit::e_BitValue> bitCollection_;
+
+    void initBitCollection();
+    void setBitCollection(const int val);
 };
 
 

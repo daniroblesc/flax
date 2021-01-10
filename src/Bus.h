@@ -32,22 +32,5 @@ private:
     Byte value_;
 };
 
-// This is the interface for a Bus node
-class IBusNode
-{
-public:  
-    IBusNode(Bus *bus)
-    {
-        bus_ = bus;   
-    };
-
-    ~IBusNode() {};
-
-    virtual void enable(const Bit& e) = 0; // node's content is written to the bus
-    virtual void set(const Bit& s) = 0; // node's content is refreshed with the bus content
-       
-protected:
-    Bus* bus_ = nullptr;
-};
 
 #endif // BUS_H_
