@@ -3,36 +3,32 @@
 #include <iostream>      
 #include <math.h>
 
+
 IDecoder::IDecoder(const int numInputs)
 {
-    numInputs_ = numInputs;
-
-    not_.reserve(numInputs_);
-    for (int i = 0; i < numInputs_; ++i)
-    {
-        not_.push_back(NOTGate());
-    }
-    
-    numOutputs_ = pow(2, numInputs_);
-
-    and_.reserve(numOutputs_);
-    for (int i = 0; i < numOutputs_; ++i)
-    {
-        and_.push_back(ANDGate());
-    }
-
+    numOutputs_ = pow(2, numInputs);
     output_.reserve(numOutputs_);    
 }
 
 IDecoder::~IDecoder()
 {}
 
-std::string IDecoder::toString(const std::vector<Bit>& v)
+std::vector<Bit> IDecoder::output()
+{
+    return output_;
+}
+
+Bit IDecoder::output(const int n)
+{
+    return output_[n];
+}
+
+std::string IDecoder::toString(const std::vector<Bit>& bitStream)
 {
     std::stringstream ss;
-    for (int i = 0; i < v.size(); ++i)
+    for (int i = 0; i < bitStream.size(); ++i)
     {
-        ss << v[i].toString();
+        ss << bitStream[i].toString();
     }
     return ss.str();
 }
@@ -52,14 +48,43 @@ int IDecoder::outputToInt()
 }
 
 //
+// IBasicDecoder
+//
+
+BasicDecoder::BasicDecoder(const int numInputs) : IDecoder(numInputs)
+{
+    not_.reserve(numInputs);
+    for (int i = 0; i < numInputs; ++i)
+    {
+        not_.push_back(NOTGate());
+    }
+    
+    int numOutputs = pow(2, numInputs);
+
+    and_.reserve(numOutputs);
+    for (int i = 0; i < numOutputs; ++i)
+    {
+        and_.push_back(ANDGate());
+    }
+}
+
+BasicDecoder::~BasicDecoder()
+{}
+
+//
 // Decoder2X4
 //
 
-Decoder2X4::Decoder2X4() : IDecoder(2)
+Decoder2X4::Decoder2X4() : BasicDecoder(2)
 {}
 
 Decoder2X4::~Decoder2X4()
 {}
+
+void Decoder2X4::update(const Byte& input)
+{
+    update(input.get(0), input.get(1));
+}
 
 void Decoder2X4::update(const Bit& A, const Bit& B)
 {
@@ -89,21 +114,12 @@ void Decoder2X4::update(const Bit& A, const Bit& B)
     //std::cout << "Decoder2X4::update( outputToInt : " << outputToInt() << ")" << std::endl;
 }
 
-std::vector<Bit> Decoder2X4::output()
-{
-    return output_;
-}
-
-Bit Decoder2X4::output(const int n)
-{
-    return output_[n];
-}
 
 //
 // Decoder4X16
 //
 
-Decoder4X16::Decoder4X16() : IDecoder(4)
+Decoder4X16::Decoder4X16() : BasicDecoder(4)
 {
 }
 
@@ -174,13 +190,75 @@ void Decoder4X16::update(const Bit& A, const Bit& B, const Bit& C, const Bit& D)
     //std::cout << "Decoder4X16::update( outputToInt : " << outputToInt() << ")" << std::endl;
 }
 
-std::vector<Bit> Decoder4X16::output()
+
+//
+// Decoder8X256
+//
+
+Decoder8X256::Decoder8X256() : IDecoder(8)
 {
-    return output_;
+    decoders4x16_.reserve(NUM_4X16DECODERS);
+    for (int i=0; i < NUM_4X16DECODERS; i++)
+    {
+        decoders4x16_.push_back(Decoder4X16());
+    }
 }
 
-Bit Decoder4X16::output(const int n)
+Decoder8X256::~Decoder8X256()
+{}
+
+void Decoder8X256::update(const Byte& input)
+{   
+    //std::cout << "Decoder8X256::update( input : " << input.toString() << ")" << std::endl;
+
+    Bit a = input.get(0);
+    Bit b = input.get(1);
+    Bit c = input.get(2);
+    Bit d = input.get(3);
+    Bit e = input.get(4);
+    Bit f = input.get(5);
+    Bit g = input.get(6);
+    Bit h = input.get(7);
+
+	decoderSelector_.update(e, f, g, h);   
+
+    index_ = 0;
+    for (int i=0; i < NUM_4X16DECODERS; i++)
+	{
+		updateDecoder(a, b, c, d, i, 16*i);
+	}  
+
+    output_.clear();
+    for (int i=0; i < numOutputs_; i++)
+    {
+        if (index_ == i)
+        {
+            output_.push_back(Bit::ONE);
+        }
+        else
+        {
+            output_.push_back(Bit::ZERO);            
+        }
+    }  
+    //std::cout << "Decoder8X256::update( index_:" << index_ << ")" << std::endl;
+    //std::cout << "Decoder8X256::update( output : " << toString(output_) << ")" << std::endl;
+    //std::cout << "Decoder8X256::update( outputToInt : " << outputToInt() << ")" << std::endl;
+}
+
+void Decoder8X256::updateDecoder(Bit& a, Bit& b, Bit& c, Bit& d, int decoderIndex, int outputWireStart) 
 {
-    return output_[n];
+	if (decoderSelector_.output(decoderIndex) == Bit::ONE)
+    {
+		decoders4x16_[decoderIndex].update(a, b, c, d);
+        //std::cout << "Decoder8X256::updateDecoder( decoders4x16_[" << decoderIndex << "]: " << decoders4x16_[decoderIndex].outputToInt() << ")" << std::endl;
+
+		for (int i=0; i < NUM_4X16DECODERS; i++)
+        {
+			if (decoders4x16_[decoderIndex].output(i) == Bit::ONE) 
+            {
+				index_ = outputWireStart + i;
+			}
+		}
+	}
 }
 

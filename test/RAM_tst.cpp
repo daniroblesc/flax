@@ -104,9 +104,9 @@ TEST_F(RAMTest, cannotReadCellContentIfEnableBitIsZeroed)
     EXPECT_FALSE(bus_.get() == 0xAB); 
 }
 
-TEST_F(RAMTest, RAMSingleTest)
+TEST_F(RAMTest, RAM256SingleTest)
 {
-    RAM ram(&bus_);
+    RAM256 ram(&bus_);
 
     /* Write the @1 */
     updateBus(0xAB); // set memory address
@@ -133,9 +133,9 @@ TEST_F(RAMTest, RAMSingleTest)
     EXPECT_TRUE(bus_.get() == 0x23); 
 }
 
-TEST_F(RAMTest, RAMFullTest)
+TEST_F(RAMTest, RAM256FullTest)
 {
-    RAM ram(&bus_);
+    RAM256 ram(&bus_);
 
     /* Write the entire RAM */
     for (int addr=0; addr < 0xFF; ++addr)
@@ -153,5 +153,72 @@ TEST_F(RAMTest, RAMFullTest)
         ram.setAddress();
         ram.enable();
         EXPECT_TRUE(bus_.get() == (0xFF-addr)); 
+    }
+}
+
+
+TEST_F(RAMTest, RAM65KSingleTest)
+{
+    RAM65K ram(&bus_);
+
+    /* Write the @1 */
+    updateBus(0xB); // set memory address (low part)
+    ram.setS0();
+    updateBus(0xA); // set memory address (high part)
+    ram.setS1();
+    updateBus(0x22); // set data to save in ram
+    ram.set();
+
+    /* Write the @2 */
+    updateBus(0xB); // set memory address (low part)
+    ram.setS0();
+    updateBus(0xB); // set memory address (high part)
+    ram.setS1();
+    updateBus(0x23); // set data to save in ram
+    ram.set();
+
+    /* Read the @1 */
+    updateBus(0xB); // set memory address (low part)
+    ram.setS0();
+    updateBus(0xA); // set memory address (high part)
+    ram.setS1();
+    ram.enable();
+    EXPECT_TRUE(bus_.get() == 0x22); 
+
+    /* Read the @2 */
+    updateBus(0xB); // set memory address (low part)
+    ram.setS0();
+    updateBus(0xB); // set memory address (high part)
+    ram.setS1();
+    ram.enable();
+    EXPECT_TRUE(bus_.get() == 0x23); 
+}
+
+TEST_F(RAMTest, RAM65KFullTest)
+{
+    RAM65K ram(&bus_);
+
+    /* Write the entire RAM */
+    for (int i = 0; i < 0xFFFF; ++i)
+    {
+        updateBus(i & 0x0F); // set memory address (low part)
+        ram.setS0();
+        updateBus(i & 0xF0); // set memory address (high part)
+        ram.setS1();
+
+        updateBus((0xFFFF-i) & 0x00FF); // set data to save in ram
+        ram.set();
+    }
+
+    /* Read the entire RAM */
+    for (int i = 0; i < 0xFFFF; ++i)
+    {
+        updateBus(i & 0x0F); // set memory address (low part)
+        ram.setS0();
+        updateBus(i & 0xF0); // set memory address (high part)
+        ram.setS1();
+
+        ram.enable();
+        EXPECT_TRUE(bus_.get() == ((0xFFFF-i) & 0x00FF)); 
     }
 }

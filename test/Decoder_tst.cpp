@@ -83,3 +83,17 @@ TEST_F(Decoder4X16Test, singleTest)
 
     EXPECT_EQ(11, decoder.outputToInt());
 }
+
+class Decoder8X256Test : public testing::Test 
+{};
+
+TEST_F(Decoder8X256Test, singleTest)
+{
+    Decoder8X256 decoder;
+
+    for (int b = 0x00; b <= 0xFF; ++b)
+    {
+        decoder.update(Byte(b));
+        EXPECT_EQ(b, decoder.outputToInt());
+    }    
+}

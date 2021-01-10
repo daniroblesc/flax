@@ -22,7 +22,7 @@ public:
     bool operator==(const int &val) const; // equals operator    
 
     int toInt() const;
-    std::string toString();
+    std::string toString() const;
 
     Bit get(const int position) const;
     void set(const int position, Bit value);  

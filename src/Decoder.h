@@ -8,24 +8,34 @@
 class IDecoder
 {
 public:
-
     IDecoder(const int numInputs);
     virtual ~IDecoder();
-    
-    virtual std::vector<Bit> output() = 0;
-    virtual Bit output(const int n) = 0;
+
+    virtual void update(const Byte& input) = 0;
+
+    std::vector<Bit> output();
+    Bit output(const int n);
     int outputToInt();
 
 protected:
-
-    int numInputs_;
     int numOutputs_;
+    std::vector<Bit> output_;
+
+    std::string toString(const std::vector<Bit>& bitStream);
+};
+
+class BasicDecoder : public IDecoder
+{
+public:
+
+    BasicDecoder(const int numInputs);
+    virtual ~BasicDecoder();
+    
+
+protected:
 
     std::vector<NOTGate> not_;
     std::vector<ANDGate> and_;
-    std::vector<Bit> output_;
-
-    std::string toString(const std::vector<Bit>& inputs);
 };
 
 /* Decoder2X4:
@@ -40,17 +50,15 @@ protected:
     1   1  |   0     0     0     1   |  3
 
 */
-class Decoder2X4 : public IDecoder
+class Decoder2X4 : public BasicDecoder
 {
 public:
 
     Decoder2X4();
     ~Decoder2X4();
 
+    void update(const Byte& input);
     void update(const Bit& A, const Bit& B);
-
-    std::vector<Bit> output();
-    Bit output(const int n);
 };
 
 
@@ -79,7 +87,7 @@ public:
     1 1 1 0 | 0    0    0    0    0    0    0    0    0    0    0    0    0    0    1    0    | 14   
     1 1 1 1 | 0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    1    | 15  
 */
-class Decoder4X16 : public IDecoder
+class Decoder4X16 : public BasicDecoder
 {
 public:
 
@@ -88,10 +96,29 @@ public:
 
     void update(const Byte& input);
     void update(const Bit& A, const Bit& B, const Bit& C, const Bit& D);
-
-    std::vector<Bit> output();
-    Bit output(const int n);
 };
 
+/* Decoder8X256:
+*/
+
+class Decoder8X256 : public IDecoder
+{
+public:
+
+    Decoder8X256();
+    ~Decoder8X256();
+
+    void update(const Byte& input);
+
+private:
+
+    const int NUM_4X16DECODERS = 16;
+
+    Decoder4X16 decoderSelector_;
+	std::vector<Decoder4X16> decoders4x16_;
+    int index_;
+    
+    void updateDecoder(Bit& a, Bit& b, Bit& c, Bit& d, int decoderIndex, int outputWireStart);
+};
 
 #endif // DECODER_H_  

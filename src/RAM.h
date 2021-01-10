@@ -30,41 +30,82 @@ private:
     Bus* bus_ = nullptr;
 };
 
-class RAM 
+class RAMCellGrid
 {
 public:
-    RAM(Bus *bus);
-    ~RAM();
+    RAMCellGrid(Bus *bus, const int gridSize = 16);
+    virtual ~RAMCellGrid();
+
+    RAMCell* getCell(int col, int row);
+
+private:
+
+    int gridSize_ = 16;
+    Bus *bus_ = nullptr;
+    
+    std::vector<std::vector<RAMCell*>> grid_;
+};
+
+class IRAM
+{
+public:
+    IRAM(Bus *bus);
+    virtual ~IRAM();
+    
+    virtual void enable(const Bit& e = Bit::ONE) = 0;
+    virtual void set(const Bit& s = Bit::ONE) = 0; 
+
+protected:
+
+    Bus* systemBus_ = nullptr;
+
+    std::string toString(const std::vector<Bit>& v);
+};
+
+class RAM256 : public IRAM 
+{
+public:
+    RAM256(Bus *bus);
+    virtual ~RAM256();
 
     void setAddress(const Bit& sa = Bit::ONE);
     void enable(const Bit& e = Bit::ONE);
     void set(const Bit& s = Bit::ONE); 
 
 private:
-    Bus* systemBus_ = nullptr;
+    
     Bus* MAROutputBus_ = nullptr;
     Register* MAR_ = nullptr;
     Decoder4X16 selectCol_;
     Decoder4X16 selectRow_;
+    RAMCellGrid* cellGrid_ = nullptr;
 
-    RAMCell* cells_[16][16];
-
-
-    std::string toString(const std::vector<Bit>& v);
     RAMCell* getSelectedCell();
-
 };
 
-#endif // RAM_H_
+class RAM65K : public IRAM 
+{
+public:
+    RAM65K(Bus *bus);
+    virtual ~RAM65K();
 
-/**
- * escritura en memoria (guardar el contenido del regA en memoria):
- *  1.  regA.enable() -> el contenido de regA va al Bus
- *  2.  seleccionamos la celda via "MAR" (Memory Access Register)
- *  3.  celda.set() -> node's content is refreshed with the bus content
- * 
- * lectura en memoria (mover el contenido de la celda al regA)
- *  1.  seleccionamos la celda via "MAR" (Memory Access Register)
- *  2.  celda.enable() -> node's content is written to the bus
- *  3.  regA.set() -> node's content is refreshed with the bus content
- * */
+    void setS0(const Bit& s0 = Bit::ONE);
+    void setS1(const Bit& s1 = Bit::ONE);
+    void enable(const Bit& e = Bit::ONE);
+    void set(const Bit& s = Bit::ONE); 
+
+private:
+
+    Bus* MAROutputBus0_ = nullptr;
+    Bus* MAROutputBus1_ = nullptr;
+    Register* MAR0_ = nullptr;
+    Register* MAR1_ = nullptr;
+    Decoder8X256 selectCol_;
+    Decoder8X256 selectRow_;
+    RAMCellGrid* cellGrid_ = nullptr;
+    
+    RAMCell* getSelectedCell();
+};
+
+
+#endif // RAM_H_

@@ -96,7 +96,7 @@ void Byte::set(const int position, Bit value)
     bitCollection_[position] = value.get();
 }
 
-std::string Byte::toString()
+std::string Byte::toString() const
 {
     std::stringstream ss;
     for (int i = NUM_BITS; i > 0; --i)

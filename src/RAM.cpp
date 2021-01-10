@@ -30,61 +30,106 @@ void RAMCell::set(const Bit& s)
     R_->set( X1_.output() );
 }
 
-// 
-// RAM
-// 
+//
+// RAMCellGrid
+//
 
-RAM::RAM(Bus *bus)
+RAMCellGrid::RAMCellGrid(Bus *bus, const int gridSize)
 {
-    systemBus_ = bus;
-    MAROutputBus_ = new Bus();
-    MAR_ = new Register(systemBus_, MAROutputBus_);
-  
-    for (int i = 0; i < 16; ++i)
-    {
-        for (int j = 0; j < 16; ++j)
+    bus_ = bus;
+    gridSize_ = gridSize;
+    grid_.resize(gridSize, std::vector<RAMCell*>(gridSize, nullptr));
+
+    for (int col = 0; col < gridSize; ++col)
+    {       
+        for (int row = 0; row < gridSize; ++row)
         {
-            cells_[i][j] = new RAMCell(systemBus_);
+            grid_[col][row] = new RAMCell(bus);
         }
     }
 }
 
-RAM::~RAM()
+RAMCellGrid::~RAMCellGrid()
+{
+    for (int col = 0; col < gridSize_; ++col)
+    {
+        for (int row = 0; row < gridSize_; ++row)
+        {
+            delete grid_[col][row];
+        }
+    }
+}
+
+RAMCell* RAMCellGrid::getCell(int col, int row)
+{
+   return grid_[col][row];
+}
+
+// 
+// IRAM
+// 
+
+IRAM::IRAM(Bus *bus) 
+{
+    systemBus_ = bus;
+}
+
+IRAM::~IRAM() 
+{}
+
+std::string IRAM::toString(const std::vector<Bit>& v)
+{
+    std::stringstream ss_input;
+    for (int i = 0; i < v.size(); ++i)
+    {
+        ss_input << v[i].toString();
+    }
+    return ss_input.str();
+}
+
+// 
+// RAM256
+// 
+
+RAM256::RAM256(Bus *bus) : IRAM(bus)
+{
+    MAROutputBus_ = new Bus();
+    MAR_ = new Register(systemBus_, MAROutputBus_); 
+    cellGrid_ = new RAMCellGrid(systemBus_);
+}
+
+RAM256::~RAM256()
 {    
     delete MAR_;
     delete MAROutputBus_;
-    for (int i = 0; i < 16; ++i)
-    {
-        for (int j = 0; j < 16; ++j)
-        {
-            delete cells_[i][j];
-        }
-    }
+    delete cellGrid_;
 }
 
-void RAM::enable(const Bit& e)
+void RAM256::enable(const Bit& e)
 {
     RAMCell* cell = getSelectedCell();
 
     cell->update(Bit(Bit::ONE), Bit(Bit::ONE));
     cell->enable();
+    cell->update(Bit(Bit::ZERO), Bit(Bit::ZERO));
 }
 
-void RAM::set(const Bit& s)
+void RAM256::set(const Bit& s)
 {
     RAMCell* cell = getSelectedCell();
 
     cell->update(Bit(Bit::ONE), Bit(Bit::ONE));
     cell->set();
+    cell->update(Bit(Bit::ZERO), Bit(Bit::ZERO));
 }
 
-void RAM::setAddress(const Bit& sa)
+void RAM256::setAddress(const Bit& sa)
 {
     // MAR content is refreshed with the bus content
     MAR_->set(sa);
 }
 
-RAMCell* RAM::getSelectedCell()
+RAMCell* RAM256::getSelectedCell()
 {
     // get MAR content (the 'address')
     MAR_->enable();
@@ -101,25 +146,84 @@ RAMCell* RAM::getSelectedCell()
     int selectedCol = selectCol_.outputToInt();
     int selectedRow = selectRow_.outputToInt();
 
-    // disable all cells
-    for (int col = 0; col < 16; ++col)
-    {
-        for (int row = 0; row < 16; ++row)
-        {
-            cells_[col][row]->update(Bit(Bit::ZERO), Bit(Bit::ZERO));
-        }
-    }
-
     // return the selected cell
-    return cells_[selectedCol][selectedRow];
+    return cellGrid_->getCell(selectedCol, selectedRow);
 }
 
-std::string RAM::toString(const std::vector<Bit>& v)
+// 
+// RAM65K
+// 
+
+RAM65K::RAM65K(Bus *bus) : IRAM(bus)
 {
-    std::stringstream ss_input;
-    for (int i = 0; i < v.size(); ++i)
-    {
-        ss_input << v[i].toString();
-    }
-    return ss_input.str();
+    MAROutputBus0_ = new Bus();
+    MAROutputBus1_ = new Bus();
+    MAR0_ = new Register(systemBus_, MAROutputBus0_); 
+    MAR1_ = new Register(systemBus_, MAROutputBus1_); 
+    cellGrid_ = new RAMCellGrid(systemBus_, 256);
+}
+
+RAM65K::~RAM65K()
+{    
+    delete MAR0_;
+    delete MAR1_;
+    delete MAROutputBus0_;
+    delete MAROutputBus1_;
+    delete cellGrid_;
+}
+
+void RAM65K::setS0(const Bit& s0)
+{
+    // MAR0 content is refreshed with the bus content
+    MAR0_->set(s0);
+}
+
+void RAM65K::setS1(const Bit& s1)
+{
+    // MAR1 content is refreshed with the bus content
+    MAR1_->set(s1);
+}
+
+void RAM65K::enable(const Bit& e)
+{
+    RAMCell* cell = getSelectedCell();
+
+    cell->update(Bit(Bit::ONE), Bit(Bit::ONE));
+    cell->enable();
+    cell->update(Bit(Bit::ZERO), Bit(Bit::ZERO));    
+}
+
+void RAM65K::set(const Bit& s)
+{
+    RAMCell* cell = getSelectedCell();
+
+    cell->update(Bit(Bit::ONE), Bit(Bit::ONE));
+    cell->set();
+    cell->update(Bit(Bit::ZERO), Bit(Bit::ZERO));    
+}
+
+RAMCell* RAM65K::getSelectedCell()
+{
+    // get MAR0 content 
+    MAR0_->enable();
+    Byte address0 = MAROutputBus0_->get();
+
+    // get MAR1 content
+    MAR1_->enable();
+    Byte address1 = MAROutputBus1_->get();
+
+    //std::cout << "RAM65K::getSelectedCell( address= " << address1.toString() << ":" << address0.toString() << ")" << std::endl;
+
+    // update Decoder's inputs
+    selectCol_.update(address0);
+    selectRow_.update(address1);
+
+    // get Decoder's ouputs
+    int selectedCol = selectCol_.outputToInt();
+    int selectedRow = selectRow_.outputToInt();
+    //std::cout << "RAM65K::getSelectedCell( col : " << selectedCol << ")" << std::endl; 
+    //std::cout << "RAM65K::getSelectedCell( row : " << selectedRow << ")" << std::endl; 
+
+    // return the selected cell
+    return cellGrid_->getCell(selectedCol, selectedRow);
 }
