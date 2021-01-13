@@ -13,8 +13,8 @@ public:
     Register(Bus* inputBus, Bus* outputBus);
     ~Register();
 
-    void enable(const Bit& e = Bit::ONE);  // register's content is written to the bus
-    void set(const Bit& s = Bit::ONE);  // register content is refreshed with the bus content
+    void enable(const bool e = true);  // register's content is written to the bus
+    void set(const bool s = true);  // register content is refreshed with the bus content
 
 private:
 

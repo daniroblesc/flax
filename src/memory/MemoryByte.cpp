@@ -17,12 +17,12 @@ void MemoryByte::update(const Byte& input)
 {
     for ( int n = 0; n < Byte::NUM_BITS; ++n )
     {
-        Bit inputBit = input.get(n);
+        bool inputBit = input.get(n);
         memoryBitCollection_[n].update(inputBit);
     }
 }
 
-void MemoryByte::set(const Bit& s)
+void MemoryByte::set(const bool s)
 {
     for ( int n = 0; n < Byte::NUM_BITS; ++n )
     {
@@ -36,7 +36,7 @@ Byte MemoryByte::output()
 
     for ( int n = 0; n < Byte::NUM_BITS; ++n )
     {
-        Bit outputBit = memoryBitCollection_[n].output();
+        bool outputBit = memoryBitCollection_[n].output();
         output.set(n, outputBit);
     }
 

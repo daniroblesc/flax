@@ -17,7 +17,7 @@ public:
     void update(const Byte& input);
     
     // enable/disable 'e' bit
-    void enable(const Bit& e = Bit::ONE);
+    void enable(const bool e = true);
 
     // get the output
     Byte output();
@@ -25,7 +25,7 @@ public:
 private:
     std::vector< ANDGate > gatesCollection_;
     Byte input_;
-    Bit e_;
+    Wire e_;
 };
 
 #endif // BYTE_ENABLER_H_  

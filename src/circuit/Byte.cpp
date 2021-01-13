@@ -8,11 +8,7 @@ const int Byte::NUM_BITS = 8;
 
 void Byte::initBitCollection()
 {
-    bitCollection_.reserve(NUM_BITS);
-    for (int n = 0; n < NUM_BITS; ++n)
-    {
-        bitCollection_.push_back(Bit::ZERO);
-    }
+    bitCollection_.resize(NUM_BITS, false);
 }
 
 void Byte::setBitCollection(const int val)
@@ -20,7 +16,7 @@ void Byte::setBitCollection(const int val)
     for (int i = 0; i < NUM_BITS; ++i )
     {
         int b = (val >> i) & 1U;
-        bitCollection_[i] = static_cast<Bit::e_BitValue>(b);
+        bitCollection_[i] = static_cast<bool>(b);
     }
 }
 
@@ -68,7 +64,7 @@ int Byte::toInt() const
     int retval = 0;
     for (int i = 0; i < NUM_BITS; ++i )
     {
-        if (bitCollection_[i] == Bit::ONE)
+        if (bitCollection_[i] == true)
         {
             retval |= 1UL << i;
         }
@@ -81,19 +77,19 @@ int Byte::toInt() const
     return retval;
 }
 
-Bit Byte::get(const int position) const
+bool Byte::get(const int position) const
 {
     if (position >= NUM_BITS)
     {
-        return Bit::ZERO;
+        return false;
     }
 
     return bitCollection_[position];
 }
 
-void Byte::set(const int position, Bit value)
+void Byte::set(const int position, const bool value)
 {
-    bitCollection_[position] = value.get();
+    bitCollection_[position] = value;
 }
 
 std::string Byte::toString() const

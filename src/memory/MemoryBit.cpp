@@ -1,26 +1,26 @@
 #include "MemoryBit.h"
 
-void MemoryBit::update(const Bit& input)
+void MemoryBit::update(const bool input)
 {
-    input_ = input;
+    input_.update(input);
 }
 
-void MemoryBit::set(const Bit& s)
+void MemoryBit::set(const bool s)
 {
-    s_ = s;
+    s_.update(s);
 }
 
-Bit MemoryBit::output()
+bool MemoryBit::output()
 {
-    G1_.update(input_, s_);
-    Bit a = G1_.output();
+    G1_.update(input_.output(), s_.output());
+    bool a = G1_.output();
 
-    G2_.update(a, s_);
-    Bit b = G2_.output();
+    G2_.update(a, s_.output());
+    bool b = G2_.output();
 
-    Bit o;
+    bool o;
     G4_.update(b, o);
-    Bit c = G4_.output();
+    bool c = G4_.output();
 
     G3_.update(a, c);
     o = G3_.output();

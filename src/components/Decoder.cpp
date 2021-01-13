@@ -13,22 +13,22 @@ IDecoder::IDecoder(const int numInputs)
 IDecoder::~IDecoder()
 {}
 
-std::vector<Bit> IDecoder::output()
+std::vector<bool> IDecoder::output()
 {
     return output_;
 }
 
-Bit IDecoder::output(const int n)
+bool IDecoder::output(const int n)
 {
     return output_[n];
 }
 
-std::string IDecoder::toString(const std::vector<Bit>& bitStream)
+std::string IDecoder::toString(const std::vector<bool>& bitStream)
 {
     std::stringstream ss;
     for (int i = 0; i < bitStream.size(); ++i)
     {
-        ss << bitStream[i].toString();
+        ss << bitStream[i];
     }
     return ss.str();
 }
@@ -38,7 +38,7 @@ int IDecoder::outputToInt()
     int retval = 0;
     for (int i = 0; i < output_.size(); ++i )
     {
-        if (output_[i] == Bit::ONE)
+        if (output_[i] == true)
         {
             return i;
         }
@@ -86,7 +86,7 @@ void Decoder2X4::update(const Byte& input)
     update(input.get(0), input.get(1));
 }
 
-void Decoder2X4::update(const Bit& A, const Bit& B)
+void Decoder2X4::update(const bool A, const bool B)
 {
     //std::cout << "Decoder2X4::update( A: " << A.get() << " B: " << B.get() << ")" << std::endl;
 
@@ -95,8 +95,8 @@ void Decoder2X4::update(const Bit& A, const Bit& B)
     not_[1].update(B);
 
     // Get NOT gates outputs
-    Bit notA = not_[0].output();
-    Bit notB = not_[1].output();
+    bool notA = not_[0].output();
+    bool notB = not_[1].output();
 
     //Update AND gates inputs
     and_[0].update(notB, notA);
@@ -131,7 +131,7 @@ void Decoder4X16::update(const Byte& input)
     update(input.get(0), input.get(1), input.get(2), input.get(3));
 }
 
-void Decoder4X16::update(const Bit& A, const Bit& B, const Bit& C, const Bit& D)
+void Decoder4X16::update(const bool A, const bool B, const bool C, const bool D)
 {
     //std::cout << "Decoder4X16::update( A: " << A.get() << " B: " << B.get() << " C: " << C.get() << " D: " << D.get() << ")" << std::endl;
 
@@ -142,10 +142,10 @@ void Decoder4X16::update(const Bit& A, const Bit& B, const Bit& C, const Bit& D)
     not_[3].update(D);
 
     // Get NOT gates outputs
-    Bit notA = not_[0].output();
-    Bit notB = not_[1].output();
-    Bit notC = not_[2].output();
-    Bit notD = not_[3].output();
+    bool notA = not_[0].output();
+    bool notB = not_[1].output();
+    bool notC = not_[2].output();
+    bool notD = not_[3].output();
 
     // Update AND gates inputs    
     /* 0000 */and_[0].update(notD, notC, notB, notA);
@@ -211,14 +211,14 @@ void Decoder8X256::update(const Byte& input)
 {   
     //std::cout << "Decoder8X256::update( input : " << input.toString() << ")" << std::endl;
 
-    Bit a = input.get(0);
-    Bit b = input.get(1);
-    Bit c = input.get(2);
-    Bit d = input.get(3);
-    Bit e = input.get(4);
-    Bit f = input.get(5);
-    Bit g = input.get(6);
-    Bit h = input.get(7);
+    bool a = input.get(0);
+    bool b = input.get(1);
+    bool c = input.get(2);
+    bool d = input.get(3);
+    bool e = input.get(4);
+    bool f = input.get(5);
+    bool g = input.get(6);
+    bool h = input.get(7);
 
 	decoderSelector_.update(e, f, g, h);   
 
@@ -233,11 +233,11 @@ void Decoder8X256::update(const Byte& input)
     {
         if (index_ == i)
         {
-            output_.push_back(Bit::ONE);
+            output_.push_back(true);
         }
         else
         {
-            output_.push_back(Bit::ZERO);            
+            output_.push_back(false);            
         }
     }  
     //std::cout << "Decoder8X256::update( index_:" << index_ << ")" << std::endl;
@@ -245,16 +245,16 @@ void Decoder8X256::update(const Byte& input)
     //std::cout << "Decoder8X256::update( outputToInt : " << outputToInt() << ")" << std::endl;
 }
 
-void Decoder8X256::updateDecoder(Bit& a, Bit& b, Bit& c, Bit& d, int decoderIndex, int outputWireStart) 
+void Decoder8X256::updateDecoder(bool& a, bool& b, bool& c, bool& d, int decoderIndex, int outputWireStart) 
 {
-	if (decoderSelector_.output(decoderIndex) == Bit::ONE)
+	if (decoderSelector_.output(decoderIndex) == true)
     {
 		decoders4x16_[decoderIndex].update(a, b, c, d);
         //std::cout << "Decoder8X256::updateDecoder( decoders4x16_[" << decoderIndex << "]: " << decoders4x16_[decoderIndex].outputToInt() << ")" << std::endl;
 
 		for (int i=0; i < NUM_4X16DECODERS; i++)
         {
-			if (decoders4x16_[decoderIndex].output(i) == Bit::ONE) 
+			if (decoders4x16_[decoderIndex].output(i) == true) 
             {
 				index_ = outputWireStart + i;
 			}

@@ -4,39 +4,60 @@
 #include "Bit.h"
 #include <vector>
 
+class Wire
+{
+public:
+    Wire() {};
+    ~Wire() {};
+
+    void update(const bool value)
+    {
+        output_ = value;
+    }
+
+    bool output()
+    {
+        return output_;
+    }
+
+private:
+
+    bool output_;
+};
+
 class NANDGate
 {
 public:
-    void update(const Bit& a, const Bit& b);
-    Bit output();
+    void update(const bool a, const bool b);
+    bool output();
     
 private:
-    Bit a_;    
-    Bit b_;    
+    Wire a_;    
+    Wire b_;    
 };
 
 class NOTGate
 {
 public:
-    void update(const Bit& a);
-    Bit output();
+    void update(const bool a);
+    bool output();
 
 private:
-    Bit a_;    
+    Wire a_;    
 };
 
 class ANDGate
 {
 public:
-    void update(const Bit& a, const Bit& b);
-    void update(const Bit& a, const Bit& b, const Bit& c);
-    void update(const Bit& a, const Bit& b, const Bit& c, const Bit& d);
-    void update(const std::vector<Bit>& inputs);
+    void update(const bool a, const bool b);
+    void update(const bool a, const bool b, const bool c);
+    void update(const bool a, const bool b, const bool c, const bool d);
+    void update(const std::vector<bool>& inputs);
 
-    Bit output();
+    bool output();
 
 private:
-    std::vector<Bit> inputs_;
+    std::vector<bool> inputs_;
 };
 
 

@@ -4,53 +4,53 @@
 // NANDGate implementation
 //
 
-void NANDGate::update(const Bit& a, const Bit& b)
+void NANDGate::update(const bool a, const bool b)
 {
-    a_ = a;
-    b_ = b;
+    a_.update(a);
+    b_.update(b);
 }
 
-Bit NANDGate::output()
+bool NANDGate::output()
 {
-    if ((a_ == Bit::ONE) && (b_ == Bit::ONE))
+    if ((a_.output()) && (b_.output()))
     {
-        return Bit::ZERO;          
+        return false;          
     }
 
-    return Bit::ONE;
+    return true;
 }
 
 //
 // NOTGate implementation
 //
 
-void NOTGate::update(const Bit& a)
+void NOTGate::update(const bool a)
 {
-    a_ = a;
+    a_.update(a);
 }
 
-Bit NOTGate::output()
+bool NOTGate::output()
 {
-    if (a_ == Bit::ONE)
+    if (a_.output())
     {
-        return Bit::ZERO;  
+        return false;  
     }
 
-    return  Bit::ONE;
+    return true;
 }
 
 //
 // ANDGate implementation
 //
 
-void ANDGate::update(const Bit& a, const Bit& b)
+void ANDGate::update(const bool a, const bool b)
 {
     inputs_.clear();
     inputs_.push_back(a);
     inputs_.push_back(b);
 }
 
-void ANDGate::update(const Bit& a, const Bit& b, const Bit& c)
+void ANDGate::update(const bool a, const bool b, const bool c)
 {
     inputs_.clear();
     inputs_.push_back(a);
@@ -58,7 +58,7 @@ void ANDGate::update(const Bit& a, const Bit& b, const Bit& c)
     inputs_.push_back(c);
 }
 
-void ANDGate::update(const Bit& a, const Bit& b, const Bit& c, const Bit& d)
+void ANDGate::update(const bool a, const bool b, const bool c, const bool d)
 {
     inputs_.clear();
     inputs_.push_back(a);
@@ -67,22 +67,22 @@ void ANDGate::update(const Bit& a, const Bit& b, const Bit& c, const Bit& d)
     inputs_.push_back(d);
 }
 
-void ANDGate::update(const std::vector<Bit>& inputs)
+void ANDGate::update(const std::vector<bool>& inputs)
 {
     inputs_.clear();
     inputs_ = inputs;
 }
 
-Bit ANDGate::output()
+bool ANDGate::output()
 {
     size_t n = inputs_.size();
     for (int i = 0; i < n; ++i)
     {
-        if (inputs_[i].get() == Bit::ZERO)
+        if (inputs_[i] == false)
         {
-            return Bit(Bit::ZERO);
+            return false;
         }
     }
 
-    return Bit(Bit::ONE);
+    return true;
 }

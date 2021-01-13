@@ -13,18 +13,18 @@ RAMCell::~RAMCell()
     delete R_;
 }
 
-void RAMCell::update(const Bit& a1, const Bit& a2)
+void RAMCell::update(const bool a1, const bool a2)
 {
     X0_.update(a1, a2);
 }
 
-void RAMCell::enable(const Bit& e)
+void RAMCell::enable(const bool e)
 {
     X2_.update( X0_.output(), e );
     R_->enable( X2_.output() );
 }
 
-void RAMCell::set(const Bit& s)
+void RAMCell::set(const bool s)
 {
     X1_.update( X0_.output(), s );
     R_->set( X1_.output() );
@@ -77,12 +77,12 @@ IRAM::IRAM(Bus *bus)
 IRAM::~IRAM() 
 {}
 
-std::string IRAM::toString(const std::vector<Bit>& v)
+std::string IRAM::toString(const std::vector<bool>& v)
 {
     std::stringstream ss_input;
     for (int i = 0; i < v.size(); ++i)
     {
-        ss_input << v[i].toString();
+        ss_input << v[i];
     }
     return ss_input.str();
 }
@@ -105,25 +105,25 @@ RAM256::~RAM256()
     delete cellGrid_;
 }
 
-void RAM256::enable(const Bit& e)
+void RAM256::enable(const bool e)
 {
     RAMCell* cell = getSelectedCell();
 
-    cell->update(Bit(Bit::ONE), Bit(Bit::ONE));
+    cell->update(true, true);
     cell->enable();
-    cell->update(Bit(Bit::ZERO), Bit(Bit::ZERO));
+    cell->update(false, false);
 }
 
-void RAM256::set(const Bit& s)
+void RAM256::set(const bool s)
 {
     RAMCell* cell = getSelectedCell();
 
-    cell->update(Bit(Bit::ONE), Bit(Bit::ONE));
+    cell->update(true, true);
     cell->set();
-    cell->update(Bit(Bit::ZERO), Bit(Bit::ZERO));
+    cell->update(false, false);
 }
 
-void RAM256::setAddress(const Bit& sa)
+void RAM256::setAddress(const bool sa)
 {
     // MAR content is refreshed with the bus content
     MAR_->set(sa);
@@ -172,34 +172,34 @@ RAM65K::~RAM65K()
     delete cellGrid_;
 }
 
-void RAM65K::setS0(const Bit& s0)
+void RAM65K::setS0(const bool s0)
 {
     // MAR0 content is refreshed with the bus content
     MAR0_->set(s0);
 }
 
-void RAM65K::setS1(const Bit& s1)
+void RAM65K::setS1(const bool s1)
 {
     // MAR1 content is refreshed with the bus content
     MAR1_->set(s1);
 }
 
-void RAM65K::enable(const Bit& e)
+void RAM65K::enable(const bool e)
 {
     RAMCell* cell = getSelectedCell();
 
-    cell->update(Bit(Bit::ONE), Bit(Bit::ONE));
+    cell->update(true, true);
     cell->enable();
-    cell->update(Bit(Bit::ZERO), Bit(Bit::ZERO));    
+    cell->update(false, false);    
 }
 
-void RAM65K::set(const Bit& s)
+void RAM65K::set(const bool s)
 {
     RAMCell* cell = getSelectedCell();
 
-    cell->update(Bit(Bit::ONE), Bit(Bit::ONE));
+    cell->update(true, true);
     cell->set();
-    cell->update(Bit(Bit::ZERO), Bit(Bit::ZERO));    
+    cell->update(false, false);    
 }
 
 RAMCell* RAM65K::getSelectedCell()

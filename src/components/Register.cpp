@@ -14,7 +14,7 @@ Register::Register(Bus *inputBus, Bus *outputBus)
 Register::~Register()
 {}
 
-void Register::enable(const Bit& e)
+void Register::enable(const bool e)
 {
     // the E's inputs go to the outputs
     enabler_.enable(e);
@@ -24,7 +24,7 @@ void Register::enable(const Bit& e)
     outputBus_->set(output);
 }
 
-void Register::set(const Bit& s)
+void Register::set(const bool s)
 {
     // get bus content
     Byte input = inputBus_->get();

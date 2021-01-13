@@ -12,21 +12,21 @@ TEST_F(Decoder2X4Test, singleTest)
 {
     Decoder2X4 decoder;
 
-    decoder.update(Bit::ZERO, Bit::ZERO);
+    decoder.update(false, false);
     EXPECT_EQ(0x00, decoder.outputToInt());
-    EXPECT_TRUE(Bit(Bit::ONE) == decoder.output(0));
+    EXPECT_TRUE(true == decoder.output(0));
     
-    decoder.update(Bit::ONE, Bit::ZERO);
+    decoder.update(true, false);
     EXPECT_EQ(0x01, decoder.outputToInt());
-    EXPECT_TRUE(Bit(Bit::ONE) == decoder.output(1));
+    EXPECT_TRUE(true == decoder.output(1));
 
-    decoder.update(Bit::ZERO, Bit::ONE);
+    decoder.update(false, true);
     EXPECT_EQ(0x02, decoder.outputToInt());
-    EXPECT_TRUE(Bit(Bit::ONE) == decoder.output(2));
+    EXPECT_TRUE(true == decoder.output(2));
 
-    decoder.update(Bit::ONE, Bit::ONE);
+    decoder.update(true, true);
     EXPECT_EQ(0x03, decoder.outputToInt());
-    EXPECT_TRUE(Bit(Bit::ONE) == decoder.output(3));
+    EXPECT_TRUE(true == decoder.output(3));
 }
 
 
@@ -42,7 +42,7 @@ TEST_P(Decoder4X16TestAPI, output)
     decoder.update(input);
 
     EXPECT_EQ(std::get<1>(GetParam()), decoder.outputToInt());
-    EXPECT_TRUE(Bit(Bit::ONE) == decoder.output(std::get<1>(GetParam())));
+    EXPECT_TRUE(true == decoder.output(std::get<1>(GetParam())));
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -79,7 +79,7 @@ TEST_F(Decoder4X16Test, singleTest)
     Decoder4X16 decoder;
 
     // 0xB = 1011b = 11d
-    decoder.update(Bit(Bit::ONE), Bit(Bit::ONE), Bit(Bit::ZERO), Bit(Bit::ONE));
+    decoder.update(true, true, false, true);
 
     EXPECT_EQ(11, decoder.outputToInt());
 }

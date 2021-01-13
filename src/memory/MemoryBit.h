@@ -1,7 +1,6 @@
 #ifndef MEMORY_BIT_H_
 #define MEMORY_BIT_H_
 
-#include "circuit/Bit.h"
 #include "circuit/Gates.h"
 
 class MemoryBit
@@ -9,18 +8,18 @@ class MemoryBit
 public:
 
     // update the input
-    void update(const Bit& input);
+    void update(const bool input);
 
     // enable/disable 's' bit
-    void set(const Bit& s = Bit::ONE);
+    void set(const bool s = true);
 
     // get the output
-    Bit output();
+    bool output();
 
 private:
 
-    Bit input_;
-    Bit s_;
+    Wire input_;
+    Wire s_;
 
     NANDGate G1_;
     NANDGate G2_;

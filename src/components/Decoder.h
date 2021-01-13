@@ -13,15 +13,15 @@ public:
 
     virtual void update(const Byte& input) = 0;
 
-    std::vector<Bit> output();
-    Bit output(const int n);
+    std::vector<bool> output();
+    bool output(const int n);
     int outputToInt();
 
 protected:
     int numOutputs_;
-    std::vector<Bit> output_;
+    std::vector<bool> output_;
 
-    std::string toString(const std::vector<Bit>& bitStream);
+    std::string toString(const std::vector<bool>& bitStream);
 };
 
 class BasicDecoder : public IDecoder
@@ -58,7 +58,7 @@ public:
     ~Decoder2X4();
 
     void update(const Byte& input);
-    void update(const Bit& A, const Bit& B);
+    void update(const bool A, const bool B);
 };
 
 
@@ -95,7 +95,7 @@ public:
     ~Decoder4X16();
 
     void update(const Byte& input);
-    void update(const Bit& A, const Bit& B, const Bit& C, const Bit& D);
+    void update(const bool A, const bool B, const bool C, const bool D);
 };
 
 /* Decoder8X256:
@@ -118,7 +118,7 @@ private:
 	std::vector<Decoder4X16> decoders4x16_;
     int index_;
     
-    void updateDecoder(Bit& a, Bit& b, Bit& c, Bit& d, int decoderIndex, int outputWireStart);
+    void updateDecoder(bool& a, bool& b, bool& c, bool& d, int decoderIndex, int outputWireStart);
 };
 
 #endif // DECODER_H_  

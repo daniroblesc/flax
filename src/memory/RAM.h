@@ -13,13 +13,13 @@ public:
     ~RAMCell();
 
     // update Cell's input with address bits
-    void update(const Bit& a1, const Bit& a2);
+    void update(const bool a1, const bool a2);
 
     // write Cell's content to the bus
-    void enable(const Bit& e = Bit::ONE);  
+    void enable(const bool e = true);  
 
     // update Cell's content with data on the bus
-    void set(const Bit& s = Bit::ONE);  
+    void set(const bool s = true);  
 
 private:
     
@@ -52,14 +52,14 @@ public:
     IRAM(Bus *bus);
     virtual ~IRAM();
     
-    virtual void enable(const Bit& e = Bit::ONE) = 0;
-    virtual void set(const Bit& s = Bit::ONE) = 0; 
+    virtual void enable(const bool e = true) = 0;
+    virtual void set(const bool s = true) = 0; 
 
 protected:
 
     Bus* systemBus_ = nullptr;
 
-    std::string toString(const std::vector<Bit>& v);
+    std::string toString(const std::vector<bool>& v);
 };
 
 class RAM256 : public IRAM 
@@ -68,9 +68,9 @@ public:
     RAM256(Bus *bus);
     virtual ~RAM256();
 
-    void setAddress(const Bit& sa = Bit::ONE);
-    void enable(const Bit& e = Bit::ONE);
-    void set(const Bit& s = Bit::ONE); 
+    void setAddress(const bool sa = true);
+    void enable(const bool e = true);
+    void set(const bool s = true); 
 
 private:
     
@@ -89,10 +89,10 @@ public:
     RAM65K(Bus *bus);
     virtual ~RAM65K();
 
-    void setS0(const Bit& s0 = Bit::ONE);
-    void setS1(const Bit& s1 = Bit::ONE);
-    void enable(const Bit& e = Bit::ONE);
-    void set(const Bit& s = Bit::ONE); 
+    void setS0(const bool s0 = true);
+    void setS1(const bool s1 = true);
+    void enable(const bool e = true);
+    void set(const bool s = true); 
 
 private:
 

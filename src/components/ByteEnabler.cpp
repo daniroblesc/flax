@@ -17,9 +17,9 @@ void ByteEnabler::update(const Byte& input)
     input_ = input;
 }
 
-void ByteEnabler::enable(const Bit& e)
+void ByteEnabler::enable(const bool e)
 {
-    e_ = e;
+    e_.update(e);
 }
 
 Byte ByteEnabler::output()
@@ -27,9 +27,9 @@ Byte ByteEnabler::output()
     Byte retval;
     for ( int n = 0; n < Byte::NUM_BITS; ++n )
     {
-        Bit InputBit = input_.get(n);
-        gatesCollection_[n].update(InputBit, e_);
-        Bit OutputBit = gatesCollection_[n].output();
+        bool InputBit = input_.get(n);
+        gatesCollection_[n].update(InputBit, e_.output());
+        bool OutputBit = gatesCollection_[n].output();
         retval.set(n, OutputBit);
     }
     return retval;

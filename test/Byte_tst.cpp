@@ -70,21 +70,21 @@ TEST_F(ByteTest, getPosition)
 {
     Byte byte(0xAB); // 1010 1011
 
-    EXPECT_TRUE(byte.get(0) == Bit(Bit::ONE));
-    EXPECT_TRUE(byte.get(1) == Bit(Bit::ONE));
-    EXPECT_TRUE(byte.get(2) == Bit(Bit::ZERO));
-    EXPECT_TRUE(byte.get(3) == Bit(Bit::ONE));
-    EXPECT_TRUE(byte.get(4) == Bit(Bit::ZERO));
-    EXPECT_TRUE(byte.get(5) == Bit(Bit::ONE));
-    EXPECT_TRUE(byte.get(6) == Bit(Bit::ZERO));
-    EXPECT_TRUE(byte.get(7) == Bit(Bit::ONE));
+    EXPECT_TRUE(byte.get(0) == true);
+    EXPECT_TRUE(byte.get(1) == true);
+    EXPECT_TRUE(byte.get(2) == false);
+    EXPECT_TRUE(byte.get(3) == true);
+    EXPECT_TRUE(byte.get(4) == false);
+    EXPECT_TRUE(byte.get(5) == true);
+    EXPECT_TRUE(byte.get(6) == false);
+    EXPECT_TRUE(byte.get(7) == true);
 }
 
 TEST_F(ByteTest, setPosition) 
 {
     Byte byte(0xAB); // 1010 1011
 
-    byte.set(1, Bit::ZERO);
+    byte.set(1, false);
     EXPECT_TRUE(byte.toInt() == 0xA9);
 }
 
@@ -92,5 +92,5 @@ TEST_F(ByteTest, getPositionOutOfRange)
 {
     Byte byte(0xAB); // 1010 1011
 
-    EXPECT_TRUE(byte.get(8) == Bit::ZERO);
+    EXPECT_TRUE(byte.get(8) == false);
 }

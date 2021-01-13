@@ -16,7 +16,7 @@ public:
     void update(const Byte& input);
 
     // enable/disable 's' bit
-    void set(const Bit& s = Bit::ONE);
+    void set(const bool s = true);
 
     // get the output
     Byte output();

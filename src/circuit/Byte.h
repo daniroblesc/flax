@@ -1,7 +1,6 @@
 #ifndef BYTE_H_
 #define BYTE_H_
 
-#include "Bit.h"
 #include <string>
 #include <vector>
 
@@ -24,11 +23,11 @@ public:
     int toInt() const;
     std::string toString() const;
 
-    Bit get(const int position) const;
-    void set(const int position, Bit value);  
+    bool get(const int position) const;
+    void set(const int position, const bool value);  
 
 private:
-    std::vector<Bit::e_BitValue> bitCollection_;
+    std::vector<bool> bitCollection_;
 
     void initBitCollection();
     void setBitCollection(const int val);
