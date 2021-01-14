@@ -7,18 +7,8 @@
 class Wire
 {
 public:
-    Wire() {};
-    ~Wire() {};
-
-    void update(const bool value)
-    {
-        output_ = value;
-    }
-
-    bool output()
-    {
-        return output_;
-    }
+    void update(const bool value);
+    bool output();
 
 private:
 
@@ -60,5 +50,38 @@ private:
     std::vector<bool> inputs_;
 };
 
+class ORGate
+{
+public:
+    void update(const bool a, const bool b);
+    bool output();
+    
+private:
+    Wire a_;    
+    Wire b_;   
+    Wire c_;
+    Wire d_;
+
+    NOTGate not_[2];
+    NANDGate nand_; 
+};
+
+class XORGate
+{
+public:
+    void update(const bool a, const bool b);
+    bool output();
+    
+private:
+    Wire a_;    
+    Wire b_;   
+    Wire c_;
+    Wire d_;
+    Wire e_;
+    Wire f_;
+
+    NOTGate not_[2];
+    NANDGate nand_[3]; 
+};
 
 #endif // GATES_H_

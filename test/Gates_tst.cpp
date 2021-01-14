@@ -102,3 +102,56 @@ TEST_F(ANDGateTest, executeInputVectorReturnFalse)
   bool c = And.output();
   EXPECT_TRUE(false == c);
 }
+
+class ORGateTest : public ::testing::TestWithParam<std::tuple<bool, bool, bool>>
+{
+};
+
+TEST_P(ORGateTest, execute) 
+{
+  ORGate Or;
+
+  bool a = std::get<0>(GetParam());
+  bool b = std::get<1>(GetParam());
+  bool expected = std::get<2>(GetParam());
+
+  Or.update(a, b);
+  bool c = Or.output();
+  EXPECT_TRUE(expected == c);
+}
+
+INSTANTIATE_TEST_CASE_P(
+        execute,
+        ORGateTest,
+        ::testing::Values(
+                std::make_tuple(false, false, false),
+                std::make_tuple(false, true,  true),
+                std::make_tuple(true,  false, true),
+                std::make_tuple(true,  true,  true)));
+
+
+class XORGateTest : public ::testing::TestWithParam<std::tuple<bool, bool, bool>>
+{
+};
+
+TEST_P(XORGateTest, execute) 
+{
+  XORGate Xor;
+
+  bool a = std::get<0>(GetParam());
+  bool b = std::get<1>(GetParam());
+  bool expected = std::get<2>(GetParam());
+
+  Xor.update(a, b);
+  bool c = Xor.output();
+  EXPECT_TRUE(expected == c);
+}
+
+INSTANTIATE_TEST_CASE_P(
+        execute,
+        XORGateTest,
+        ::testing::Values(
+                std::make_tuple(false, false, false),
+                std::make_tuple(false, true,  true),
+                std::make_tuple(true,  false, true),
+                std::make_tuple(true,  true,  false)));

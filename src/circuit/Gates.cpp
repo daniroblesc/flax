@@ -1,6 +1,20 @@
 #include "Gates.h"
 
 //
+// Wire implementation
+//
+
+void Wire::update(const bool value)
+{
+    output_ = value;
+}
+
+bool Wire::output()
+{
+    return output_;
+}
+
+//
 // NANDGate implementation
 //
 
@@ -85,4 +99,55 @@ bool ANDGate::output()
     }
 
     return true;
+}
+
+//
+// ORGate implementation
+//
+
+void ORGate::update(const bool a, const bool b)
+{
+    a_.update(a);
+    b_.update(b);
+}
+
+bool ORGate::output()
+{
+   not_[0].update(a_.output());
+   c_.update(not_[0].output());
+
+   not_[1].update(b_.output());
+   d_.update(not_[1].output());
+
+   nand_.update(c_.output(), d_.output());
+   return nand_.output();
+}
+
+
+//
+// XORGate implementation
+//
+
+void XORGate::update(const bool a, const bool b)
+{
+    a_.update(a);
+    b_.update(b);
+}
+
+bool XORGate::output()
+{
+    not_[0].update(a_.output());
+    c_.update(not_[0].output());
+
+    not_[1].update(b_.output());
+    d_.update(not_[1].output());
+
+    nand_[0].update(c_.output(), b_.output());
+    e_.update(nand_[0].output());
+
+    nand_[1].update(a_.output(), d_.output());
+    f_.update(nand_[1].output());
+
+    nand_[2].update(e_.output(), f_.output());
+    return nand_[2].output();
 }
