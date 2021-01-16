@@ -2,7 +2,6 @@
 #include "gmock/gmock.h"
 
 #include "circuit/Gates.h"
-#include "circuit/Bit.h"
 
 using ::testing::Return;
 

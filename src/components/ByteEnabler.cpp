@@ -2,11 +2,7 @@
 
 ByteEnabler::ByteEnabler()
 {
-    gatesCollection_.reserve(Byte::NUM_BITS);
-    for ( int n = 0; n < Byte::NUM_BITS; ++n )
-    {
-        gatesCollection_.push_back(ANDGate());
-    }
+    gatesCollection_.resize(Byte::NUM_BITS);
 }
 
 ByteEnabler::~ByteEnabler()

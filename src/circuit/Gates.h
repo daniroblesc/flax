@@ -1,19 +1,8 @@
 #ifndef GATES_H_
 #define GATES_H_
 
-#include "Bit.h"
+#include "Wire.h"
 #include <vector>
-
-class Wire
-{
-public:
-    void update(const bool value);
-    bool output();
-
-private:
-
-    bool output_;
-};
 
 class NANDGate
 {

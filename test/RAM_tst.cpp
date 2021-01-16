@@ -32,7 +32,7 @@ protected:
     {
         updateBus(value);
         // select the cell by address
-        cell_->update(Bit::ONE, Bit::ONE);
+        cell_->update(true, true);
         // save bus content into the cell
         cell_->set();
     }
@@ -57,7 +57,7 @@ TEST_F(RAMTest, cannotReadCellContentIfHasNotBeenSelected)
     updateBus(0xAB);
 
     // DO not select the cell by address
-    cell_->update(Bit::ONE, Bit::ZERO);
+    cell_->update(true, false);
     // save bus content into the cell 
     cell_->set();
 
@@ -76,9 +76,9 @@ TEST_F(RAMTest, cannotReadCellContentIfHasNotBeenSet)
     updateBus(0xAB);
 
     // select the cell by address
-    cell_->update(Bit::ONE, Bit::ONE);
+    cell_->update(true, true);
     // DO not save bus content into the cell (0xA0)
-    cell_->set(Bit::ZERO);
+    cell_->set(false);
 
     // now change bus content
     updateBus(0xBB);
@@ -98,7 +98,7 @@ TEST_F(RAMTest, cannotReadCellContentIfEnableBitIsZeroed)
     updateBus(0xBB);
 
     // write cell content to the bus
-    cell_->enable(Bit::ZERO);
+    cell_->enable(false);
 
     // check that bus content is refreshed with cell's content
     EXPECT_FALSE(bus_.get() == 0xAB); 
