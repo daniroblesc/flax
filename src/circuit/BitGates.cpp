@@ -137,3 +137,30 @@ bool XORGate::output()
     nand_[2].update(e_.output(), f_.output());
     return nand_[2].output();
 }
+
+//
+// AddGate implementation
+//
+
+void AddGate::update(const bool a, const bool b, const bool carryIn)
+{
+    a_.update(a);
+    b_.update(b);
+    carryIn_.update(carryIn);
+}
+
+void AddGate::output(bool &sum, bool &carryOut)
+{
+    xor_[0].update(a_.output(), b_.output());
+
+    and_[0].update(carryIn_.output(), xor_[0].output());
+    and_[1].update(a_.output(), b_.output());
+
+    xor_[1].update(xor_[0].output(), carryIn_.output());
+    sum_.update(xor_[1].output());
+    sum = sum_.output();
+
+    or_.update(and_[0].output(), and_[1].output());
+    carryOut_.update(or_.output());
+    carryOut = carryOut_.output();
+}
