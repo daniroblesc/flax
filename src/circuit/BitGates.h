@@ -110,4 +110,26 @@ private:
     ORGate or_;
 };
 
+class CompGate
+{
+public:
+    void update(const bool a, const bool b, const bool equal, const bool a_larger);
+    void output(bool& c, bool& equal, bool& a_larger);
+
+private:
+
+    Wire a_;    
+    Wire b_; 
+    Wire c_;
+    Wire allBitsAboveAreEqual_;
+    Wire aAboveIsLarger_;
+
+
+    XORGate xor_;
+    NOTGate not_;
+    ANDGate and_[2];
+    ORGate or_;
+
+};
+
 #endif // BIT_GATES_H_
