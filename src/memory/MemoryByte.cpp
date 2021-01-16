@@ -2,11 +2,7 @@
 
 MemoryByte::MemoryByte()
 {
-    memoryBitCollection_.reserve(Byte::NUM_BITS);
-    for ( int n = 0; n < Byte::NUM_BITS; ++n )
-    {
-        memoryBitCollection_.push_back(MemoryBit());
-    }
+    memoryBitCollection_.resize(Byte::NUM_BITS);
 }
 
 MemoryByte::~MemoryByte()
@@ -17,7 +13,7 @@ void MemoryByte::update(const Byte& input)
 {
     for ( int n = 0; n < Byte::NUM_BITS; ++n )
     {
-        bool inputBit = input.get(n);
+        bool inputBit = input[n];
         memoryBitCollection_[n].update(inputBit);
     }
 }

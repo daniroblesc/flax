@@ -2,7 +2,6 @@
 #define BYTE_H_
 
 #include <string>
-#include <vector>
 
 class Byte
 {
@@ -13,6 +12,7 @@ public:
     Byte(); // default constructor
     Byte(const Byte &that);
     Byte(const int val);
+    ~Byte();
     
     Byte& operator=(const Byte &that); // assignment operator
     Byte& operator=(const int &val); // assignment operator
@@ -22,15 +22,16 @@ public:
 
     int toInt() const;
     std::string toString() const;
-
-    bool get(const int position) const;
+    
+    const bool& operator[](int) const; // read
     void set(const int position, const bool value);  
 
 private:
-    std::vector<bool> bitCollection_;
+    bool* bitCollection_ = nullptr;
 
     void initBitCollection();
-    void setBitCollection(const int val);
+    void initBitCollection(const int val);
+    void initBitCollection(bool* val);
 };
 
 

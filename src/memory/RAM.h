@@ -1,7 +1,7 @@
 #ifndef RAM_H_
 #define RAM_H_
 
-#include "circuit/Gates.h"
+#include "circuit/BitGates.h"
 #include "circuit/Bus.h"
 #include "components/Register.h"
 #include "components/Decoder.h"

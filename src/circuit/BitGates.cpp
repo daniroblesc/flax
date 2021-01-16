@@ -1,4 +1,4 @@
-#include "Gates.h"
+#include "BitGates.h"
 
 //
 // NANDGate implementation

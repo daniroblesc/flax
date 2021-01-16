@@ -1,7 +1,7 @@
 #ifndef BYTE_ENABLER_H_
 #define BYTE_ENABLER_H_
 
-#include "circuit/Gates.h"
+#include "circuit/BitGates.h"
 #include "circuit/Byte.h"
 #include <vector>
 

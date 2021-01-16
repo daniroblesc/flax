@@ -1,7 +1,7 @@
 #ifndef DECODER_H_
 #define DECODER_H_
 
-#include "circuit/Gates.h"
+#include "circuit/BitGates.h"
 #include "circuit/Byte.h"
 #include <vector>
 

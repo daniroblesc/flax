@@ -23,7 +23,7 @@ Byte ByteEnabler::output()
     Byte retval;
     for ( int n = 0; n < Byte::NUM_BITS; ++n )
     {
-        bool InputBit = input_.get(n);
+        bool InputBit = input_[n];
         gatesCollection_[n].update(InputBit, e_.output());
         bool OutputBit = gatesCollection_[n].output();
         retval.set(n, OutputBit);

@@ -2,17 +2,6 @@ set(BINARY ${CMAKE_PROJECT_NAME}_tst)
 
 file(GLOB_RECURSE TEST_SOURCES LIST_DIRECTORIES true *.h *.cpp)
 
-#set(TEST_SOURCES    main.cpp 
-#                    Gates_tst.cpp 
-#                    MemoryBit_tst.cpp
-#                    MemoryByte_tst.cpp 
-#                    Bit_tst.cpp
-#                    Byte_tst.cpp
-#                    ByteEnabler_tst.cpp
-#                    Register_tst.cpp
-#                    Decoder_tst.cpp
-#                    RAM_tst.cpp)
-
 add_executable(${BINARY} ${TEST_SOURCES})
 
 add_test(NAME ${BINARY} COMMAND ${BINARY})

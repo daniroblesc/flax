@@ -1,5 +1,5 @@
-#ifndef GATES_H_
-#define GATES_H_
+#ifndef BIT_GATES_H_
+#define BIT_GATES_H_
 
 #include "Wire.h"
 #include <vector>
@@ -73,4 +73,4 @@ private:
     NANDGate nand_[3]; 
 };
 
-#endif // GATES_H_
+#endif // BIT_GATES_H_

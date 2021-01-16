@@ -1,22 +1,47 @@
-
 #include "Byte.h"
 #include <sstream>      // std::stringstream
 #include <string.h>
 #include <iostream>      
+#include <assert.h>     /* assert */
 
 const int Byte::NUM_BITS = 8;
 
 void Byte::initBitCollection()
 {
-    bitCollection_.resize(NUM_BITS, false);
+    if (bitCollection_ == nullptr)
+    {
+        bitCollection_ = new bool[NUM_BITS];
+        for (int i = 0; i < NUM_BITS; ++i )
+        {
+            bitCollection_[i] = false;
+        }
+    }
 }
 
-void Byte::setBitCollection(const int val)
+void Byte::initBitCollection(const int val)
 {
+    if (bitCollection_ == nullptr)
+    {
+        bitCollection_ = new bool[NUM_BITS];
+    }
+
     for (int i = 0; i < NUM_BITS; ++i )
     {
         int b = (val >> i) & 1U;
         bitCollection_[i] = static_cast<bool>(b);
+    }
+}
+
+void Byte::initBitCollection(bool* val)
+{
+    if (bitCollection_ == nullptr)
+    {
+        bitCollection_ = new bool[NUM_BITS];
+    }
+
+    for (int i = 0; i < NUM_BITS; ++i )
+    {
+        bitCollection_[i] = val[i];
     }
 }
 
@@ -27,25 +52,28 @@ Byte::Byte()
 
 Byte::Byte(const int val)
 {
-    initBitCollection();
-    setBitCollection(val); 
+    initBitCollection(val);
 }
 
 Byte::Byte(const Byte &that)
 {
-    initBitCollection();
-    bitCollection_ = that.bitCollection_;
+    initBitCollection(that.bitCollection_);
 }
-    
+
+Byte::~Byte()
+{
+    delete [] bitCollection_;
+}
+
 Byte& Byte::operator=(const Byte &that)
 {
-    bitCollection_ = that.bitCollection_;
+    initBitCollection(that.bitCollection_);
     return *this;
 }
 
 Byte& Byte::operator=(const int &val)
 {
-    setBitCollection(val);
+    initBitCollection(val);
     return *this;
 }
         
@@ -77,14 +105,10 @@ int Byte::toInt() const
     return retval;
 }
 
-bool Byte::get(const int position) const
+const bool& Byte::operator[](int i) const // read
 {
-    if (position >= NUM_BITS)
-    {
-        return false;
-    }
-
-    return bitCollection_[position];
+    assert(i < NUM_BITS);
+    return bitCollection_[i];
 }
 
 void Byte::set(const int position, const bool value)

@@ -70,14 +70,14 @@ TEST_F(ByteTest, getPosition)
 {
     Byte byte(0xAB); // 1010 1011
 
-    EXPECT_TRUE(byte.get(0) == true);
-    EXPECT_TRUE(byte.get(1) == true);
-    EXPECT_TRUE(byte.get(2) == false);
-    EXPECT_TRUE(byte.get(3) == true);
-    EXPECT_TRUE(byte.get(4) == false);
-    EXPECT_TRUE(byte.get(5) == true);
-    EXPECT_TRUE(byte.get(6) == false);
-    EXPECT_TRUE(byte.get(7) == true);
+    EXPECT_TRUE(byte[0] == true);
+    EXPECT_TRUE(byte[1] == true);
+    EXPECT_TRUE(byte[2] == false);
+    EXPECT_TRUE(byte[3] == true);
+    EXPECT_TRUE(byte[4] == false);
+    EXPECT_TRUE(byte[5] == true);
+    EXPECT_TRUE(byte[6] == false);
+    EXPECT_TRUE(byte[7] == true);
 }
 
 TEST_F(ByteTest, setPosition) 
@@ -86,11 +86,4 @@ TEST_F(ByteTest, setPosition)
 
     byte.set(1, false);
     EXPECT_TRUE(byte.toInt() == 0xA9);
-}
-
-TEST_F(ByteTest, getPositionOutOfRange) 
-{
-    Byte byte(0xAB); // 1010 1011
-
-    EXPECT_TRUE(byte.get(8) == false);
 }

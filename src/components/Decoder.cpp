@@ -83,7 +83,7 @@ Decoder2X4::~Decoder2X4()
 
 void Decoder2X4::update(const Byte& input)
 {
-    update(input.get(0), input.get(1));
+    update(input[0], input[1]);
 }
 
 void Decoder2X4::update(const bool A, const bool B)
@@ -128,7 +128,7 @@ Decoder4X16::~Decoder4X16()
 
 void Decoder4X16::update(const Byte& input)
 {
-    update(input.get(0), input.get(1), input.get(2), input.get(3));
+    update(input[0], input[1], input[2], input[3]);
 }
 
 void Decoder4X16::update(const bool A, const bool B, const bool C, const bool D)
@@ -211,14 +211,14 @@ void Decoder8X256::update(const Byte& input)
 {   
     //std::cout << "Decoder8X256::update( input : " << input.toString() << ")" << std::endl;
 
-    bool a = input.get(0);
-    bool b = input.get(1);
-    bool c = input.get(2);
-    bool d = input.get(3);
-    bool e = input.get(4);
-    bool f = input.get(5);
-    bool g = input.get(6);
-    bool h = input.get(7);
+    bool a = input[0];
+    bool b = input[1];
+    bool c = input[2];
+    bool d = input[3];
+    bool e = input[4];
+    bool f = input[5];
+    bool g = input[6];
+    bool h = input[7];
 
 	decoderSelector_.update(e, f, g, h);   
 

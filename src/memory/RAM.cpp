@@ -137,8 +137,8 @@ RAMCell* RAM256::getSelectedCell()
     //std::cout << "RAM::set( address : " << address.toString() << ")" << std::endl;
 
     // update Decoder's inputs
-    selectCol_.update(address.get(0), address.get(1), address.get(2), address.get(3));
-    selectRow_.update(address.get(4), address.get(5), address.get(6), address.get(7));
+    selectCol_.update(address[0], address[1], address[2], address[3]);
+    selectRow_.update(address[4], address[5], address[6], address[7]);
 
     // get Decoder's ouputs
     //std::cout << "RAM::set( col : " << selectCol_.outputToInt() << ")" << std::endl; 

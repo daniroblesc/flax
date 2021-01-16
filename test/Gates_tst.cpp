@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include "circuit/Gates.h"
+#include "circuit/BitGates.h"
 
 using ::testing::Return;
 
