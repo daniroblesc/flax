@@ -4,6 +4,16 @@
 #include "Wire.h"
 #include <vector>
 
+/*  NAND gate (NOT-AND) is a logic gate which produces an output which is false
+    only if all its inputs are true:
+
+    a   b  |   c
+    ---------------
+    0   0  |   1  
+    1   0  |   1  
+    0   1  |   1   
+    1   1  |   0   
+ */
 class NANDGate
 {
 public:
@@ -15,6 +25,13 @@ private:
     Wire b_;    
 };
 
+/*  inverter or NOT gate is a logic gate which implements logical negation:
+
+    a   |   not a
+    -------------
+    0   |    1  
+    1   |    0  
+ */
 class NOTGate
 {
 public:
@@ -25,6 +42,16 @@ private:
     Wire a_;    
 };
 
+/*  The AND gate is a basic digital logic gate that implements logical 
+    conjunction - it behaves according to the following truth table:
+
+    a   b  |   c
+    ---------------
+    0   0  |   0  
+    1   0  |   0  
+    0   1  |   0   
+    1   1  |   1   
+ */
 class ANDGate
 {
 public:
@@ -39,6 +66,16 @@ private:
     std::vector<bool> inputs_;
 };
 
+/*  The OR gate is a digital logic gate that implements logical 
+    disjunction – it behaves according to the following truth table:
+
+    a   b  |   c
+    ---------------
+    0   0  |   0  
+    1   0  |   1  
+    0   1  |   1   
+    1   1  |   1   
+ */
 class ORGate
 {
 public:
@@ -55,6 +92,17 @@ private:
     NANDGate nand_; 
 };
 
+/*  XOR represents the inequality function, i.e., the output is true if the 
+    inputs are not alike otherwise the output is false. A way to remember 
+    XOR is "must have one or the other but not both".
+
+    a   b  |   c
+    ---------------
+    0   0  |   0  
+    1   0  |   1  
+    0   1  |   1   
+    1   1  |   0    
+*/
 class XORGate
 {
 public:
@@ -73,9 +121,7 @@ private:
     NANDGate nand_[3]; 
 };
 
-/*
-
-Half Adder:
+/* Half Adder:
 
     a   b  |  sum   carry  
     ----------------------
@@ -87,10 +133,13 @@ Half Adder:
     'sum' is XOR(a,b)
     'carry' is AND(a,b)
 
-A Full Adder adds binary numbers and accounts for values carried in as well as out.
-A one-bit Full Adder adds three one-bit numbers, often written as A, B and Cin;
-A and B are the operands, and Cin is a bit carried in from the previous less-signficant stage.
+    A Full Adder adds binary numbers and accounts for values carried in as well
+    as out.
+    
+    A one-bit Full Adder adds three one-bit numbers, often written as A, B and Cin.
 
+    A and B are the operands, and Cin is a bit carried in from the previous 
+    less-signficant stage.
 */
 class AddGate
 {
@@ -108,28 +157,6 @@ private:
     XORGate xor_[2];
     ANDGate and_[2];
     ORGate or_;
-};
-
-class CompGate
-{
-public:
-    void update(const bool a, const bool b, const bool equal, const bool a_larger);
-    void output(bool& c, bool& equal, bool& a_larger);
-
-private:
-
-    Wire a_;    
-    Wire b_; 
-    Wire c_;
-    Wire allBitsAboveAreEqual_;
-    Wire aAboveIsLarger_;
-
-
-    XORGate xor_;
-    NOTGate not_;
-    ANDGate and_[2];
-    ORGate or_;
-
 };
 
 #endif // BIT_GATES_H_

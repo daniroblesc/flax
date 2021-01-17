@@ -114,51 +114,6 @@ TEST_F(ByteGatesTest, AdderWithCarryOut)
     EXPECT_TRUE(carryOut);
 }
 
-TEST_F(ByteGatesTest, ComparatorAGreaterThanB) 
-{
-    Comparator cmp;
-
-    cmp.update(0xA1, 0x02);
-
-    Byte c;
-    bool equal, a_larger;
-    cmp.output(c, equal, a_larger);
-
-    EXPECT_FALSE(equal);
-    EXPECT_TRUE(a_larger);
-    EXPECT_EQ(0xA3, c.toInt());
-}
-
-TEST_F(ByteGatesTest, ComparatorBGreaterThanA) 
-{
-    Comparator cmp;
-
-    cmp.update(0x31, 0xE2);
-
-    Byte c;
-    bool equal, a_larger;
-    cmp.output(c, equal, a_larger);
-
-    EXPECT_FALSE(equal);
-    EXPECT_FALSE(a_larger);
-    EXPECT_EQ(0xD3, c.toInt());
-}
-
-TEST_F(ByteGatesTest, ComparatorAEqualB) 
-{
-    Comparator cmp;
-
-    cmp.update(0x31, 0x31);
-
-    Byte c;
-    bool equal, a_larger;
-    cmp.output(c, equal, a_larger);
-
-    EXPECT_TRUE(equal);
-    EXPECT_FALSE(a_larger);
-    EXPECT_EQ(0x0, c.toInt());
-}
-
 TEST_F(ByteGatesTest, ZReturnsFalse) 
 {
     Z z;

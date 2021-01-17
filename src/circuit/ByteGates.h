@@ -107,29 +107,6 @@ private:
 };
 
 //
-// Comparator
-//   we have two bits that pass down from the highest bit position to the lowest
-
-class Comparator
-{
-public:
-
-    Comparator();
-    ~Comparator();
-
-    void update(const Byte& a, const Byte& b);
-    void output(Byte& c, bool& equal, bool& a_larger);
-
-private:
-    std::vector<CompGate> cmp_;
-
-    Byte a_;
-    Byte b_;
-    bool equal_ = true;
-    bool a_larger_ = false;
-};
-
-//
 // Z: The output bit turns on when all of the bits in the byte are off
 //
 

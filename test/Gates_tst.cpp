@@ -196,37 +196,3 @@ INSTANTIATE_TEST_CASE_P(
                 std::make_tuple(true,  true,  true,  true,  true)
                 ));
 
-class CompGateTest : public ::testing::TestWithParam<std::tuple<bool, bool, bool, bool, bool>>
-{};
-
-TEST_P(CompGateTest, execute) 
-{
-  CompGate comp;
-
-  bool A = std::get<0>(GetParam());
-  bool B = std::get<1>(GetParam());
-  comp.update(A, B, true, false);
-
-  bool c, equal, a_larger;
-  comp.output(c, equal, a_larger);
-
-  bool expectedC = std::get<2>(GetParam());
-  bool expectedEqual = std::get<3>(GetParam());
-  bool expectedALarger = std::get<4>(GetParam());
-
-  EXPECT_TRUE(expectedC == c);
-  EXPECT_TRUE(expectedEqual == equal);
-  EXPECT_TRUE(expectedALarger == a_larger);
-}
-
-INSTANTIATE_TEST_CASE_P(
-        execute,
-        CompGateTest,
-        ::testing::Values(
-                //                 A     B     C    equal  a_larger
-                //--------------------------------------------------------
-                std::make_tuple(false, true,  true,  false, false ),
-                std::make_tuple(true,  false, true,  false, true  ),
-                std::make_tuple(false, false, false, true,  false ),
-                std::make_tuple(true,  true,  false, true,  false )
-        ));

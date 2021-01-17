@@ -162,39 +162,6 @@ void Adder::output(Byte &sum, bool &carryOut)
    }
 }
 
-//
-// Comparator
-//
-
-Comparator::Comparator()
-{
-    cmp_.resize(Byte::NUM_BITS);
-}
-
-Comparator::~Comparator()
-{}
-
-void Comparator::update(const Byte& a, const Byte& b)
-{
-    a_ = a;
-    b_ = b;
-}
-
-void Comparator::output(Byte& c, bool& equal, bool& a_larger)
-{
-    equal = equal_;
-    a_larger = a_larger_;
-
-    for ( int i = Byte::NUM_BITS-1; i >= 0; --i )
-    {
-        cmp_[i].update(a_[i], b_[i], equal, a_larger);
-        
-        bool BitC;
-        cmp_[i].output(BitC, equal, a_larger);
-
-        c.set(i, BitC);
-    }
-}
 
 //
 // Z

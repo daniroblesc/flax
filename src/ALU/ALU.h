@@ -6,6 +6,7 @@
 #include "components/Decoder.h"
 #include "components/Shifter.h"
 #include "components/Enabler.h"
+#include "components/Comparator.h"
 
 class ALU
 {
