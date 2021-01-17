@@ -84,27 +84,6 @@ private:
     std::vector<XORGate> xor_;
 };
 
-//
-// Adder
-//
-class Adder
-{
-public:
-
-    Adder();
-    ~Adder();
-
-    void update(const Byte& a, const Byte& b, const bool carryIn);
-    void output(Byte &sum, bool &carryOut);
-
-private:
-
-    Byte a_;
-    Byte b_;
-    bool carryIn_; 
-    bool carryOut_; 
-    std::vector<AddGate> add_;
-};
 
 //
 // Z: The output bit turns on when all of the bits in the byte are off

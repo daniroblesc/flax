@@ -7,6 +7,7 @@
 #include "components/Shifter.h"
 #include "components/Enabler.h"
 #include "components/Comparator.h"
+#include "components/Adder.h"
 
 class ALU
 {

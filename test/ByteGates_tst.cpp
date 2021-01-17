@@ -57,63 +57,6 @@ TEST_F(ByteGatesTest, XOrer)
     EXPECT_EQ(output, 0x41);
 }
 
-TEST_F(ByteGatesTest, CalcDoubleWithOutCarryOut) 
-{
-    Adder adder;
-
-    for (int a = 0x00; a < 0x7F; ++a)
-    {
-        bool carryIn = false;
-        adder.update(Byte(a), Byte(a), carryIn);
-
-        Byte sum;
-        bool carryOut;
-        adder.output(sum, carryOut);
-
-        int expectedSum = a + a;
-
-        EXPECT_EQ(expectedSum, sum.toInt());
-        EXPECT_FALSE(carryOut);
-    }
-}
-
-TEST_F(ByteGatesTest, AdderWithOutCarryOut) 
-{
-    Adder adder;
-
-    for (int a = 0x00; a < 0x7F; ++a)
-    {
-        for (int b = 0x7f; b >= 0x00; --b)
-        {
-            bool carryIn = false;
-            adder.update(Byte(a), Byte(b), carryIn);
-
-            Byte sum;
-            bool carryOut;
-            adder.output(sum, carryOut);
-
-            int expectedSum = a + b;
-
-            EXPECT_EQ(expectedSum, sum.toInt());
-            EXPECT_FALSE(carryOut);
-        }
-    }
-}
-
-TEST_F(ByteGatesTest, AdderWithCarryOut) 
-{
-    Adder adder;
-
-    adder.update(Byte(0xF1), Byte(0xF1), false);
-
-    Byte sum;
-    bool carryOut;
-    adder.output(sum, carryOut);
-
-    EXPECT_EQ(0xE2, sum.toInt());
-    EXPECT_TRUE(carryOut);
-}
-
 TEST_F(ByteGatesTest, ZReturnsFalse) 
 {
     Z z;
