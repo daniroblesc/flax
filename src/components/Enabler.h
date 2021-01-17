@@ -1,16 +1,16 @@
-#ifndef BYTE_ENABLER_H_
-#define BYTE_ENABLER_H_
+#ifndef ENABLER_H_
+#define ENABLER_H_
 
 #include "circuit/BitGates.h"
 #include "circuit/Byte.h"
 #include <vector>
 
-class ByteEnabler
+class Enabler
 {
 public:
     
-    ByteEnabler();
-    ~ByteEnabler();
+    Enabler();
+    ~Enabler();
 
 
     // update the input
@@ -28,4 +28,4 @@ private:
     Wire e_;
 };
 
-#endif // BYTE_ENABLER_H_  
+#endif // ENABLER_H_  

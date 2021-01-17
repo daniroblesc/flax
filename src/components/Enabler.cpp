@@ -1,24 +1,24 @@
-#include "ByteEnabler.h"
+#include "Enabler.h"
 
-ByteEnabler::ByteEnabler()
+Enabler::Enabler()
 {
     gatesCollection_.resize(Byte::NUM_BITS);
 }
 
-ByteEnabler::~ByteEnabler()
+Enabler::~Enabler()
 {}
 
-void ByteEnabler::update(const Byte& input)
+void Enabler::update(const Byte& input)
 {
     input_ = input;
 }
 
-void ByteEnabler::enable(const bool e)
+void Enabler::enable(const bool e)
 {
     e_.update(e);
 }
 
-Byte ByteEnabler::output()
+Byte Enabler::output()
 {
     Byte retval;
     for ( int n = 0; n < Byte::NUM_BITS; ++n )

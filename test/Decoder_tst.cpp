@@ -30,6 +30,50 @@ TEST_F(Decoder2X4Test, singleTest)
 }
 
 
+class Decoder3X8TestAPI : public ::testing::TestWithParam<std::tuple<int, int>>
+{};
+
+TEST_P(Decoder3X8TestAPI, output)
+{
+    Decoder3X8 decoder;
+
+    Byte input(std::get<0>(GetParam()));
+    decoder.update(input);
+
+    EXPECT_EQ(std::get<1>(GetParam()), decoder.outputToInt());
+    EXPECT_TRUE(true == decoder.output(std::get<1>(GetParam())));
+}
+
+INSTANTIATE_TEST_CASE_P(
+        output,
+        Decoder3X8TestAPI,
+        ::testing::Values(
+                //             input output
+                //----------------------------
+                std::make_tuple(0x00, 0),
+                std::make_tuple(0x01, 1),
+                std::make_tuple(0x02, 2),
+                std::make_tuple(0x03, 3),
+
+                std::make_tuple(0x04, 4),
+                std::make_tuple(0x05, 5),
+                std::make_tuple(0x06, 6),
+                std::make_tuple(0x07, 7)
+        ));
+
+class Decoder3X8Test : public testing::Test 
+{};
+
+TEST_F(Decoder3X8Test, singleTest)
+{
+    Decoder3X8 decoder;
+
+    // 0x4 = 100b = 4d
+    decoder.update(false, false, true);
+
+    EXPECT_EQ(4, decoder.outputToInt());
+}
+
 
 class Decoder4X16TestAPI : public ::testing::TestWithParam<std::tuple<int, int>>
 {};

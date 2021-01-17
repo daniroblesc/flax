@@ -116,6 +116,55 @@ void Decoder2X4::update(const bool A, const bool B)
 
 
 //
+// Decoder3X8
+//
+
+Decoder3X8::Decoder3X8() : BasicDecoder(3)
+{}
+
+Decoder3X8::~Decoder3X8()
+{}
+
+void Decoder3X8::update(const Byte& input)
+{
+    update(input[0], input[1], input[2]);
+}
+
+void Decoder3X8::update(const bool A, const bool B, const bool C)
+{
+    // Update NOT gates inputs
+    not_[0].update(A);
+    not_[1].update(B);
+    not_[2].update(C);
+
+    // Get NOT gates outputs
+    bool notA = not_[0].output();
+    bool notB = not_[1].output();
+    bool notC = not_[2].output();
+
+    //Update AND gates inputs
+    and_[0].update(notC, notB, notA);
+    and_[1].update(notC, notB, A);
+    and_[2].update(notC, B,    notA);
+    and_[3].update(notC, B,    A);
+
+    and_[4].update(C, notB, notA);
+    and_[5].update(C, notB, A);
+    and_[6].update(C, B,    notA);
+    and_[7].update(C, B,    A);
+
+    output_.clear();    
+    output_.push_back( and_[0].output() );
+    output_.push_back( and_[1].output() );
+    output_.push_back( and_[2].output() );
+    output_.push_back( and_[3].output() );
+    output_.push_back( and_[4].output() );
+    output_.push_back( and_[5].output() );
+    output_.push_back( and_[6].output() );
+    output_.push_back( and_[7].output() );
+}
+
+//
 // Decoder4X16
 //
 

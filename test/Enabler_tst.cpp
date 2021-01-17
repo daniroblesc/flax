@@ -1,16 +1,16 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include "components/ByteEnabler.h"
+#include "components/Enabler.h"
 
 using ::testing::Return;
 
-class ByteEnablerTest : public testing::Test 
+class EnablerTest : public testing::Test 
 {};
 
-TEST_F(ByteEnablerTest, getEoutputOnceBitEIsEnabled) 
+TEST_F(EnablerTest, getEoutputOnceBitEIsEnabled) 
 {
-     ByteEnabler E;
+    Enabler E;
     Byte input = 0xAB;
 
     // update the input
@@ -23,9 +23,9 @@ TEST_F(ByteEnablerTest, getEoutputOnceBitEIsEnabled)
     EXPECT_EQ(output.toInt(), 0xAB);
 }
 
-TEST_F(ByteEnablerTest, doNotGetOutputIfEBitIsNotSet) 
+TEST_F(EnablerTest, doNotGetOutputIfEBitIsNotSet) 
 {
-    ByteEnabler E;
+    Enabler E;
     Byte input = 0xAB;
 
     // update the input

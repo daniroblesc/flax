@@ -1,7 +1,7 @@
 #ifndef REGISTER_H_
 #define REGISTER_H_
 
-#include "ByteEnabler.h"
+#include "Enabler.h"
 #include "memory/MemoryByte.h"
 #include "circuit/Bus.h"
 
@@ -18,7 +18,7 @@ public:
 
 private:
 
-    ByteEnabler enabler_;
+    Enabler enabler_;
     MemoryByte memoryByte_;
 
     Bus* inputBus_;

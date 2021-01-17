@@ -62,6 +62,35 @@ public:
 };
 
 
+/* Decoder3X8:
+    input 'A' is bit0
+    input 'B' is bit1 
+    input 'C' is bit2 
+
+    C   B   A  |  0/0/0   0/0/1   0/1/0   0/1/1   1/0/0   1/0/1   1/1/0   1/1/1   |  # (outputToInt)     
+    -------------------------------------------------------------------------------------------------
+    0   0   0  |    1       0       0       0       0       0       0       0     |  0
+    0   0   1  |    0       1       0       0       0       0       0       0     |  1
+    0   1   0  |    0       0       1       0       0       0       0       0     |  2
+    0   1   1  |    0       0       0       1       0       0       0       0     |  3
+    1   0   0  |    0       0       0       0       1       0       0       0     |  4
+    1   0   1  |    0       0       0       0       0       1       0       0     |  5
+    1   1   0  |    0       0       0       0       0       0       1       0     |  6
+    1   1   1  |    0       0       0       0       0       0       0       1     |  7
+*/
+class Decoder3X8 : public BasicDecoder
+{
+public:
+
+    Decoder3X8();
+    ~Decoder3X8();
+
+    void update(const Byte& input);
+    void update(const bool A, const bool B, const bool C);
+};
+
+
+
 /* Decoder4X16:
     input 'A' is bit0
     input 'B' is bit1 
