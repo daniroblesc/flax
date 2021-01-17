@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include "circuit/Byte.h"
+#include "misc/Byte.h"
 #include <iostream>
 
 using ::testing::Return;

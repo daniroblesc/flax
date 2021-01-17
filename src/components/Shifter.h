@@ -1,7 +1,7 @@
 #ifndef SHIFTER_H_
 #define SHIFTER_H_
 
-#include "circuit/Byte.h"
+#include "misc/Byte.h"
  
 /*
     0100 0010 -> 0010 0001

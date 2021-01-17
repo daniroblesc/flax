@@ -2,7 +2,7 @@
 #define MEMORY_BYTE_H_
 
 #include "MemoryBit.h"
-#include "circuit/Byte.h"
+#include "misc/Byte.h"
 #include <vector>
 
 class MemoryByte

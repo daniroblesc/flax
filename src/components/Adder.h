@@ -2,7 +2,7 @@
 #ifndef ADDER_H_
 #define ADDER_H_
 
-#include "circuit/Byte.h"
+#include "misc/Byte.h"
 #include "circuit/Wire.h"
 #include "circuit/BitGates.h"
 #include <vector>

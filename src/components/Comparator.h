@@ -3,7 +3,7 @@
 
 #include "circuit/Wire.h"
 #include "circuit/BitGates.h"
-#include "circuit/Byte.h"
+#include "misc/Byte.h"
 
 
 /* What the comparator gate does is to find out whether the two bits on the 

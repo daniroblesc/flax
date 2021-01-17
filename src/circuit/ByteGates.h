@@ -1,7 +1,7 @@
 #ifndef BYTE_GATES_H_
 #define BYTE_GATES_H_
 
-#include "Byte.h"
+#include "misc/Byte.h"
 #include "BitGates.h"
 #include <vector>
 

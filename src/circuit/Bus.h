@@ -1,7 +1,7 @@
 #ifndef BUS_H_
 #define BUS_H_
 
-#include "Byte.h"
+#include "misc/Byte.h"
 
 // This is a 8-bit bus: an IBusNode set/get value into the bus 
 //  note: set() must be thread-safe 

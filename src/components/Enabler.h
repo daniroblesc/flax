@@ -2,7 +2,7 @@
 #define ENABLER_H_
 
 #include "circuit/BitGates.h"
-#include "circuit/Byte.h"
+#include "misc/Byte.h"
 #include <vector>
 
 class Enabler
