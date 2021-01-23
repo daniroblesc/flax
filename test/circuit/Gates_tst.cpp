@@ -74,34 +74,6 @@ INSTANTIATE_TEST_CASE_P(
                 std::make_tuple(true,  false, false),
                 std::make_tuple(true,  true,  true)));
 
-TEST_F(ANDGateTest, executeInputVectorReturnTrue)
-{
-  std::vector<bool> inputs;
-  inputs.push_back(true);
-  inputs.push_back(true);
-  inputs.push_back(true);
-  inputs.push_back(true);
-
-  ANDGate And;
-  And.update(inputs);
-  bool c = And.output();
-  EXPECT_TRUE(true == c);
-}
-
-TEST_F(ANDGateTest, executeInputVectorReturnFalse)
-{
-  std::vector<bool> inputs;
-  inputs.push_back(true);
-  inputs.push_back(true);
-  inputs.push_back(true);
-  inputs.push_back(false);
-
-  ANDGate And;
-  And.update(inputs);
-  bool c = And.output();
-  EXPECT_TRUE(false == c);
-}
-
 class ORGateTest : public ::testing::TestWithParam<std::tuple<bool, bool, bool>>
 {
 };

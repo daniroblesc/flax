@@ -13,20 +13,23 @@ class ALU
 {
 public:
 
+    ALU();
+    ~ALU();
+
     void update(const Byte& a, const Byte& b, const bool carryIn, const Wire* op);
     void output(Byte &c, bool &carryOut, bool& equal, bool& a_larger, bool& zero);
 
 private:
     Comparator XOR_;
-    Orer OR_; 
-    Ander AND_;
-    Notter NOT_;
+    ORer OR_; 
+    ANDer AND_;
+    NOTter NOT_;
     LShifter SHL_;
     RShifter SHR_;
     Adder ADD_;
     Enabler enabler_[7];
     ANDGate and_[3];
-    Z z_;
+    Zero z_;
     Decoder3X8 decoder_;
 
     // inputs

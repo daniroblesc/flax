@@ -10,9 +10,9 @@ using ::testing::Return;
 class ByteGatesTest : public testing::Test 
 {};
 
-TEST_F(ByteGatesTest, Notter) 
+TEST_F(ByteGatesTest, NOTter) 
 {
-    Notter inverter;
+    NOTter inverter;
 
     Byte input = 0xBB; // 1011 1011
     inverter.update(input);
@@ -21,45 +21,45 @@ TEST_F(ByteGatesTest, Notter)
     EXPECT_EQ(output, 0x44);
 }
 
-TEST_F(ByteGatesTest, Ander) 
+TEST_F(ByteGatesTest, ANDer) 
 {
-    Ander ander;
+    ANDer ANDer;
 
     Byte a = 0xAA; // 1010 1010
     Byte b = 0xEB; // 1110 1011
-    ander.update(a, b);
+    ANDer.update(a, b);
 
-    Byte output = ander.output();
+    Byte output = ANDer.output();
     EXPECT_EQ(output, 0xAA);
 }
 
-TEST_F(ByteGatesTest, Orer) 
+TEST_F(ByteGatesTest, ORer) 
 {
-    Orer orer;
+    ORer ORer;
 
     Byte a = 0xAA; // 1010 1010
     Byte b = 0xEB; // 1110 1011
-    orer.update(a, b);
+    ORer.update(a, b);
 
-    Byte output = orer.output();
+    Byte output = ORer.output();
     EXPECT_EQ(output, 0xEB);
 }
 
-TEST_F(ByteGatesTest, XOrer) 
+TEST_F(ByteGatesTest, XORer) 
 {
-    XOrer xorer;
+    XORer xORer;
 
     Byte a = 0xAA; // 1010 1010
     Byte b = 0xEB; // 1110 1011
-    xorer.update(a, b);
+    xORer.update(a, b);
 
-    Byte output = xorer.output();
+    Byte output = xORer.output();
     EXPECT_EQ(output, 0x41);
 }
 
 TEST_F(ByteGatesTest, ZReturnsFalse) 
 {
-    Z z;
+    Zero z;
 
     z.update(0x31);
 
@@ -68,7 +68,7 @@ TEST_F(ByteGatesTest, ZReturnsFalse)
 
 TEST_F(ByteGatesTest, ZReturnsTrue) 
 {
-    Z z;
+    Zero z;
 
     z.update(0x0);
 

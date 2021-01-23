@@ -5,98 +5,154 @@
 #include "BitGates.h"
 #include <vector>
 
-//
-// Notter
-//
-class Notter
+/*! \class NOTter
+ *  \brief This device connects two registers with 8 NOT gates.
+ *  
+ *  Each bit will be changed to its opossite. This operation is used for many 
+ *  purposes, the first being in some arithmetic functions.
+ *  Another name for a NOT gate is an "inverter", because it makes the opposite
+ *  of what you give it, turns it up side down, or inverts it.
+ */
+class NOTter
 {
 public:
 
-    Notter();
-    ~Notter();
+    NOTter();
+    ~NOTter();
 
+    /** Update device input
+     *  @param [in] a value for device input
+     */
     void update(const Byte& a);
+
+    /** Generate device output
+     *  @return output byte
+     */ 
     Byte output();
 
 private:
 
-    Byte a_;
-    std::vector<NOTGate> not_;
+    Byte a_;    ///< input byte
+    std::vector<NOTGate> not_;  ///< NOT gates
 };
 
-//
-// Ander
-//
-class Ander
+/*! \class ANDer
+ *  \brief The ANDer takes two input bytes,and ANDs each bit of those two into a third byte.
+ * 
+ *  With this, we can AND two bytes together to form a third byte.
+ */ 
+class ANDer
 {
 public:
 
-    Ander();
-    ~Ander();
+    ANDer();
+    ~ANDer();
 
+    /** Update device input
+     *  @param [in] a value for device input a
+     *  @param [in] b value for device input b
+     */
     void update(const Byte& a, const Byte& b);
+
+    /** Generate device output
+     *  @return output byte
+     */  
     Byte output();
 
 private:
 
-    Byte a_;
-    Byte b_;
-    std::vector<ANDGate> and_;
+    Byte a_;    ///< input byte a 
+    Byte b_;    ///< input byte b
+    std::vector<ANDGate> and_;  ///< AND gates
 };
 
-//
-// Orer
-//
-class Orer
+/*! \class ORer
+ *  \brief The ORer takes two input bytes,and ORs each bit of those two into a third byte.
+ * 
+ *  With this, we can OR two bytes together to form a third byte.
+ */ 
+class ORer
 {
 public:
 
-    Orer();
-    ~Orer();
+    ORer();
+    ~ORer();
 
+    /** Update device input
+     *  @param [in] a value for device input a
+     *  @param [in] b value for device input b
+     */
     void update(const Byte& a, const Byte& b);
+
+    /** Generate device output
+     *  @return output byte
+     */  
     Byte output();
 
 private:
 
-    Byte a_;
-    Byte b_;
-    std::vector<ORGate> or_;
+    Byte a_;    ///< input byte a 
+    Byte b_;    ///< input byte b 
+    std::vector<ORGate> or_;    ///< OR gates
 };
 
-//
-// XOrer
-//
-class XOrer
+/*! \class XORer
+ *  \brief The XORer takes two input bytes,and XORs each bit of those two into a third byte.
+ * 
+ *  With this, we can XOR two bytes together to form a third byte.
+ */ 
+class XORer
 {
 public:
 
-    XOrer();
-    ~XOrer();
+    XORer();
+    ~XORer();
 
+    /** Update device input
+     *  @param [in] a value for device input a
+     *  @param [in] b value for device input b
+     */
     void update(const Byte& a, const Byte& b);
+
+    /** Generate device output
+     *  @return output byte
+     */ 
     Byte output();
 
 private:
 
-    Byte a_;
-    Byte b_;
-    std::vector<XORGate> xor_;
+    Byte a_;    ///< input byte a 
+    Byte b_;    ///< input byte b 
+    std::vector<XORGate> xor_;  ///< XOR gates
 };
 
 
-//
-// Z: The output bit turns on when all of the bits in the byte are off
-//
-
-class Z
+/*! \class Zero
+ *  \brief The Zero takes one byte as input and returns one bit that tell us when 
+ *         the content of the byte is all zeros.
+ * 
+ *  This is a gate combination that takes a whole byte as input, and generates 
+ *  only one bit as output. The output bit turns on when all of the bits in the 
+ *  byte are off. In other words, the output bit tell us when the content of
+ *  the byte is all zeros.
+ */
+class Zero
 {
 public:    
+    /** Update device input
+     *  @param [in] a value for device input
+     */
     void update(const Byte& a);
+
+    /** Generate device output
+     *  @return the output bit
+     */  
     bool output();
 
 private:
-    Byte a_;
+    Byte a_;    ///< input byte a
+    ORGate or_[7];    ///< OR gates
+    NOTGate not_;  ///< NOT gate
 };
 
 #endif // BYTE_GATES_H_

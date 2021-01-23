@@ -7,7 +7,12 @@ using ::testing::Return;
 
 class ALUTest : public testing::Test 
 {
-public:
+protected:    
+    void SetUp() override 
+    {}
+
+    void TearDown() override 
+    {}    
 
     void selectCMP()
     {
@@ -177,7 +182,6 @@ TEST_F(ALUTest, SHRWithShiftOutFalse)
     Byte c;
     bool carryOut, equal, a_larger, zero;
     alu_.output(c, carryOut, equal, a_larger, zero);
-
     EXPECT_EQ(c, 0x21);
     EXPECT_FALSE(carryOut);
 }
@@ -219,7 +223,6 @@ TEST_F(ALUTest, SHRWithShiftInTrue)
     EXPECT_EQ(c, 0xA1);
     EXPECT_FALSE(carryOut);
 }
-
 
 TEST_F(ALUTest, SHLWithShiftOutFalse) 
 {

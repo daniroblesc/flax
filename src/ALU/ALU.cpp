@@ -1,6 +1,12 @@
 #include "ALU.h"
 #include <iostream>
 
+ALU::ALU()
+{}
+
+ALU::~ALU()
+{}
+
 void ALU::update(const Byte& a, const Byte& b, const bool carryIn, const Wire* op)
 {
     a_ = a;
@@ -80,8 +86,6 @@ void ALU::output(Byte &c, bool &carryOut, bool& equal, bool& a_larger, bool& zer
                 and_[2].update(adderCarryOut, code[i]);
                 carryOut = and_[2].output();
             }
-
-            //std::cout << "selected op= " << i << " c=" << c.toInt() << " carryOut=" << carryOut << std::endl;
         }
     }
 }
