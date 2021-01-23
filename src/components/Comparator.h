@@ -64,7 +64,7 @@ public:
     /** Generate device outputs
      *  @param [out] c a bit is set to true if inputs bit are not equal, otherwise is set to false
      *  @param [out] equal is set to true if inputs bit are equal, otherwise is set to false
-     *  @param [out] a_larger is set to true if 'a' bit is larger than 'b' bit
+     *  @param [out] a_larger is set to true if 'a' is larger than 'b' 
      */    
     void output(Byte& c, bool& equal, bool& a_larger);
 
