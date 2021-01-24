@@ -1,4 +1,5 @@
 #include "Bus1.h"
+#include <iostream>
 
 Bus1::Bus1(Bus *inputBus, Bus *outputBus) 
 {
@@ -11,13 +12,14 @@ Bus1::~Bus1()
 
 void Bus1::enable(const bool bus1)
 {
-    bus1_.update(bus1);
-    not_.update(bus1_.output());
-
+    // get bus content
     Byte input = inputBus_->get();
-    Byte output;
+    
+    bus1_.update(bus1);
+    not_.update(bus1_.output());  
 
-    or_.update(input[0], not_.output());
+    Byte output;
+    or_.update(input[0], bus1_.output());
     output.set(0, or_.output());
 
     for (int i = 0; i < Byte::NUM_BITS - 1; ++i)

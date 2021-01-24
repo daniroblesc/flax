@@ -19,13 +19,31 @@ TEST_F(Bus1Test, basicOperationBus1BitIsZero)
     Bus1 B1(&inputBus, &outputBus);
     
     // set bus value
-    inputBus.set(0xAA); 
-    outputBus.set(0xBB); 
+    inputBus.set(0xAA);   // 1010 1010
+    outputBus.set(0xBB);  
 
     // the bits of the input bus pass through to the output bus unchanged
     B1.enable(0);
 
     // outputBus refreshed with the inputBus content 
     EXPECT_TRUE(outputBus.get() == 0xAA);
+    EXPECT_TRUE(inputBus.get() == 0xAA);
+}
+
+TEST_F(Bus1Test, basicOperationBus1BitIsOne) 
+{
+    Bus inputBus;
+    Bus outputBus;
+    Bus1 B1(&inputBus, &outputBus);
+    
+    // set bus value
+    inputBus.set(0xAA);   // 1010 1010
+    outputBus.set(0xBB);  
+
+    // the input byte is ignored and the output byte will be 1
+    B1.enable(1);
+
+    // outputBus refreshed with the inputBus content 
+    EXPECT_TRUE(outputBus.get() == 1);
     EXPECT_TRUE(inputBus.get() == 0xAA);
 }
