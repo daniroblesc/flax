@@ -2,27 +2,31 @@
 
 MemoryByte::MemoryByte()
 {
-    memoryBitCollection_.resize(Byte::NUM_BITS);
+    bits_.resize(Byte::NUM_BITS);
+    output_.resize(Byte::NUM_BITS);
 }
 
 MemoryByte::~MemoryByte()
 {
 }
 
-void MemoryByte::update(const Byte& input)
+void MemoryByte::update(const Byte& input, const bool s)
 {
+    if (s)
+    {
+        // clear previous content
+        for ( int n = 0; n < Byte::NUM_BITS; ++n )
+        {
+            bits_[n].update(false, true);
+        }
+    }
+    
+    // set new content
     for ( int n = 0; n < Byte::NUM_BITS; ++n )
     {
         bool inputBit = input[n];
-        memoryBitCollection_[n].update(inputBit);
-    }
-}
-
-void MemoryByte::set(const bool s)
-{
-    for ( int n = 0; n < Byte::NUM_BITS; ++n )
-    {
-        memoryBitCollection_[n].set(s);
+        bits_[n].update(inputBit, s);
+        output_[n].update(bits_[n].output());
     }
 }
 
@@ -32,8 +36,7 @@ Byte MemoryByte::output()
 
     for ( int n = 0; n < Byte::NUM_BITS; ++n )
     {
-        bool outputBit = memoryBitCollection_[n].output();
-        output.set(n, outputBit);
+        output.set(n, output_[n].output());
     }
 
     return output;    

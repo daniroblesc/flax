@@ -1,29 +1,27 @@
 #include "MemoryBit.h"
 
-void MemoryBit::update(const bool input)
+void MemoryBit::update(const bool input, const bool s)
 {
-    input_.update(input);
-}
+    wireI_.update(input);
+    wireS_.update(s);
 
-void MemoryBit::set(const bool s)
-{
-    s_.update(s);
+    /*G1*/gates[0].update(wireI_.output(), wireS_.output());
+    bool a = gates[0].output();
+
+	/*G2*/gates[1].update(a, wireS_.output());
+    bool b = gates[1].output();
+
+    bool c = gates[3].output();
+	/*G3*/gates[2].update(a, c);
+
+    bool o = gates[2].output();
+	/*G4*/gates[3].update(o, b );
+
+    o = gates[2].output();
+	wireO_.update(o);
 }
 
 bool MemoryBit::output()
 {
-    G1_.update(input_.output(), s_.output());
-    bool a = G1_.output();
-
-    G2_.update(a, s_.output());
-    bool b = G2_.output();
-
-    bool o;
-    G4_.update(b, o);
-    bool c = G4_.output();
-
-    G3_.update(a, c);
-    o = G3_.output();
-
-    return o;
+    return wireO_.output();
 }

@@ -18,13 +18,9 @@ public:
 
     /** Update the input byte
      *  @param [in] input The input byte
+     *  @param [in] s the 's' bit. When s=1 then the input byte is saved. 
      */
-    void update(const Byte& input);
-
-    /** Save the input byte into the device
-     *  @param [in] s the 's' bit. When s=1 then the input byte is saved.
-     */
-    void set(const bool s = true);
+    void update(const Byte& input, const bool s = true);
 
     /** Get device output
      *  @return the saved byte
@@ -33,7 +29,9 @@ public:
 
 private:
 
-    std::vector<MemoryBit> memoryBitCollection_; ///< collection of saved bits
+    std::vector<MemoryBit> bits_; ///< collection of saved bits
+    std::vector<Wire> output_; ///< output wires
+
 };
 
 

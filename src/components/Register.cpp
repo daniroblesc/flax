@@ -29,10 +29,8 @@ void Register::set(const bool s)
     // get bus content
     Byte input = inputBus_->get();
 
-    // update B's inputs with bus content
-    memoryByte_.update(input);
-    // save B content
-    memoryByte_.set(s);   
+    // update B's inputs with bus content & save B content
+    memoryByte_.update(input, s);
 
     // update E's input with B's output
     enabler_.update(memoryByte_.output());
