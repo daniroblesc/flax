@@ -1,24 +1,59 @@
 #include "ALU.h"
 #include <iostream>
+#include <assert.h>     /* assert */
 
-ALU::ALU()
-{}
+ALU::ALU(Bus* inputBusA, Bus* inputBusB, Bus* outputBus) : 
+    control::IControllableUnit("ALU"),
+    IBusNode("ALU")
+{
+    inputBusA_ = inputBusA;
+    inputBusB_ = inputBusB;
+    outputBus_ = outputBus;    
+    inputBusA_->subscribe(this);
+    inputBusB_->subscribe(this);
+    outputBus_->subscribe(this);
+}
 
 ALU::~ALU()
 {}
 
-void ALU::update(const Byte& a, const Byte& b, const bool carryIn, const Wire* op)
+void ALU::signal(const control::signalType type, const control::SignalCollection& value)
 {
-    a_ = a;
-    b_ = b;
+    assert(value.size()==3);
+    
+    switch (type)
+    {
+    case control::SIG_OP:
+    {
+        bool carryIn = false;
+        Wire op[3]; 
+        op[0].update(value[0]);
+        op[1].update(value[1]);
+        op[2].update(value[2]);
+        update(carryIn, op);
+    }
+    break;
+
+    default:
+        assert(0);
+        break;
+    };
+}
+
+void ALU::update(const bool carryIn, const Wire* op)
+{
+    a_ = inputBusA_->read(this);
+    b_ = inputBusB_->read(this);
     carryIn_ = carryIn;
     op_[0] = op[0];    
     op_[1] = op[1];    
     op_[2] = op[2];    
 }
 
-void ALU::output(Byte &c, bool &carryOut, bool& equal, bool& a_larger, bool& zero)
+void ALU::output(bool &carryOut, bool& equal, bool& a_larger, bool& zero)
 {
+    Byte c;
+
     // Update inputs to the devices
     XOR_.update(a_, b_);
     OR_.update(a_, b_);
@@ -88,4 +123,6 @@ void ALU::output(Byte &c, bool &carryOut, bool& equal, bool& a_larger, bool& zer
             }
         }
     }
+
+    outputBus_->write(this, c);
 }

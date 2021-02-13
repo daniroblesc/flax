@@ -8,6 +8,8 @@
 #include "components/Enabler.h"
 #include "components/Comparator.h"
 #include "components/Adder.h"
+#include "circuit/Bus.h"
+#include "control/ControlUnit.h"
 
 /*! \class ALU
  *  \brief This class implements an arithmetic logic unit (ALU) that performs 
@@ -19,30 +21,42 @@
  *  outputs, or both, which convey information about a previous operation or the 
  *  current operation, respectively, between the ALU and external status registers.
  */ 
-class ALU
+class ALU : public control::IControllableUnit, public IBusNode
 {
 public:
 
-    ALU();
+    /** Constructor
+     *  @param [in] inputBusA  the input bus A
+     *  @param [in] inputBusB  the input bus B
+     *  @param [in] outputBus the output bus
+     */
+    ALU(Bus* inputBusA, Bus* inputBusB, Bus* outputBus);
+
+    /** Destructor
+     */
     ~ALU();
     
-    /** Update gate's inputs
-     *  @param [in] a operand A
-     *  @param [in] b operand B
+    /** Update inputs
      *  @param [in] carryIn bit carried in from the previous less-signficant stage
      *  @param [in] op 3 input bits indicating the operation to be performed
      */
-    void update(const Byte& a, const Byte& b, const bool carryIn, const Wire* op);
+    void update(const bool carryIn, const Wire* op);
 
-    /** Update gate's inputs
-     *  @param [out] c result of the performed operation
+    /** Update outputs
      *  @param [out] carryOut bit of the leftmost column will turn on if the sum of the 
      *                        two numbers is greater than 255
      *  @param [out] equal is set to true if inputs are equal, otherwise is set to false
      *  @param [out] a_larger is set to true if 'a' is larger than 'b' 
      *  @param [out] zero is set to true if the output is zero
      */
-    void output(Byte &c, bool &carryOut, bool& equal, bool& a_larger, bool& zero);
+    void output(bool &carryOut, bool& equal, bool& a_larger, bool& zero);
+
+    /** implements control::IControllableUnit method
+     *  Signal received from the Control Unit
+     *  @param [in] type signal's type
+     *  @param [in] value signal value
+     */
+    void signal(const control::signalType type, const control::SignalCollection& value) override;
 
 private:
     /// internal devices
@@ -63,6 +77,10 @@ private:
     Byte b_;
     bool carryIn_;
     Wire op_[3];
+
+    Bus* inputBusA_;     ///< input bus A
+    Bus* inputBusB_;     ///< input bus B
+    Bus* outputBus_;    ///< output bus
 };
 
 #endif // ALU_H_

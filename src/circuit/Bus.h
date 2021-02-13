@@ -2,34 +2,57 @@
 #define BUS_H_
 
 #include "misc/Byte.h"
+#include <mutex>          // std::mutex
+#include <list>
 
-// This is a 8-bit bus: an IBusNode set/get value into the bus 
-//  note: set() must be thread-safe 
+class IBusNode
+{
+public:
+    /** Constructor
+     *  @param [in] id The bus node identifier
+     */
+    IBusNode(const std::string& id);
+
+    /** Get the bus node identifier
+     *  @return The identifier
+     */
+    std::string getId() const;
+
+private:
+    std::string id_;    ///< The identifier
+};
+
 class Bus
 {
 public:
 
-    // an IBusNode turn the bit 'e' (enable) to ON so its data
-    // is now in the bus
-    void set(const Byte& value)
+    typedef enum LogLevel
     {
-        value_ = value;
-    }
+        VERBOSE,
+        ERROR
+    } LogLevel;
 
-    // an IBusNode turn the bit 's' (set) to ON so the byte from
-    // the bus has been copied to this IBusNode
-    Byte get()
-    {
-        return value_;
-    }
+    Bus(const std::string& id, LogLevel logLevel = ERROR);
 
-    std::string toString()
-    {
-        return value_.toString();
-    }
+    void subscribe(IBusNode* busNode);
+    void unsubscribe(IBusNode* busNode);
+
+    void write(IBusNode* busNode, const Byte& value);
+    void write(const Byte& value);
+
+    Byte read(IBusNode* busNode);
+    Byte read();
+
+    std::string toString();
 
 private:
     Byte value_;
+    std::mutex mtxBusAccess_;
+
+    std::list<IBusNode*>  subscribers_;
+
+    std::string id_; ///< bus identifier
+    LogLevel logLevel_ = ERROR;
 };
 
 

@@ -11,16 +11,7 @@ MemoryByte::~MemoryByte()
 }
 
 void MemoryByte::update(const Byte& input, const bool s)
-{
-    if (s)
-    {
-        // clear previous content
-        for ( int n = 0; n < Byte::NUM_BITS; ++n )
-        {
-            bits_[n].update(false, true);
-        }
-    }
-    
+{  
     // set new content
     for ( int n = 0; n < Byte::NUM_BITS; ++n )
     {

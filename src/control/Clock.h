@@ -25,9 +25,6 @@ public:
     virtual void onClk(const bool clk) = 0;
     virtual void onClkE(const bool clkE) = 0;
     virtual void onClkS(const bool clkS) = 0;
-    virtual void onClkD(const bool clkD) = 0;
-
-    virtual void onClkMessage(const ClockMessage msg) = 0;
 };
 
 /*! \class Clock
@@ -60,8 +57,7 @@ private:
     std::thread* clkThread_ = nullptr;
     void clkThread();
     bool shutdownClkThread_ = false;
-    void notifyClk(ClockType type, const bool value);
-    void onClockChange(const IClockSubscriber::ClockMessage& msg);
+    void onClockChange(ClockType type, const bool value);
 
     int64_t cycleTime_ = 0; ///< in millisecs
     int64_t halfCycleTime_ = 0; ///< in microseconds
@@ -72,7 +68,7 @@ private:
     bool clkE_ = false; ///< clock enable
     bool clkS_ = false; ///< clock set
 
-    void updateEnableAndSetClocks(IClockSubscriber::ClockMessage& msg);
+    void updateEnableAndSetClocks();
 };
 
 

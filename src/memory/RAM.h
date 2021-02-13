@@ -5,6 +5,7 @@
 #include "circuit/Bus.h"
 #include "components/Register.h"
 #include "components/Decoder.h"
+#include <memory>
 
 /*! \class RAMCell
  *  \brief This class implements a memory cell
@@ -135,7 +136,7 @@ protected:
 /*! \class RAM256
  *  \brief This class implements a RAM of 256 bytes
  */ 
-class RAM256 : public IRAM 
+class RAM256 : public IRAM, public IBusNode
 {
 public:
     /** Constructor
@@ -164,7 +165,7 @@ public:
 
 private:
     
-    Bus* MAROutputBus_ = nullptr;   ///< internal bus
+    std::unique_ptr<Bus> MAROutputBus_;   ///< internal bus
     Register* MAR_ = nullptr;   ///< memory address register
     Decoder4X16 selectCol_; ///< decoder to select grid's col
     Decoder4X16 selectRow_; ///< decoder to select grid's row
@@ -177,7 +178,7 @@ private:
 /*! \class RAM65K
  *  \brief This class implements a RAM of 65K bytes
  */ 
-class RAM65K : public IRAM 
+class RAM65K : public IRAM, public IBusNode 
 {
 public:
     /** Constructor
@@ -211,8 +212,8 @@ public:
 
 private:
 
-    Bus* MAROutputBus0_ = nullptr;  ///< internal bus #0
-    Bus* MAROutputBus1_ = nullptr;  ///< internal bus #1
+    std::unique_ptr<Bus> MAROutputBus0_;  ///< internal bus #0
+    std::unique_ptr<Bus> MAROutputBus1_;  ///< internal bus #1
     Register* MAR0_ = nullptr;  ///< memory address register #0
     Register* MAR1_ = nullptr;  ///< memory address register #1
     Decoder8X256 selectCol_;    ///< decoder to select grid's col

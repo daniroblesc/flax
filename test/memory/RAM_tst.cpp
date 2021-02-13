@@ -3,6 +3,7 @@
 
 #include "memory/RAM.h"
 #include <iostream>
+#include <memory>
 
 using ::testing::Return;
 
@@ -12,20 +13,21 @@ protected:
 
     void SetUp() override 
     {
-        cell_ = new RAMCell(&bus_);
+        bus_ = std::make_unique<Bus>("bus");
+        cell_ = new RAMCell(bus_.get());
     }
 
     void TearDown() override 
     { 
         delete cell_;
     }
-
-    Bus bus_;   
+    
+    std::unique_ptr<Bus> bus_;
     RAMCell* cell_;
 
     void updateBus(const Byte value)
     {
-        bus_.set(value);
+        bus_->write(value);
     }
 
     void updateCellContent(const Byte value)
@@ -36,6 +38,7 @@ protected:
         // save bus content into the cell
         cell_->set();
     }
+  
 };
 
 TEST_F(RAMTest, saveByteInACell) 
@@ -49,7 +52,7 @@ TEST_F(RAMTest, saveByteInACell)
     cell_->enable();
 
     // check that bus content is refreshed with cell's content
-    EXPECT_TRUE(bus_.get() == 0xAB); 
+    EXPECT_TRUE(bus_->read() == 0xAB); 
 }
 
 TEST_F(RAMTest, cannotReadCellContentIfHasNotBeenSelected) 
@@ -68,7 +71,7 @@ TEST_F(RAMTest, cannotReadCellContentIfHasNotBeenSelected)
     cell_->enable();
 
     // check that bus content has not been refreshed with cell's content
-    EXPECT_FALSE(bus_.get() == 0xAB); 
+    EXPECT_FALSE(bus_->read() == 0xAB); 
 }
 
 TEST_F(RAMTest, cannotReadCellContentIfHasNotBeenSet) 
@@ -87,7 +90,7 @@ TEST_F(RAMTest, cannotReadCellContentIfHasNotBeenSet)
     cell_->enable();
 
     // check that bus content is refreshed with cell's content
-    EXPECT_FALSE(bus_.get() == 0xAB); 
+    EXPECT_FALSE(bus_->read() == 0xAB); 
 }
 
 TEST_F(RAMTest, cannotReadCellContentIfEnableBitIsZeroed) 
@@ -101,12 +104,12 @@ TEST_F(RAMTest, cannotReadCellContentIfEnableBitIsZeroed)
     cell_->enable(false);
 
     // check that bus content is refreshed with cell's content
-    EXPECT_FALSE(bus_.get() == 0xAB); 
+    EXPECT_FALSE(bus_->read() == 0xAB); 
 }
 
 TEST_F(RAMTest, RAM256SingleTest)
 {
-    RAM256 ram(&bus_);
+    RAM256 ram(bus_.get());
 
     /* Write the @1 */
     updateBus(0xAB); // set memory address
@@ -124,18 +127,18 @@ TEST_F(RAMTest, RAM256SingleTest)
     updateBus(0xAB); // set memory address
     ram.setAddress();
     ram.enable();
-    EXPECT_TRUE(bus_.get() == 0x22); 
+    EXPECT_TRUE(bus_->read() == 0x22); 
 
     /* Read the @2 */
     updateBus(0xAC); // set memory address
     ram.setAddress();
     ram.enable();
-    EXPECT_TRUE(bus_.get() == 0x23); 
+    EXPECT_TRUE(bus_->read() == 0x23); 
 }
 
 TEST_F(RAMTest, RAM256FullTest)
 {
-    RAM256 ram(&bus_);
+    RAM256 ram(bus_.get());
 
     /* Write the entire RAM */
     for (int addr=0; addr < 0xFF; ++addr)
@@ -152,14 +155,14 @@ TEST_F(RAMTest, RAM256FullTest)
         updateBus(addr); // set memory address
         ram.setAddress();
         ram.enable();
-        EXPECT_TRUE(bus_.get() == (0xFF-addr)); 
+        EXPECT_TRUE(bus_->read() == (0xFF-addr)); 
     }
 }
 
 
 TEST_F(RAMTest, RAM65KSingleTest)
 {
-    RAM65K ram(&bus_);
+    RAM65K ram(bus_.get());
 
     /* Write the @1 */
     updateBus(0xB); // set memory address (low part)
@@ -183,7 +186,7 @@ TEST_F(RAMTest, RAM65KSingleTest)
     updateBus(0xA); // set memory address (high part)
     ram.setS1();
     ram.enable();
-    EXPECT_TRUE(bus_.get() == 0x22); 
+    EXPECT_TRUE(bus_->read() == 0x22); 
 
     /* Read the @2 */
     updateBus(0xB); // set memory address (low part)
@@ -191,12 +194,12 @@ TEST_F(RAMTest, RAM65KSingleTest)
     updateBus(0xB); // set memory address (high part)
     ram.setS1();
     ram.enable();
-    EXPECT_TRUE(bus_.get() == 0x23); 
+    EXPECT_TRUE(bus_->read() == 0x23); 
 }
 
 TEST_F(RAMTest, RAM65KFullTest)
 {
-    RAM65K ram(&bus_);
+    RAM65K ram(bus_.get());
 
     /* Write the entire RAM */
     for (int i = 0; i < 0xFFFF; ++i)
@@ -219,6 +222,6 @@ TEST_F(RAMTest, RAM65KFullTest)
         ram.setS1();
 
         ram.enable();
-        EXPECT_TRUE(bus_.get() == ((0xFFFF-i) & 0x00FF)); 
+        EXPECT_TRUE(bus_->read() == ((0xFFFF-i) & 0x00FF)); 
     }
 }

@@ -4,19 +4,21 @@
 #include "circuit/Bus.h"
 #include "circuit/BitGates.h"
 #include "circuit/Wire.h"
+#include "control/ControlUnit.h"
 
 /*! \class Bus1
  *  \brief This class implements a device that will place the number 1 on a bus 
  *         when we need it
  */ 
-class Bus1
+class Bus1 : public control::IControllableUnit, public IBusNode
 {
 public:
     /** Constructor
+     *  @param [in] id the identifier for this device
      *  @param [in] inputBus  the input bus
      *  @param [in] outputBus the output bus
      */
-    Bus1(Bus* inputBus, Bus* outputBus);
+    Bus1(const std::string& id, Bus* inputBus, Bus* outputBus);
 
     /** Destructor
      */
@@ -29,6 +31,13 @@ public:
      *  @param [in] bus1 The 'bus1' bit 
      */
     void enable(const bool bus1 = true);  
+
+    /** implements control::IControllableUnit method
+     *  Signal received from the Control Unit
+     *  @param [in] type signal's type
+     *  @param [in] value signal value
+     */
+    void signal(const control::signalType type, const control::SignalCollection& value) override;
 
 private:
 

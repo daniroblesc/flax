@@ -1,10 +1,15 @@
 #include "Bus1.h"
 #include <iostream>
+#include <assert.h>     /* assert */
 
-Bus1::Bus1(Bus *inputBus, Bus *outputBus) 
+Bus1::Bus1(const std::string& id, Bus *inputBus, Bus *outputBus)  : 
+    control::IControllableUnit(id),
+    IBusNode(id)
 {
     inputBus_ = inputBus;
     outputBus_ = outputBus;
+    inputBus_->subscribe(this);
+    outputBus_->subscribe(this);    
 }
 
 Bus1::~Bus1()
@@ -13,7 +18,7 @@ Bus1::~Bus1()
 void Bus1::enable(const bool bus1)
 {
     // get bus content
-    Byte input = inputBus_->get();
+    Byte input = inputBus_->read(this);
     
     bus1_.update(bus1);
     not_.update(bus1_.output());  
@@ -29,5 +34,22 @@ void Bus1::enable(const bool bus1)
     }
     
     // save output to the bus
-    outputBus_->set(output);
+    outputBus_->write(this, output);
+}
+
+void Bus1::signal(const control::signalType type, const control::SignalCollection& value)
+{
+    assert(value.size()==1);
+
+    switch (type)
+    {
+    case control::SIG_ENABLE:
+        enable(value[0]);
+        break;
+    
+    default:
+        assert(0);
+        break;
+    }
+
 }

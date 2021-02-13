@@ -5,7 +5,7 @@
 RAMCell::RAMCell(Bus *bus) 
 {
     bus_ = bus;
-    R_ = new Register(bus_, bus_);
+    R_ = new Register("RamCell", bus_, bus_);
 }   
 
 RAMCell::~RAMCell()
@@ -91,17 +91,18 @@ std::string IRAM::toString(const std::vector<bool>& v)
 // RAM256
 // 
 
-RAM256::RAM256(Bus *bus) : IRAM(bus)
+RAM256::RAM256(Bus *bus) : IRAM(bus), IBusNode("RAM256")
 {
-    MAROutputBus_ = new Bus();
-    MAR_ = new Register(systemBus_, MAROutputBus_); 
+    MAROutputBus_ = std::make_unique<Bus>("MAR_out"); 
+    MAROutputBus_->subscribe(this);
+
+    MAR_ = new Register("MAR", systemBus_, MAROutputBus_.get()); 
     cellGrid_ = new RAMCellGrid(systemBus_);
 }
 
 RAM256::~RAM256()
 {    
     delete MAR_;
-    delete MAROutputBus_;
     delete cellGrid_;
 }
 
@@ -133,7 +134,7 @@ RAMCell* RAM256::getSelectedCell()
 {
     // get MAR content (the 'address')
     MAR_->enable();
-    Byte address = MAROutputBus_->get();
+    Byte address = MAROutputBus_->read(this);
     //std::cout << "RAM::set( address : " << address.toString() << ")" << std::endl;
 
     // update Decoder's inputs
@@ -154,12 +155,16 @@ RAMCell* RAM256::getSelectedCell()
 // RAM65K
 // 
 
-RAM65K::RAM65K(Bus *bus) : IRAM(bus)
+RAM65K::RAM65K(Bus *bus) : IRAM(bus), IBusNode("RAM65K")
 {
-    MAROutputBus0_ = new Bus();
-    MAROutputBus1_ = new Bus();
-    MAR0_ = new Register(systemBus_, MAROutputBus0_); 
-    MAR1_ = new Register(systemBus_, MAROutputBus1_); 
+    MAROutputBus0_ = std::make_unique<Bus>("MAR0_out"); 
+    MAROutputBus0_->subscribe(this);
+
+    MAROutputBus1_ = std::make_unique<Bus>("MAR1_out"); 
+    MAROutputBus1_->subscribe(this);
+
+    MAR0_ = new Register("MAR0", systemBus_, MAROutputBus0_.get()); 
+    MAR1_ = new Register("MAR1", systemBus_, MAROutputBus1_.get()); 
     cellGrid_ = new RAMCellGrid(systemBus_, 256);
 }
 
@@ -167,8 +172,6 @@ RAM65K::~RAM65K()
 {    
     delete MAR0_;
     delete MAR1_;
-    delete MAROutputBus0_;
-    delete MAROutputBus1_;
     delete cellGrid_;
 }
 
@@ -206,11 +209,11 @@ RAMCell* RAM65K::getSelectedCell()
 {
     // get MAR0 content 
     MAR0_->enable();
-    Byte address0 = MAROutputBus0_->get();
+    Byte address0 = MAROutputBus0_->read(this);
 
     // get MAR1 content
     MAR1_->enable();
-    Byte address1 = MAROutputBus1_->get();
+    Byte address1 = MAROutputBus1_->read(this);
 
     //std::cout << "RAM65K::getSelectedCell( address= " << address1.toString() << ":" << address0.toString() << ")" << std::endl;
 

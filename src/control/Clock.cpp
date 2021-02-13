@@ -36,30 +36,18 @@ void Clock::shutdown()
     }
 }
 
-void Clock::onClockChange(const IClockSubscriber::ClockMessage& msg)
-{
-    mtxSubscribers_.lock();
-    for (auto subscriber : subscribers_) 
-    {
-        subscriber->onClkMessage(msg);
-    }
-    mtxSubscribers_.unlock();
-}
-
-void Clock::updateEnableAndSetClocks(IClockSubscriber::ClockMessage& msg)
+void Clock::updateEnableAndSetClocks()
 {
     if ((clk_ || clkd_) != clkE_)
     {
         clkE_ = (clk_ || clkd_);
-        //notifyClk(enable, clkE_);
-        msg[ClockEnable] = clkE_;
+        onClockChange(ClockEnable, clkE_);        
     }
 
     if ((clk_ && clkd_) != clkS_)
     {
         clkS_ = (clk_ && clkd_);
-       //notifyClk(set, clkS_);
-       msg[ClockSet] = clkS_;
+       onClockChange(ClockSet, clkS_);
     }
 }
 
@@ -70,30 +58,23 @@ void Clock::clkThread()
         IClockSubscriber::ClockMessage msg;
         (clk_) ? clk_ = false : clk_ = true;
 
-        msg[ClockSystem] = clk_;
+        onClockChange(ClockSystem, clk_); // clk_ cambia:
+                                          //     1) notificar a los clientes 
+                                          //     2) empieza el ciclo
 
-        //notifyClk(system, clk_); // clk_ cambia:
-                                 //     1) notificar a los clientes 
-                                 //     2) empieza el ciclo
-
-        updateEnableAndSetClocks(msg);
-        onClockChange(msg);
+        updateEnableAndSetClocks();       
 
         std::this_thread::sleep_for(std::chrono::microseconds(quarterCycleTime_));
 
-        (clkd_) ? clkd_ = false : clkd_ = true; // actualizar clkd_
-        //notifyClk(delayed, clkd_);
-        msg.clear();
-        msg[ClockDelayed] = clkd_;
+        (clkd_) ? clkd_ = false : clkd_ = true; // actualizar clkd_        
 
-        updateEnableAndSetClocks(msg);
-        onClockChange(msg);
+        updateEnableAndSetClocks();       
 
         std::this_thread::sleep_for(std::chrono::microseconds(quarterCycleTime_));  
     }
 }
 
-void Clock::notifyClk(ClockType type, const bool value)
+void Clock::onClockChange(ClockType type, const bool value)
 {
     mtxSubscribers_.lock();
     for (auto subscriber : subscribers_) 
@@ -110,7 +91,6 @@ void Clock::notifyClk(ClockType type, const bool value)
             subscriber->onClkS(value);  
             break;            
         default:
-            subscriber->onClkD(value);  
             break;
         }        
     }
