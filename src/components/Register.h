@@ -25,8 +25,9 @@ public:
      *  @param [in] id register's id
      *  @param [in] inputBus  the input bus
      *  @param [in] outputBus the output bus
+     *  @param [in] defaultValue the default value 
      */
-    Register(const std::string& id, Bus* inputBus, Bus* outputBus);
+    Register(const std::string& id, Bus* inputBus, Bus* outputBus, const Byte& defaultValue = 0);
 
     /** Destructor
      */

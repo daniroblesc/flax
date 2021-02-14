@@ -11,7 +11,7 @@ Register::Register(const std::string& id, Bus *bus, const Byte& defaultValue) :
     setDefaultValue(defaultValue);
 }
 
-Register::Register(const std::string& id, Bus *inputBus, Bus *outputBus) : 
+Register::Register(const std::string& id, Bus *inputBus, Bus *outputBus, const Byte& defaultValue) : 
     control::IControllableUnit(id),
     IBusNode(id)
 {
@@ -19,6 +19,7 @@ Register::Register(const std::string& id, Bus *inputBus, Bus *outputBus) :
     outputBus_ = outputBus;
     inputBus_->subscribe(this);
     outputBus_->subscribe(this);
+    setDefaultValue(defaultValue);
 }
 
 Register::~Register()

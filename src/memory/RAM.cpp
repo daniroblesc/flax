@@ -3,10 +3,10 @@
 #include <sstream>      // std::stringstream
 #include <assert.h>     /* assert */
 
-RAMCell::RAMCell(Bus *bus) 
+RAMCell::RAMCell(Bus *bus, const Byte& defaultValue) 
 {
     bus_ = bus;
-    R_ = new Register("RamCell", bus_, bus_);
+    R_ = new Register("RamCell", bus_, bus_, defaultValue);
 }   
 
 RAMCell::~RAMCell()
@@ -31,11 +31,16 @@ void RAMCell::set(const bool s)
     R_->set( X1_.output() );
 }
 
+Byte RAMCell::output()
+{
+    return R_->output();
+}
+
 //
 // RAMCellGrid
 //
 
-RAMCellGrid::RAMCellGrid(Bus *bus, const int gridSize)
+RAMCellGrid::RAMCellGrid(Bus *bus, const int gridSize, const Byte& defaultValue)
 {
     bus_ = bus;
     gridSize_ = gridSize;
@@ -45,7 +50,7 @@ RAMCellGrid::RAMCellGrid(Bus *bus, const int gridSize)
     {       
         for (int row = 0; row < gridSize; ++row)
         {
-            grid_[col][row] = new RAMCell(bus);
+            grid_[col][row] = new RAMCell(bus, defaultValue);
         }
     }
 }
@@ -92,12 +97,12 @@ std::string IRAM::toString(const std::vector<bool>& v)
 // RAM256
 // 
 
-RAM256::RAM256(Bus *systemBus, Register* MAR) : 
+RAM256::RAM256(Bus *systemBus, Register* MAR, const Byte& defaultValue) : 
     IRAM(systemBus), IBusNode("RAM256"), control::IControllableUnit("RAM256")
 {
     MAROutputBus_ = MAR->getOutputBus();
     MAR_ = MAR;
-    cellGrid_ = new RAMCellGrid(systemBus_);
+    cellGrid_ = new RAMCellGrid(systemBus_, 16, defaultValue);
 }
 
 RAM256::~RAM256()
@@ -109,8 +114,8 @@ void RAM256::enable(const bool e)
 {
     RAMCell* cell = getSelectedCell();
 
-    cell->update(true, true);
-    cell->enable();
+    cell->update();
+    cell->enable(e);
     cell->update(false, false);
 }
 
@@ -118,8 +123,8 @@ void RAM256::set(const bool s)
 {
     RAMCell* cell = getSelectedCell();
 
-    cell->update(true, true);
-    cell->set();
+    cell->update();
+    cell->set(s);
     cell->update(false, false);
 }
 
@@ -204,8 +209,8 @@ void RAM65K::enable(const bool e)
 {
     RAMCell* cell = getSelectedCell();
 
-    cell->update(true, true);
-    cell->enable();
+    cell->update();
+    cell->enable(e);
     cell->update(false, false);    
 }
 
@@ -213,8 +218,8 @@ void RAM65K::set(const bool s)
 {
     RAMCell* cell = getSelectedCell();
 
-    cell->update(true, true);
-    cell->set();
+    cell->update();
+    cell->set(s);
     cell->update(false, false);    
 }
 

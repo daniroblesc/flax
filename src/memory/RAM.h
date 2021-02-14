@@ -21,8 +21,9 @@ class RAMCell
 public:
     /** Constructor
      *  @param [in] bus system bus where the memory is connected
+     *  @param [in] defaultValue the default value 
      */
-    RAMCell(Bus *bus);
+    RAMCell(Bus *bus, const Byte& defaultValue = 0);
     
     /** Destructor
      */ 
@@ -32,7 +33,7 @@ public:
      *  @param [in] a1 bit address #1
      *  @param [in] a2 bit address #2
      */
-    void update(const bool a1, const bool a2);
+    void update(const bool a1 = true, const bool a2 = true);
 
     /** write cell's content to the bus
      *  @param [in] e content is written to the bus if e=true
@@ -42,7 +43,12 @@ public:
     /** update cell's content with data from the bus
      *  @param [in] s content is updated from the bus if s=true
      */
-    void set(const bool s = true);  
+    void set(const bool s = true); 
+
+    /** Get cell's register output (for debugging purposes)
+     *  @return the saved byte
+     */
+    Byte output(); 
 
 private:
     
@@ -65,8 +71,9 @@ public:
     /** Constructor
      *  @param [in] bus system bus where the memory is connected
      *  @param [in] gridSize the grid size
+     *  @param [in] defaultValue the default value 
      */
-    RAMCellGrid(Bus *bus, const int gridSize = 16);
+    RAMCellGrid(Bus *bus, const int gridSize, const Byte& defaultValue = 0);
 
     /** Destructor
      */ 
@@ -142,8 +149,9 @@ public:
     /** Constructor
      *  @param [in] systemBus system bus where the memory is connected
      *  @param [in] MAR the memory address register
+     *  @param [in] defaultValue the default value  
      */
-    RAM256(Bus *systemBus, Register* MAR);
+    RAM256(Bus *systemBus, Register* MAR, const Byte& defaultValue = 0);
 
     /** Destructor
      */ 

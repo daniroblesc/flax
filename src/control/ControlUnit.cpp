@@ -26,10 +26,10 @@ std::string IControllableUnit::getId() const
 // ControlUnit implementation
 //
 
-ControlUnit::ControlUnit(Bus* inputBus, const double clkFreq)
+ControlUnit::ControlUnit(Bus* inputBus)
 {
     inputBus_ = inputBus;
-    clock_ = std::make_unique<control::Clock>(clkFreq);    
+    clock_ = std::make_unique<control::Clock>();    
 }
 
 ControlUnit::~ControlUnit()
@@ -61,33 +61,12 @@ void ControlUnit::connect(IControllableUnit* controllableUnit)
 
 void ControlUnit::onClk(const bool clk)
 {
-    stepper_.update(clk);
-/*
-    if (stepper_.output(STEP1))
-    {
-        std::cout << "ControlUnit::onClk( STEP1 )\n";
-    }
-    if (stepper_.output(STEP2))
-    {
-        std::cout << "ControlUnit::onClk( STEP2 )\n";
-    }
-    if (stepper_.output(STEP2))
-    {
-        std::cout << "ControlUnit::onClk( STEP3 )\n";
-    }
-    if (stepper_.output(STEP4))
-    {
-        std::cout << "ControlUnit::onClk( STEP4 )\n";
-    }
-    else if (stepper_.output(STEP5))
-    {
-        std::cout << "ControlUnit::onClk( STEP5 )\n";
-    }
-    else if (stepper_.output(STEP6))
-    {
-        std::cout << "ControlUnit::onClk( STEP6 )\n";
-    }
-*/    
+    stepper_.update(clk); 
+}
+
+void ControlUnit::extClk(bool clk)
+{
+    stepper_.update(clk); 
 }
 
 int ControlUnit::getCurrentStep()
@@ -106,11 +85,42 @@ int ControlUnit::getCurrentStep()
     return retval;
 }
 
-
 void ControlUnit::onClkE(const bool clkE)
-{
-    std::cout << "ControlUnit::onClkE( " << clkE << " step " << getCurrentStep() << ")\n";
+{  
+    //std::cout << "ControlUnit::onClkE(" << clkE << " step=" << getCurrentStep() << ")\n";
 
+    if (stepper_.output(STEP1))
+    {
+        if (clkE)
+            std::cout << "\n\nControlUnit::onClkE(STEP1)\n";
+        else 
+            std::cout << "\n\nControlUnit::onClkE(STEP1 - ClkE false)\n";
+
+        allEnableGates_["IAR"]->update(clkE, stepper_.output(STEP1));
+        sendSignal("IAR", SIG_ENABLE, allEnableGates_["IAR"]->output());
+
+        sendSignal("BUS1", SIG_ENABLE, stepper_.output(STEP1));
+
+        SignalCollection sigValue;
+        // ADD = 110
+        sigValue.push_back(0);
+        sigValue.push_back(1);
+        sigValue.push_back(1);
+        sendSignal("ALU", SIG_OP, sigValue);
+    }
+    else if (stepper_.output(STEP2))
+    {
+        if (clkE)
+            std::cout << "\n\nControlUnit::onClkE(STEP2)\n";
+        else 
+            std::cout << "\n\nControlUnit::onClkE(STEP2 - ClkE false)\n";
+
+        allEnableGates_["RAM256"]->update(clkE, stepper_.output(STEP2));
+        sendSignal("RAM256", SIG_ENABLE, allEnableGates_["RAM256"]->output());
+
+    }
+
+/*
     allEnableGates_["R1"]->update(clkE, stepper_.output(STEP4));
     sendSignal("R1",  SIG_ENABLE, allEnableGates_["R1"]->output());
 
@@ -130,12 +140,39 @@ void ControlUnit::onClkE(const bool clkE)
 
     allEnableGates_["ACC"]->update(clkE, stepper_.output(STEP6));
     sendSignal("ACC", SIG_ENABLE, allEnableGates_["ACC"]->output());
+*/    
 }
 
 void ControlUnit::onClkS(const bool clkS)
 {
-    std::cout << "ControlUnit::onClkS( " << clkS << " step " << getCurrentStep() << ")\n";
+    //std::cout << "ControlUnit::onClkS(" << clkS << " step=" << getCurrentStep() << ")\n";
 
+    if (stepper_.output(STEP1))
+    {
+        if (clkS)
+            std::cout << "\n\nControlUnit::onClkS(STEP1)\n";
+        else 
+            std::cout << "\n\nControlUnit::onClkS(STEP1 - ClkS false)\n";            
+
+        allSetGates_["MAR"]->update(clkS, stepper_.output(STEP1));
+        sendSignal("MAR", SIG_SET, allSetGates_["MAR"]->output());
+
+        allSetGates_["ACC"]->update(clkS, stepper_.output(STEP1));
+        sendSignal("ACC", SIG_SET, allSetGates_["ACC"]->output());
+    }
+    else if (stepper_.output(STEP2))
+    {
+        if (clkS)
+            std::cout << "\n\nControlUnit::onClkS(STEP2)\n";
+        else 
+            std::cout << "\n\nControlUnit::onClkS(STEP2 - ClkS false)\n";    
+
+        allSetGates_["IR"]->update(clkS, stepper_.output(STEP2));
+        sendSignal("IR", SIG_SET, allSetGates_["IR"]->output());
+
+    }
+
+/*
     allSetGates_["TMP"]->update(clkS, stepper_.output(STEP4));
     sendSignal("TMP", SIG_SET, allSetGates_["TMP"]->output());
 
@@ -144,6 +181,7 @@ void ControlUnit::onClkS(const bool clkS)
 
     allSetGates_["R0"]->update(clkS, stepper_.output(STEP6));
     sendSignal("R0",  SIG_SET, allSetGates_["R0"]->output());
+*/    
 }
 
 void ControlUnit::sendSignal(const std::string& id, const signalType type, const bool sigValue)

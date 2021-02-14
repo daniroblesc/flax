@@ -66,14 +66,18 @@ class ControlUnit : public IClockSubscriber
 public:
     /** Constructor
      *  @param [in] inputBus  the input bus (from IR)
-     *  @param [in] clkFreq   clk freq in Hz (for debugging purposes)
      */
-    ControlUnit(Bus* inputBus, const double clkFreq = 1000.0);
+    ControlUnit(Bus* inputBus);
 
     /** Destructor
      */
     ~ControlUnit();
 
+    /** Inject an external (for debugging purposes)
+     *  @param [in] clk the clock signal
+     */
+    void extClk(bool clk);
+    
     /** Start object 
      *  subscribe the object to the internal clock (receive notifications)
      */
@@ -95,7 +99,6 @@ public:
     void onClkE(const bool clkE);
     void onClkS(const bool clkS);
 
- 
 private:
 
     enum step
