@@ -1,6 +1,7 @@
 #include "RAM.h"
 #include <iostream>
 #include <sstream>      // std::stringstream
+#include <assert.h>     /* assert */
 
 RAMCell::RAMCell(Bus *bus) 
 {
@@ -69,9 +70,9 @@ RAMCell* RAMCellGrid::getCell(int col, int row)
 // IRAM
 // 
 
-IRAM::IRAM(Bus *bus) 
+IRAM::IRAM(Bus *systemBus) 
 {
-    systemBus_ = bus;
+    systemBus_ = systemBus;
 }
 
 IRAM::~IRAM() 
@@ -91,18 +92,16 @@ std::string IRAM::toString(const std::vector<bool>& v)
 // RAM256
 // 
 
-RAM256::RAM256(Bus *bus) : IRAM(bus), IBusNode("RAM256")
+RAM256::RAM256(Bus *systemBus, Register* MAR) : 
+    IRAM(systemBus), IBusNode("RAM256"), control::IControllableUnit("RAM256")
 {
-    MAROutputBus_ = std::make_unique<Bus>("MAR_out"); 
-    MAROutputBus_->subscribe(this);
-
-    MAR_ = new Register("MAR", systemBus_, MAROutputBus_.get()); 
+    MAROutputBus_ = MAR->getOutputBus();
+    MAR_ = MAR;
     cellGrid_ = new RAMCellGrid(systemBus_);
 }
 
 RAM256::~RAM256()
 {    
-    delete MAR_;
     delete cellGrid_;
 }
 
@@ -124,12 +123,6 @@ void RAM256::set(const bool s)
     cell->update(false, false);
 }
 
-void RAM256::setAddress(const bool sa)
-{
-    // MAR content is refreshed with the bus content
-    MAR_->set(sa);
-}
-
 RAMCell* RAM256::getSelectedCell()
 {
     // get MAR content (the 'address')
@@ -149,6 +142,26 @@ RAMCell* RAM256::getSelectedCell()
 
     // return the selected cell
     return cellGrid_->getCell(selectedCol, selectedRow);
+}
+
+void RAM256::signal(const control::signalType type, const control::SignalCollection& value)
+{
+    assert(value.size()==1);
+
+    switch (type)
+    {
+    case control::SIG_ENABLE:
+        enable(value[0]);
+        break;
+    
+    case control::SIG_SET:
+        set(value[0]);
+        break;
+
+    default:
+        assert(0);
+        break;
+    }    
 }
 
 // 

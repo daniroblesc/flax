@@ -17,6 +17,10 @@ typedef enum ClockType
     ClockSet
 } ClockType;
 
+/*! \class The IClockSubscriber interface
+ *  \brief It is the interface for all those objects that wants
+ *         to receive the clock signal.
+ */
 class IClockSubscriber
 {
 public:
@@ -27,9 +31,13 @@ public:
     virtual void onClkS(const bool clkS) = 0;
 };
 
-/*! \class Clock
- *  \brief 
+/*! \class The Clock class
+ *  \brief A clock generator is an oscillator that produces a clock signal for 
+ *         use in synchronizing a circuit's operation.
  *
+ *   A clock signal (historically also known as logic beat) oscillates between a 
+ *   high and a low state and is used like a metronome to coordinate actions of 
+ *   digital circuits.
  */
 class Clock
 {
@@ -39,10 +47,24 @@ public:
     explicit Clock(const double freq = 1000.0);
     ~Clock();
 
+    /** Start object 
+     *  internal clock signal generator thread is created
+     */
     void start();
+    
+    /** Shutdown object 
+     *  internal clock signal generator thread is terminated
+     */
     void shutdown();
 
+    /** Subscribe clients that wants to receive the clock signal
+     *  @param [in] subscriber the client
+     */
     void subscribe(IClockSubscriber* subscriber);
+
+    /** Unsubscribe clients from receiving the clock signal
+     *  @param [in] subscriber the client
+     */
     void unsubscribe(IClockSubscriber* subscriber);
 
 private:

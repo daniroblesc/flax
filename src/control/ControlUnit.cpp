@@ -26,8 +26,9 @@ std::string IControllableUnit::getId() const
 // ControlUnit implementation
 //
 
-ControlUnit::ControlUnit(const double clkFreq)
+ControlUnit::ControlUnit(Bus* inputBus, const double clkFreq)
 {
+    inputBus_ = inputBus;
     clock_ = std::make_unique<control::Clock>(clkFreq);    
 }
 

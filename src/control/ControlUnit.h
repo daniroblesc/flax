@@ -64,8 +64,14 @@ private:
 class ControlUnit : public IClockSubscriber
 {
 public:
+    /** Constructor
+     *  @param [in] inputBus  the input bus (from IR)
+     *  @param [in] clkFreq   clk freq in Hz (for debugging purposes)
+     */
+    ControlUnit(Bus* inputBus, const double clkFreq = 1000.0);
 
-    ControlUnit(const double clkFreq = 1000.0);
+    /** Destructor
+     */
     ~ControlUnit();
 
     /** Start object 
@@ -101,6 +107,8 @@ private:
         STEP5,
         STEP6
     };
+
+    Bus* inputBus_;     ///< input bus
 
     std::unique_ptr<control::Clock> clock_; ///< The internal clock
     control::Stepper stepper_; ///< The stepper

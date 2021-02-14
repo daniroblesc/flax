@@ -107,9 +107,9 @@ class IRAM
 {
 public:
     /** Constructor
-     *  @param [in] bus system bus where the memory is connected
+     *  @param [in] systemBus system bus where the memory is connected
      */
-    IRAM(Bus *bus);
+    IRAM(Bus *systemBus);
 
     /** Destructor
      */     
@@ -136,22 +136,18 @@ protected:
 /*! \class RAM256
  *  \brief This class implements a RAM of 256 bytes
  */ 
-class RAM256 : public IRAM, public IBusNode
+class RAM256 : public IRAM, public IBusNode, public control::IControllableUnit
 {
 public:
     /** Constructor
-     *  @param [in] bus system bus where the memory is connected
+     *  @param [in] systemBus system bus where the memory is connected
+     *  @param [in] MAR the memory address register
      */
-    RAM256(Bus *bus);
+    RAM256(Bus *systemBus, Register* MAR);
 
     /** Destructor
      */ 
     virtual ~RAM256();
-
-    /** select memory cell address with data from the bus
-     *  @param [in] sa memory cell is selected with address from the bus if sa=true
-     */ 
-    void setAddress(const bool sa = true);
 
     /** write memory cell's content to the bus
      *  @param [in] e content is written to the bus if e=true
@@ -163,9 +159,16 @@ public:
      */
     void set(const bool s = true); 
 
+    /** implements control::IControllableUnit method
+     *  Signal received from the Control Unit
+     *  @param [in] type signal's type
+     *  @param [in] value signal value
+     */
+    void signal(const control::signalType type, const control::SignalCollection& value) override;
+
 private:
     
-    std::unique_ptr<Bus> MAROutputBus_;   ///< internal bus
+    Bus* MAROutputBus_ = nullptr;   ///< bus from MAR's output
     Register* MAR_ = nullptr;   ///< memory address register
     Decoder4X16 selectCol_; ///< decoder to select grid's col
     Decoder4X16 selectRow_; ///< decoder to select grid's row

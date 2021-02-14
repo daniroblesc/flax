@@ -24,6 +24,11 @@ Register::Register(const std::string& id, Bus *inputBus, Bus *outputBus) :
 Register::~Register()
 {}
 
+Bus* Register::getOutputBus()
+{
+    return outputBus_;
+}
+
 void Register::setDefaultValue(const Byte& defaultValue)
 {
     if (defaultValue == 0)

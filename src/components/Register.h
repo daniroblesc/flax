@@ -32,6 +32,11 @@ public:
      */
     ~Register();
 
+    /** Get register's output bus
+     *  @return the output bus
+     */ 
+    Bus* getOutputBus();
+
     /** Update the "enable" bit 
      *  Writes reg's content to the bus when 'e' bit is ON
      *  @param [in] e 'e' bit 
