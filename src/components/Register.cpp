@@ -1,12 +1,14 @@
 #include "Register.h"
 #include <assert.h>     /* assert */
+#include <iostream>
 
-Register::Register(const std::string& id, Bus *bus) : 
+Register::Register(const std::string& id, Bus *bus, const Byte& defaultValue) : 
     control::IControllableUnit(id),
     IBusNode(id)
 {
     inputBus_ = outputBus_ = bus;
     bus->subscribe(this);
+    setDefaultValue(defaultValue);
 }
 
 Register::Register(const std::string& id, Bus *inputBus, Bus *outputBus) : 
@@ -21,6 +23,16 @@ Register::Register(const std::string& id, Bus *inputBus, Bus *outputBus) :
 
 Register::~Register()
 {}
+
+void Register::setDefaultValue(const Byte& defaultValue)
+{
+    if (defaultValue == 0)
+    {
+        return;
+    }
+    memoryByte_.update(defaultValue);
+    enabler_.update(memoryByte_.output());
+}
 
 void Register::signal(const control::signalType type, const control::SignalCollection& value)
 {
@@ -44,8 +56,13 @@ void Register::signal(const control::signalType type, const control::SignalColle
 
 void Register::enable(const bool e)
 {
+    if (e == false) 
+    {
+        return;
+    }
+
     // the E's inputs go to the outputs
-    enabler_.enable(e);
+    enabler_.enable();
     // get the E's outputs
     Byte output = enabler_.output();
     // save E's outputs to the bus
@@ -54,6 +71,11 @@ void Register::enable(const bool e)
 
 void Register::set(const bool s)
 {
+    if (s == false) 
+    {
+        return;
+    }
+
     // get bus content
     Byte input = inputBus_->read(this);
 
@@ -62,4 +84,9 @@ void Register::set(const bool s)
 
     // update E's input with B's output
     enabler_.update(memoryByte_.output());
+}
+
+Byte Register::output()
+{
+    return memoryByte_.output();
 }

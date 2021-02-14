@@ -30,7 +30,8 @@ void ALU::signal(const control::signalType type, const control::SignalCollection
         op[0].update(value[0]);
         op[1].update(value[1]);
         op[2].update(value[2]);
-        update(carryIn, op);
+        bool carryOut, equal, a_larger, zero;
+        update(carryIn, op, carryOut, equal, a_larger, zero);
     }
     break;
 
@@ -38,6 +39,12 @@ void ALU::signal(const control::signalType type, const control::SignalCollection
         assert(0);
         break;
     };
+}
+
+void ALU::update(const bool carryIn, const Wire* op,bool &carryOut, bool& equal, bool& a_larger, bool& zero)
+{
+    update(carryIn, op);
+    output(carryOut, equal, a_larger, zero);
 }
 
 void ALU::update(const bool carryIn, const Wire* op)

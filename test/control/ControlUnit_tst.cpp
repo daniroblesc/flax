@@ -25,13 +25,13 @@ protected:
 
         // Create controllable items
         // 
-        R1_  = std::make_unique<Register>("R1", buses_["system"].get());
-        R0_  = std::make_unique<Register>("R0", buses_["system"].get());
-        TMP_ = std::make_unique<Register>("TMP", buses_["system"].get());
+        R1_  = std::make_unique<Register>("R1", buses_["system"].get(), 0x3);
+        R0_  = std::make_unique<Register>("R0", buses_["system"].get(), 0x4);
+        TMP_ = std::make_unique<Register>("TMP", buses_["system"].get(), buses_["ALU_in_b"].get());
         ACC_ = std::make_unique<Register>("ACC", buses_["ALU_out"].get(), buses_["system"].get());
         ALU_ = std::make_unique<ALU>(buses_["system"].get(), buses_["ALU_in_b"].get(), buses_["ALU_out"].get());
 
-        controlUnit_ = std::make_unique<control::ControlUnit>(1);    
+        controlUnit_ = std::make_unique<control::ControlUnit>(10);    
 
         // Connect items to the Control Unit
         //
@@ -61,13 +61,9 @@ protected:
     std::unique_ptr<ALU> ALU_;
 };
 
-TEST_F(ControlUnitTest, x) 
+TEST_F(ControlUnitTest, add) 
 {
-    controlUnit_->inject(buses_["system"].get());
     controlUnit_->start();
-
-
-    std::this_thread::sleep_for(std::chrono::seconds(10));
-    
-
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    EXPECT_TRUE(R0_->output() == 0x7);
 }

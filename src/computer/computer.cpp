@@ -18,13 +18,11 @@ void Computer::initialize()
 
     // Create controllable items
     // 
-    R1_  = std::make_unique<Register>("R1", buses_["system"].get());
-    R0_  = std::make_unique<Register>("R0", buses_["system"].get());
-    TMP_ = std::make_unique<Register>("TMP", buses_["system"].get());
+    R1_  = std::make_unique<Register>("R1", buses_["system"].get(), 0x3);
+    R0_  = std::make_unique<Register>("R0", buses_["system"].get(), 0x4);
+    TMP_ = std::make_unique<Register>("TMP", buses_["system"].get(), buses_["ALU_in_b"].get());
     ACC_ = std::make_unique<Register>("ACC", buses_["ALU_out"].get(), buses_["system"].get());
     ALU_ = std::make_unique<ALU>(buses_["system"].get(), buses_["ALU_in_b"].get(), buses_["ALU_out"].get());
-
-    // Connect items to the bus
 
     // Connect items to the Control Unit
     //

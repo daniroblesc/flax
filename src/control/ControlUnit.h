@@ -68,11 +68,6 @@ public:
     ControlUnit(const double clkFreq = 1000.0);
     ~ControlUnit();
 
-    void inject(Bus* bus)
-    {
-        bus_ = bus;
-    }
-
     /** Start object 
      *  subscribe the object to the internal clock (receive notifications)
      */
@@ -119,7 +114,7 @@ private:
     void sendSignal(const std::string& id, const signalType type, const bool sigValue);
     void sendSignal(const std::string& id, const signalType type, const SignalCollection& sigValue);    
 
-    Bus* bus_;
+    int getCurrentStep();
 };
 
 

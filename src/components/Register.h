@@ -17,8 +17,9 @@ public:
     /** Constructor
      *  @param [in] id register's id
      *  @param [in] bus the input/output bus
+     *  @param [in] defaultValue the default value 
      */
-    Register(const std::string& id, Bus* bus);
+    Register(const std::string& id, Bus* bus, const Byte& defaultValue = 0);
 
     /** Constructor
      *  @param [in] id register's id
@@ -50,6 +51,11 @@ public:
      */
     void signal(const control::signalType type, const control::SignalCollection& value) override;
 
+    /** Get register output (for debugging purposes)
+     *  @return the saved byte
+     */ 
+    Byte output();
+
 private:
 
     Enabler enabler_; ///< The enabler
@@ -57,6 +63,8 @@ private:
 
     Bus* inputBus_;     ///< input bus
     Bus* outputBus_;    ///< output bus
+
+    void setDefaultValue(const Byte& defaultValue);
 };
 
 #endif // REGISTER_H_  

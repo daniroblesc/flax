@@ -51,6 +51,8 @@ public:
      */
     void output(bool &carryOut, bool& equal, bool& a_larger, bool& zero);
 
+    void update(const bool carryIn, const Wire* op,bool &carryOut, bool& equal, bool& a_larger, bool& zero);
+
     /** implements control::IControllableUnit method
      *  Signal received from the Control Unit
      *  @param [in] type signal's type
