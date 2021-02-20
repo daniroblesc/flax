@@ -52,11 +52,11 @@ public:
      *  @param [in] inputBusB  the input bus B
      *  @param [in] outputBus the output bus
      */
-    ALU(Bus* inputBusA, Bus* inputBusB, Bus* outputBus);
+    ALU(const std::shared_ptr<Bus>& inputBusA, const std::shared_ptr<Bus>& inputBusB, const std::shared_ptr<Bus>& outputBus);
 
     /** Destructor
      */
-    ~ALU();
+    ~ALU() = default;
     
     /** Update inputs
      *  @param [in] carryIn bit carried in from the previous less-signficant stage
@@ -111,9 +111,9 @@ private:
     bool carryIn_;
     OpCode op_;
 
-    Bus* inputBusA_;     ///< input bus A
-    Bus* inputBusB_;     ///< input bus B
-    Bus* outputBus_;    ///< output bus
+    std::shared_ptr<Bus> inputBusA_;     ///< input bus A
+    std::shared_ptr<Bus> inputBusB_;     ///< input bus B
+    std::shared_ptr<Bus> outputBus_;    ///< output bus
 };
 
 #endif // ALU_H_

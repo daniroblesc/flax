@@ -15,7 +15,7 @@ protected:
         inputBusB_ = std::make_unique<Bus>("inB");
         outputBus_ = std::make_unique<Bus>("out");
         
-        alu_ = std::make_unique<ALU>(inputBusA_.get(), inputBusB_.get(), outputBus_.get());
+        alu_ = std::make_unique<ALU>(inputBusA_, inputBusB_, outputBus_);
     }
 
     void TearDown() override 
@@ -24,9 +24,9 @@ protected:
     bool carryIn_ = false;
     
     // buses
-    std::unique_ptr<Bus> inputBusA_;
-    std::unique_ptr<Bus> inputBusB_;
-    std::unique_ptr<Bus> outputBus_;
+    std::shared_ptr<Bus> inputBusA_;
+    std::shared_ptr<Bus> inputBusB_;
+    std::shared_ptr<Bus> outputBus_;
 
     // the code under test
     std::unique_ptr<ALU> alu_;

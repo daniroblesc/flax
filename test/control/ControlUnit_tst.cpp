@@ -21,25 +21,25 @@ protected:
 
     void initializeRegisters()
     {
-        R0_  = std::make_unique<Register>("R0",  buses_["system"].get(), defaultValues_["R0"]);
-        R1_  = std::make_unique<Register>("R1",  buses_["system"].get(), defaultValues_["R1"]);
-        R2_  = std::make_unique<Register>("R2",  buses_["system"].get(), defaultValues_["R2"]);
-        R3_  = std::make_unique<Register>("R3",  buses_["system"].get(), defaultValues_["R3"]);
-        TMP_ = std::make_unique<Register>("TMP", buses_["system"].get(), buses_["TMP_out"].get(), defaultValues_["TMP"]);
-        ACC_ = std::make_unique<Register>("ACC", buses_["ALU_out"].get(), buses_["system"].get(), defaultValues_["ACC"]);
-        IAR_ = std::make_unique<Register>("IAR", buses_["system"].get(), defaultValues_["IAR"]);
-        IR_  = std::make_unique<Register>("IR",  buses_["system"].get(), buses_["CU_in"].get(), defaultValues_["IR"]);
-        MAR_ = std::make_unique<Register>("MAR", buses_["system"].get(), buses_["MAR_out"].get(), defaultValues_["MAR"]);
+        R0_  = std::make_unique<Register>("R0",  buses_["system"], defaultValues_["R0"]);
+        R1_  = std::make_unique<Register>("R1",  buses_["system"], defaultValues_["R1"]);
+        R2_  = std::make_unique<Register>("R2",  buses_["system"], defaultValues_["R2"]);
+        R3_  = std::make_unique<Register>("R3",  buses_["system"], defaultValues_["R3"]);
+        TMP_ = std::make_unique<Register>("TMP", buses_["system"], buses_["TMP_out"], defaultValues_["TMP"]);
+        ACC_ = std::make_unique<Register>("ACC", buses_["ALU_out"], buses_["system"], defaultValues_["ACC"]);
+        IAR_ = std::make_unique<Register>("IAR", buses_["system"], defaultValues_["IAR"]);
+        IR_  = std::make_unique<Register>("IR",  buses_["system"], buses_["CU_in"], defaultValues_["IR"]);
+        MAR_ = std::make_unique<Register>("MAR", buses_["system"], buses_["MAR_out"], defaultValues_["MAR"]);
 
-        controlUnit_->connect(R0_.get());
-        controlUnit_->connect(R1_.get());
-        controlUnit_->connect(R2_.get());
-        controlUnit_->connect(R3_.get());
-        controlUnit_->connect(TMP_.get());
-        controlUnit_->connect(ACC_.get());
-        controlUnit_->connect(IAR_.get());
-        controlUnit_->connect(IR_.get());
-        controlUnit_->connect(MAR_.get());
+        controlUnit_->connect(R0_);
+        controlUnit_->connect(R1_);
+        controlUnit_->connect(R2_);
+        controlUnit_->connect(R3_);
+        controlUnit_->connect(TMP_);
+        controlUnit_->connect(ACC_);
+        controlUnit_->connect(IAR_);
+        controlUnit_->connect(IR_);
+        controlUnit_->connect(MAR_);
     }
 
     void initializeDefaultValues()
@@ -58,12 +58,12 @@ protected:
 
     void createBuses()
     {
-        buses_["system"] = std::make_shared<Bus>("system", Bus::VERBOSE);
-        buses_["ALU_out"] = std::make_shared<Bus>("ALU_out", Bus::VERBOSE);
-        buses_["ALU_in_b"] = std::make_shared<Bus>("ALU_in_b", Bus::VERBOSE);
-        buses_["CU_in"] = std::make_shared<Bus>("CU_in", Bus::VERBOSE);
-        buses_["MAR_out"] = std::make_shared<Bus>("MAR_out", Bus::VERBOSE);
-        buses_["TMP_out"] = std::make_shared<Bus>("TMP_out", Bus::VERBOSE);
+        buses_["system"] = std::make_unique<Bus>("system", Bus::VERBOSE);
+        buses_["ALU_out"] = std::make_unique<Bus>("ALU_out", Bus::VERBOSE);
+        buses_["ALU_in_b"] = std::make_unique<Bus>("ALU_in_b", Bus::VERBOSE);
+        buses_["CU_in"] = std::make_unique<Bus>("CU_in", Bus::VERBOSE);
+        buses_["MAR_out"] = std::make_unique<Bus>("MAR_out", Bus::VERBOSE);
+        buses_["TMP_out"] = std::make_unique<Bus>("TMP_out", Bus::VERBOSE);
     }
 
     void initializeControlUnit()
@@ -71,18 +71,18 @@ protected:
         createBuses();
 
         // Create the control unit
-        controlUnit_ = std::make_unique<control::ControlUnit>(buses_["CU_in"].get(), Logger::VERBOSE);  
+        controlUnit_ = std::make_unique<control::ControlUnit>(buses_["CU_in"], Logger::VERBOSE);  
 
         initializeRegisters();
 
         // Initialize other controllable items:
-        ALU_ = std::make_unique<ALU>(buses_["system"].get(), buses_["ALU_in_b"].get(), buses_["ALU_out"].get());
-        RAM_ = std::make_unique<RAM256>(buses_["system"].get(), MAR_.get(), defaultValues_["RAM256"]);
-        BUS1_ = std::make_unique<Bus1>("BUS1",buses_["TMP_out"].get(),buses_["ALU_in_b"].get());
+        ALU_ = std::make_unique<ALU>(buses_["system"], buses_["ALU_in_b"], buses_["ALU_out"]);
+        RAM_ = std::make_unique<RAM256>(buses_["system"], MAR_, defaultValues_["RAM256"]);
+        BUS1_ = std::make_unique<Bus1>("BUS1",buses_["TMP_out"],buses_["ALU_in_b"]);
 
-        controlUnit_->connect(ALU_.get());
-        controlUnit_->connect(RAM_.get());
-        controlUnit_->connect(BUS1_.get());
+        controlUnit_->connect(ALU_);
+        controlUnit_->connect(RAM_);
+        controlUnit_->connect(BUS1_);
     }
 
     void SetUp() override 
@@ -116,19 +116,19 @@ protected:
     typedef std::map<std::string, Byte> DefaultValuesCollection;
     DefaultValuesCollection defaultValues_;
 
-    std::unique_ptr<Register> R1_;
-    std::unique_ptr<Register> R0_;
-    std::unique_ptr<Register> R2_;
-    std::unique_ptr<Register> R3_;
-    std::unique_ptr<Register> TMP_;
-    std::unique_ptr<Register> ACC_;
-    std::unique_ptr<Register> IAR_;
-    std::unique_ptr<Register> IR_;
-    std::unique_ptr<Register> MAR_;
+    std::shared_ptr<Register> R1_;
+    std::shared_ptr<Register> R0_;
+    std::shared_ptr<Register> R2_;
+    std::shared_ptr<Register> R3_;
+    std::shared_ptr<Register> TMP_;
+    std::shared_ptr<Register> ACC_;
+    std::shared_ptr<Register> IAR_;
+    std::shared_ptr<Register> IR_;
+    std::shared_ptr<Register> MAR_;
 
-    std::unique_ptr<RAM256> RAM_;
-    std::unique_ptr<ALU> ALU_;
-    std::unique_ptr<Bus1> BUS1_;
+    std::shared_ptr<RAM256> RAM_;
+    std::shared_ptr<ALU> ALU_;
+    std::shared_ptr<Bus1> BUS1_;
 };
 
 /* get the @ in IAR over to MAR */

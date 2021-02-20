@@ -2,7 +2,7 @@
 #include <iostream>
 #include <assert.h>     /* assert */
 
-ALU::ALU(Bus* inputBusA, Bus* inputBusB, Bus* outputBus) : 
+ALU::ALU(const std::shared_ptr<Bus>& inputBusA, const std::shared_ptr<Bus>& inputBusB, const std::shared_ptr<Bus>& outputBus) : 
     control::IControllableUnit("ALU"),
     IBusNode("ALU")
 {
@@ -13,9 +13,6 @@ ALU::ALU(Bus* inputBusA, Bus* inputBusB, Bus* outputBus) :
     inputBusB_->subscribe(this);
     outputBus_->subscribe(this);
 }
-
-ALU::~ALU()
-{}
 
 void ALU::signal(const control::signalType type, const control::SignalCollection& value)
 {

@@ -21,13 +21,13 @@ protected:
     } 
 
     // buses
-    std::unique_ptr<Bus> inputBus_; 
-    std::unique_ptr<Bus> outputBus_; 
+    std::shared_ptr<Bus> inputBus_; 
+    std::shared_ptr<Bus> outputBus_; 
 };
 
 TEST_F(RegisterTest, basicOperationSingleBusWriteReadTwice) 
 {
-    Register reg("reg", inputBus_.get());
+    Register reg("reg", inputBus_);
 
     inputBus_->write(0xA0); // set bus value
 
@@ -41,7 +41,7 @@ TEST_F(RegisterTest, basicOperationSingleBusWriteReadTwice)
 
 TEST_F(RegisterTest, basicOperationSingleBusSetToFalse) 
 {
-    Register reg("reg", inputBus_.get(), 0xBB);
+    Register reg("reg", inputBus_, 0xBB);
 
     inputBus_->write(0xA0); // set bus value
     
@@ -53,7 +53,7 @@ TEST_F(RegisterTest, basicOperationSingleBusSetToFalse)
 
 TEST_F(RegisterTest, basicOperationSingleBusSetToTrue) 
 {
-    Register reg("reg", inputBus_.get(), 0xBB);
+    Register reg("reg", inputBus_, 0xBB);
 
     inputBus_->write(0xA0); // set bus value
     
@@ -65,7 +65,7 @@ TEST_F(RegisterTest, basicOperationSingleBusSetToTrue)
 
 TEST_F(RegisterTest, basicOperationSingleBusEnableToFalse) 
 {
-    Register reg("reg", inputBus_.get(), 0xBB);
+    Register reg("reg", inputBus_, 0xBB);
 
     inputBus_->write(0xA0); // set bus value
     
@@ -76,7 +76,7 @@ TEST_F(RegisterTest, basicOperationSingleBusEnableToFalse)
 
 TEST_F(RegisterTest, basicOperationSingleBusEnableToTrue) 
 {
-    Register reg("reg", inputBus_.get(), 0xBB);
+    Register reg("reg", inputBus_, 0xBB);
 
     inputBus_->write(0xA0); // set bus value
     
@@ -87,7 +87,7 @@ TEST_F(RegisterTest, basicOperationSingleBusEnableToTrue)
 
 TEST_F(RegisterTest, basicOperationTwoBuses) 
 {
-    Register reg("reg", inputBus_.get(), outputBus_.get());
+    Register reg("reg", inputBus_, outputBus_);
 
     // set bus value
     inputBus_->write(0xAA); 

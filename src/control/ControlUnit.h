@@ -4,7 +4,9 @@
 #include "control/Clock.h"
 #include "control/Stepper.h"
 #include "circuit/Bus.h"
+#include "circuit/Wire.h"
 #include "misc/Logger.h"
+#include "components/Decoder.h"
 #include <map>
 #include <memory>
 
@@ -52,6 +54,50 @@ private:
     std::string id_;    ///< The identifier
 };
 
+typedef std::map< std::string, std::shared_ptr<IControllableUnit> > ControllableUnitCollection;
+
+/*! \class The ControlGPRegisters class
+ *  \brief  
+ * 
+ *
+ */
+class ControlGPRegisters
+{
+public:
+
+    ControlGPRegisters(const std::shared_ptr<Wire>& RegA, 
+                       const std::shared_ptr<Wire>& RegB);
+
+    /** Connect a controllable unit (like a register) 
+     *  The control unit will update controllable unit enable/set bits 
+     *  @param [in] controllableUnit the controllable unit
+     */
+    void connect(const std::shared_ptr<IControllableUnit>& controllableUnit);
+
+    /** Inject clock enable signal from ControlUnit
+     *  @param [in] clkE the clock enable signal
+     */
+    void onClkE(const bool clkE);
+
+    /** Inject clock set signal from ControlUnit
+     *  @param [in] clkS the clock set signal
+     */
+    void onClkS(const bool clkS);
+
+private:
+
+    std::map<std::string, std::shared_ptr<ORGate>>  orGates_;
+    std::map<std::string, std::shared_ptr<ANDGate>> setGates_;
+    Decoder2X4 decoders2x4_[3];
+
+    std::shared_ptr<Wire> RegA_;
+    std::shared_ptr<Wire> RegB_;
+    bool clkE_ = false;
+    bool clkS_ = false;
+
+    ControllableUnitCollection controllableUnits_; ///< The collection of general purposes registers
+};
+
 
 /*! \class The ControlUnit class
  *  \brief The control unit (CU) is a component of a computer's central processing 
@@ -69,13 +115,13 @@ public:
     /** Constructor
      *  @param [in] inputBus  the input bus (from IR)
      */
-    ControlUnit(Bus* inputBus, Logger::LogLevel logLevel = ERROR);
+    ControlUnit(const std::shared_ptr<Bus>& inputBus, Logger::LogLevel logLevel = ERROR);
 
     /** Destructor
      */
     ~ControlUnit();
 
-    /** Inject an external (for debugging purposes)
+    /** Inject an external clock (for debugging purposes)
      *  @param [in] clk the clock signal
      */
     void extClk(bool clk);
@@ -94,7 +140,7 @@ public:
      *  The control unit will update controllable unit enable/set bits 
      *  @param [in] controllableUnit the controllable unit
      */
-    void connect(IControllableUnit* controllableUnit);
+    void connect(const std::shared_ptr<IControllableUnit>& controllableUnit);
 
     // IClockSubscriber methods
     void onClk(const bool clk);
@@ -115,23 +161,25 @@ private:
 
     const char* className_;
 
-    Bus* inputBus_;     ///< input bus
+    std::shared_ptr<Bus> inputBus_;     ///< input bus
 
     std::unique_ptr<control::Clock> clock_; ///< The internal clock
     control::Stepper stepper_; ///< The stepper
-
-    typedef std::map<std::string, IControllableUnit*> ControllableUnitCollection;
+    
     ControllableUnitCollection controllableUnits_; ///< The collection of controllabe units
 
     std::map<std::string, std::shared_ptr<ANDGate>> allEnableGates_;
     std::map<std::string, std::shared_ptr<ANDGate>> allSetGates_;
+    std::shared_ptr<Wire> RegA_;
+    std::shared_ptr<Wire> RegB_;
 
     void sendSignal(const std::string& id, const signalType type, const bool sigValue);
     void sendSignal(const std::string& id, const signalType type, const SignalCollection& sigValue);    
 
     int getCurrentStep();
-    void log(const char *fmt, ...);
+    bool isGPRegister(const std::string& id);
 
+    std::unique_ptr<ControlGPRegisters> controlGPRegisters_;
 };
 
 

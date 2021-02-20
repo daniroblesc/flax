@@ -19,7 +19,7 @@ public:
      *  @param [in] bus the input/output bus
      *  @param [in] defaultValue the default value 
      */
-    Register(const std::string& id, Bus* bus, const Byte& defaultValue = 0);
+    Register(const std::string& id, const std::shared_ptr<Bus>& bus, const Byte& defaultValue = 0);
 
     /** Constructor
      *  @param [in] id register's id
@@ -27,16 +27,16 @@ public:
      *  @param [in] outputBus the output bus
      *  @param [in] defaultValue the default value 
      */
-    Register(const std::string& id, Bus* inputBus, Bus* outputBus, const Byte& defaultValue = 0);
+    Register(const std::string& id, const std::shared_ptr<Bus>& inputBus, const std::shared_ptr<Bus>& outputBus, const Byte& defaultValue = 0);
 
     /** Destructor
      */
-    ~Register();
+    ~Register() = default;
 
     /** Get register's output bus
      *  @return the output bus
      */ 
-    Bus* getOutputBus();
+    const std::shared_ptr<Bus>& getOutputBus();
 
     /** Update the "enable" bit 
      *  Writes reg's content to the bus when 'e' bit is ON
@@ -67,8 +67,8 @@ private:
     Enabler enabler_; ///< The enabler
     MemoryByte memoryByte_; ///< the byte memory
 
-    Bus* inputBus_;     ///< input bus
-    Bus* outputBus_;    ///< output bus
+    std::shared_ptr<Bus> inputBus_;     ///< input bus
+    std::shared_ptr<Bus> outputBus_;    ///< output bus
 
     void setDefaultValue(const Byte& defaultValue);
 };

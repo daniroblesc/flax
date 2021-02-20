@@ -17,7 +17,7 @@ protected:
         inputBus_ = std::make_unique<Bus>("in");
         outputBus_ = std::make_unique<Bus>("out");
 
-        B1_ = std::make_unique<Bus1>("BUS1",inputBus_.get(), outputBus_.get());    
+        B1_ = std::make_unique<Bus1>("BUS1", inputBus_, outputBus_);    
     }
 
     void TearDown() override 
@@ -28,8 +28,8 @@ protected:
     std::unique_ptr<Bus1> B1_;
 
     // buses
-    std::unique_ptr<Bus> inputBus_;
-    std::unique_ptr<Bus> outputBus_;
+    std::shared_ptr<Bus> inputBus_;
+    std::shared_ptr<Bus> outputBus_;
 };
 
 TEST_F(Bus1Test, basicOperationBus1BitIsZero) 

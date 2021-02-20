@@ -23,14 +23,51 @@ std::string IControllableUnit::getId() const
 }
 
 //
+// ControlGPRegisters implementation
+//
+
+ControlGPRegisters::ControlGPRegisters(const std::shared_ptr<Wire>& RegA, const std::shared_ptr<Wire>& RegB)
+{
+    RegA_ = RegA;
+    RegB_ = RegB;
+}
+
+void ControlGPRegisters::onClkE(const bool clkE)
+{
+    clkE_ = clkE;    
+}
+
+void ControlGPRegisters::onClkS(const bool clkS)
+{
+    clkS_ = clkS;
+}
+
+void ControlGPRegisters::connect(const std::shared_ptr<IControllableUnit>& controllableUnit)
+{
+    std::string id = controllableUnit->getId();
+    ControllableUnitCollection::iterator it = controllableUnits_.find(id);
+    if (it == controllableUnits_.end())
+    {
+        controllableUnits_[id] = controllableUnit;
+        orGates_[id] = std::make_shared<ORGate>();
+        setGates_[id] = std::make_shared<ANDGate>();
+    }
+}
+
+//
 // ControlUnit implementation
 //
 
-ControlUnit::ControlUnit(Bus* inputBus, Logger::LogLevel logLevel) : Logger(logLevel)
+ControlUnit::ControlUnit(const std::shared_ptr<Bus>& inputBus, Logger::LogLevel logLevel) : Logger(logLevel)
 {
     className_ = __func__;
     inputBus_ = inputBus;
     clock_ = std::make_unique<control::Clock>();    
+
+    RegA_ = std::make_shared<Wire>();
+    RegB_ = std::make_shared<Wire>();
+
+    controlGPRegisters_ = std::make_unique<ControlGPRegisters>(RegA_, RegB_);    
 }
 
 ControlUnit::~ControlUnit()
@@ -48,15 +85,28 @@ void ControlUnit::shutdown()
     clock_->unsubscribe(this);
 }
 
-void ControlUnit::connect(IControllableUnit* controllableUnit)
+bool ControlUnit::isGPRegister(const std::string& id)
+{
+    bool result = (id == "R0" || id == "R1" || id == "R2" || id == "R3");
+    return result;
+}
+
+void ControlUnit::connect(const std::shared_ptr<IControllableUnit>& controllableUnit)
 {
     std::string id = controllableUnit->getId();
     ControllableUnitCollection::iterator it = controllableUnits_.find(id);
     if (it == controllableUnits_.end())
     {
         controllableUnits_[id] = controllableUnit;
-        allEnableGates_[id] = std::make_shared<ANDGate>();
-        allSetGates_[id] = std::make_shared<ANDGate>();
+        if (isGPRegister(id))
+        {
+            controlGPRegisters_->connect(controllableUnit);
+        }
+        else
+        {
+            allEnableGates_[id] = std::make_shared<ANDGate>();
+            allSetGates_[id] = std::make_shared<ANDGate>();
+        }
     }
 }
 

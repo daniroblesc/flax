@@ -27,18 +27,18 @@ public:
 private:
 
     std::unique_ptr<control::ControlUnit> controlUnit_;
-    std::unique_ptr<ALU> ALU_;
-    std::unique_ptr<RAM256> RAM_;
+    std::shared_ptr<ALU> ALU_;
+    std::shared_ptr<RAM256> RAM_;
     
-    std::unique_ptr<Register> R0_;
-    std::unique_ptr<Register> R1_;
-    std::unique_ptr<Register> R2_;
-    std::unique_ptr<Register> R3_;
-    std::unique_ptr<Register> TMP_;
-    std::unique_ptr<Register> ACC_;
-    std::unique_ptr<Register> IAR_;
-    std::unique_ptr<Register> IR_;
-    std::unique_ptr<Register> MAR_;
+    std::shared_ptr<Register> R0_;
+    std::shared_ptr<Register> R1_;
+    std::shared_ptr<Register> R2_;
+    std::shared_ptr<Register> R3_;
+    std::shared_ptr<Register> TMP_;
+    std::shared_ptr<Register> ACC_;
+    std::shared_ptr<Register> IAR_;
+    std::shared_ptr<Register> IR_;
+    std::shared_ptr<Register> MAR_;
 
     typedef std::map<std::string, std::shared_ptr<Bus>> BusCollection;
     BusCollection buses_;

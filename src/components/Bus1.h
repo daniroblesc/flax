@@ -18,11 +18,11 @@ public:
      *  @param [in] inputBus  the input bus
      *  @param [in] outputBus the output bus
      */
-    Bus1(const std::string& id, Bus* inputBus, Bus* outputBus);
+    Bus1(const std::string& id, const std::shared_ptr<Bus>& inputBus, const std::shared_ptr<Bus>& outputBus);
 
     /** Destructor
      */
-    ~Bus1();
+    ~Bus1() = default;
 
     /** The single bit input determines what happens when a byte tries to pass 
      *  through this device.
@@ -47,8 +47,8 @@ private:
     Wire bus1_; ///< bus1 bit
 
 
-    Bus* inputBus_;     ///< input bus
-    Bus* outputBus_;    ///< output bus
+    std::shared_ptr<Bus> inputBus_;     ///< input bus
+    std::shared_ptr<Bus> outputBus_;    ///< output bus
 };
 
 #endif // BUS1_H_

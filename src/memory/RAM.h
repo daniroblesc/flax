@@ -23,11 +23,11 @@ public:
      *  @param [in] bus system bus where the memory is connected
      *  @param [in] defaultValue the default value 
      */
-    RAMCell(Bus *bus, const Byte& defaultValue = 0);
+    RAMCell(const std::shared_ptr<Bus>& bus, const Byte& defaultValue = 0);
     
     /** Destructor
      */ 
-    ~RAMCell();
+    ~RAMCell() = default;
 
     /** update cell's input with address bits
      *  @param [in] a1 bit address #1
@@ -57,8 +57,8 @@ private:
     ANDGate X1_;
     ANDGate X2_;
 
-    Register* R_ = nullptr; ///< register where data is saved
-    Bus* bus_ = nullptr; ///< system bus
+    std::shared_ptr<Register> R_; ///< register where data is saved
+    std::shared_ptr<Bus> bus_; ///< system bus
 };
 
 /*! \class RAMCellGrid
@@ -73,25 +73,26 @@ public:
      *  @param [in] gridSize the grid size
      *  @param [in] defaultValue the default value 
      */
-    RAMCellGrid(Bus *bus, const int gridSize, const Byte& defaultValue = 0);
+    RAMCellGrid(const std::shared_ptr<Bus>& bus, const int gridSize, const Byte& defaultValue = 0);
 
     /** Destructor
      */ 
-    virtual ~RAMCellGrid();
+    virtual ~RAMCellGrid() = default;
 
     /** Select a memory cell
      *  @param [in] col grid's column number
      *  @param [in] row grid's row number
      *  @return the selected memory cell
      */
-    RAMCell* getCell(int col, int row);
+    const std::shared_ptr<RAMCell>& getCell(int col, int row);
 
 private:
 
     int gridSize_ = 16; ///< the grid size
-    Bus *bus_ = nullptr;    ///< system bus
+    std::shared_ptr<Bus> bus_;    ///< system bus
     
-    std::vector<std::vector<RAMCell*>> grid_;   ///< the grid of memory cells
+    typedef std::vector<std::shared_ptr<RAMCell>> RamCellArray;
+    std::vector<RamCellArray> grid_;   ///< the grid of memory cells
 };
 
 /*! \class IRAM
@@ -116,7 +117,7 @@ public:
     /** Constructor
      *  @param [in] systemBus system bus where the memory is connected
      */
-    IRAM(Bus *systemBus);
+    IRAM(const std::shared_ptr<Bus>& systemBus);
 
     /** Destructor
      */     
@@ -134,7 +135,7 @@ public:
 
 protected:
 
-    Bus* systemBus_ = nullptr;  ///< system bus
+    std::shared_ptr<Bus> systemBus_;  ///< system bus
 
     /// Convert input bool stream to a string of chars 
     std::string toString(const std::vector<bool>& v);
@@ -151,11 +152,11 @@ public:
      *  @param [in] MAR the memory address register
      *  @param [in] defaultValue the default value  
      */
-    RAM256(Bus *systemBus, Register* MAR, const Byte& defaultValue = 0);
+    RAM256(const std::shared_ptr<Bus>& systemBus, const std::shared_ptr<Register>& MAR, const Byte& defaultValue = 0);
 
     /** Destructor
      */ 
-    virtual ~RAM256();
+    virtual ~RAM256() = default;
 
     /** write memory cell's content to the bus
      *  @param [in] e content is written to the bus if e=true
@@ -176,14 +177,14 @@ public:
 
 private:
     
-    Bus* MAROutputBus_ = nullptr;   ///< bus from MAR's output
-    Register* MAR_ = nullptr;   ///< memory address register
+    std::shared_ptr<Bus> MAROutputBus_;   ///< bus from MAR's output
+    std::shared_ptr<Register> MAR_;   ///< memory address register
     Decoder4X16 selectCol_; ///< decoder to select grid's col
     Decoder4X16 selectRow_; ///< decoder to select grid's row
-    RAMCellGrid* cellGrid_ = nullptr; ///< memory cell grid
+    std::shared_ptr<RAMCellGrid> cellGrid_; ///< memory cell grid
 
     /// get the selected memory cell
-    RAMCell* getSelectedCell();
+    const std::shared_ptr<RAMCell>& getSelectedCell();
 };
 
 /*! \class RAM65K
@@ -195,11 +196,11 @@ public:
     /** Constructor
      *  @param [in] bus system bus where the memory is connected
      */
-    RAM65K(Bus *bus);
+    RAM65K(const std::shared_ptr<Bus>& bus);
 
     /** Destructor
      */ 
-    virtual ~RAM65K();
+    virtual ~RAM65K() = default;
 
     /** select memory cell low address with data from the bus
      *  @param [in] s0 memory cell is selected with address from the bus if s0=true
@@ -223,16 +224,16 @@ public:
 
 private:
 
-    std::unique_ptr<Bus> MAROutputBus0_;  ///< internal bus #0
-    std::unique_ptr<Bus> MAROutputBus1_;  ///< internal bus #1
-    Register* MAR0_ = nullptr;  ///< memory address register #0
-    Register* MAR1_ = nullptr;  ///< memory address register #1
+    std::shared_ptr<Bus> MAROutputBus0_;  ///< internal bus #0
+    std::shared_ptr<Bus> MAROutputBus1_;  ///< internal bus #1
+    std::shared_ptr<Register> MAR0_;  ///< memory address register #0
+    std::shared_ptr<Register> MAR1_;  ///< memory address register #1
     Decoder8X256 selectCol_;    ///< decoder to select grid's col
     Decoder8X256 selectRow_;    ///< decoder to select grid's row
-    RAMCellGrid* cellGrid_ = nullptr;   ///< memory cell grid
+    std::shared_ptr<RAMCellGrid> cellGrid_;   ///< memory cell grid
     
     /// get the selected memory cell
-    RAMCell* getSelectedCell();
+    const std::shared_ptr<RAMCell>& getSelectedCell();
 };
 
 

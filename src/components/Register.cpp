@@ -2,7 +2,7 @@
 #include <assert.h>     /* assert */
 #include <iostream>
 
-Register::Register(const std::string& id, Bus *bus, const Byte& defaultValue) : 
+Register::Register(const std::string& id, const std::shared_ptr<Bus>& bus, const Byte& defaultValue) : 
     control::IControllableUnit(id),
     IBusNode(id)
 {
@@ -11,7 +11,7 @@ Register::Register(const std::string& id, Bus *bus, const Byte& defaultValue) :
     setDefaultValue(defaultValue);
 }
 
-Register::Register(const std::string& id, Bus *inputBus, Bus *outputBus, const Byte& defaultValue) : 
+Register::Register(const std::string& id, const std::shared_ptr<Bus>& inputBus, const std::shared_ptr<Bus>& outputBus, const Byte& defaultValue) : 
     control::IControllableUnit(id),
     IBusNode(id)
 {
@@ -22,10 +22,7 @@ Register::Register(const std::string& id, Bus *inputBus, Bus *outputBus, const B
     setDefaultValue(defaultValue);
 }
 
-Register::~Register()
-{}
-
-Bus* Register::getOutputBus()
+const std::shared_ptr<Bus>& Register::getOutputBus()
 {
     return outputBus_;
 }

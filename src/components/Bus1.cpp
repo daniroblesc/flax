@@ -2,7 +2,7 @@
 #include <iostream>
 #include <assert.h>     /* assert */
 
-Bus1::Bus1(const std::string& id, Bus *inputBus, Bus *outputBus)  : 
+Bus1::Bus1(const std::string& id, const std::shared_ptr<Bus>& inputBus, const std::shared_ptr<Bus>& outputBus)  : 
     control::IControllableUnit(id),
     IBusNode(id)
 {
@@ -11,9 +11,6 @@ Bus1::Bus1(const std::string& id, Bus *inputBus, Bus *outputBus)  :
     inputBus_->subscribe(this);
     outputBus_->subscribe(this);    
 }
-
-Bus1::~Bus1()
-{}
 
 void Bus1::enable(const bool bus1)
 {

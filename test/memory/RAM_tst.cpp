@@ -15,9 +15,9 @@ protected:
     {
         systemBus_ = std::make_unique<Bus>("system");
         MAROutputBus_ = std::make_unique<Bus>("MAR_out");
-        MAR_ = std::make_unique<Register>("MAR", systemBus_.get(), MAROutputBus_.get());
+        MAR_ = std::make_unique<Register>("MAR", systemBus_, MAROutputBus_);
 
-        cell_ = new RAMCell(systemBus_.get());
+        cell_ = new RAMCell(systemBus_);
     }
 
     void TearDown() override 
@@ -25,9 +25,9 @@ protected:
         delete cell_;
     }
     
-    std::unique_ptr<Bus> systemBus_;
-    std::unique_ptr<Bus> MAROutputBus_;
-    std::unique_ptr<Register> MAR_;
+    std::shared_ptr<Bus> systemBus_;
+    std::shared_ptr<Bus> MAROutputBus_;
+    std::shared_ptr<Register> MAR_;
     RAMCell* cell_;
 
     void updateSystemBus(const Byte value)
@@ -114,7 +114,7 @@ TEST_F(RAMTest, cannotReadCellContentIfEnableBitIsZeroed)
 
 TEST_F(RAMTest, RAM256SingleTest)
 {
-    RAM256 ram(systemBus_.get(), MAR_.get());
+    RAM256 ram(systemBus_, MAR_);
 
     /* Write the @1 */
     updateSystemBus(0xAB); // set memory address
@@ -143,7 +143,7 @@ TEST_F(RAMTest, RAM256SingleTest)
 
 TEST_F(RAMTest, RAM256FullTest)
 {
-    RAM256 ram(systemBus_.get(), MAR_.get());
+    RAM256 ram(systemBus_, MAR_);
 
     /* Write the entire RAM */
     for (int addr=0; addr < 0xFF; ++addr)
@@ -167,7 +167,7 @@ TEST_F(RAMTest, RAM256FullTest)
 
 TEST_F(RAMTest, RAM65KSingleTest)
 {
-    RAM65K ram(systemBus_.get());
+    RAM65K ram(systemBus_);
 
     /* Write the @1 */
     updateSystemBus(0xB); // set memory address (low part)
@@ -204,7 +204,7 @@ TEST_F(RAMTest, RAM65KSingleTest)
 
 TEST_F(RAMTest, RAM65KFullTest)
 {
-    RAM65K ram(systemBus_.get());
+    RAM65K ram(systemBus_);
 
     /* Write the entire RAM */
     for (int i = 0; i < 0xFFFF; ++i)
@@ -244,12 +244,13 @@ protected:
     { 
     }
  
-    std::unique_ptr<Bus> systemBus_;
+    std::shared_ptr<Bus> systemBus_;
 };
 
 TEST_F(RAMCellTest, setTrue)
 {
-    RAMCell cell(systemBus_.get(), 77);
+    Byte b(77);
+    RAMCell cell(systemBus_, b);
    
     systemBus_->write(88);
 
@@ -261,7 +262,7 @@ TEST_F(RAMCellTest, setTrue)
 
 TEST_F(RAMCellTest, setFalse)
 {
-    RAMCell cell(systemBus_.get(), 77);
+    RAMCell cell(systemBus_, 77);
    
     systemBus_->write(88);
 
@@ -273,7 +274,7 @@ TEST_F(RAMCellTest, setFalse)
 
 TEST_F(RAMCellTest, enableTrue)
 {
-    RAMCell cell(systemBus_.get(), 77);
+    RAMCell cell(systemBus_, 77);
    
     systemBus_->write(88);
 
@@ -285,7 +286,7 @@ TEST_F(RAMCellTest, enableTrue)
 
 TEST_F(RAMCellTest, enableFalse)
 {
-    RAMCell cell(systemBus_.get(), 77);
+    RAMCell cell(systemBus_, 77);
    
     systemBus_->write(88);
 

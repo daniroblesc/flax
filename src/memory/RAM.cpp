@@ -3,16 +3,11 @@
 #include <sstream>      // std::stringstream
 #include <assert.h>     /* assert */
 
-RAMCell::RAMCell(Bus *bus, const Byte& defaultValue) 
+RAMCell::RAMCell(const std::shared_ptr<Bus>& bus, const Byte& defaultValue) 
 {
     bus_ = bus;
-    R_ = new Register("RamCell", bus_, bus_, defaultValue);
+    R_ = std::make_unique<Register>("RamCell", bus_, bus_, defaultValue);
 }   
-
-RAMCell::~RAMCell()
-{
-    delete R_;
-}
 
 void RAMCell::update(const bool a1, const bool a2)
 {
@@ -40,33 +35,22 @@ Byte RAMCell::output()
 // RAMCellGrid
 //
 
-RAMCellGrid::RAMCellGrid(Bus *bus, const int gridSize, const Byte& defaultValue)
+RAMCellGrid::RAMCellGrid(const std::shared_ptr<Bus>& bus, const int gridSize, const Byte& defaultValue)
 {
     bus_ = bus;
     gridSize_ = gridSize;
-    grid_.resize(gridSize, std::vector<RAMCell*>(gridSize, nullptr));
+    grid_.resize(gridSize, RamCellArray(gridSize, nullptr));
 
     for (int col = 0; col < gridSize; ++col)
     {       
         for (int row = 0; row < gridSize; ++row)
         {
-            grid_[col][row] = new RAMCell(bus, defaultValue);
+            grid_[col][row] = std::make_unique<RAMCell>(bus, defaultValue);
         }
     }
 }
 
-RAMCellGrid::~RAMCellGrid()
-{
-    for (int col = 0; col < gridSize_; ++col)
-    {
-        for (int row = 0; row < gridSize_; ++row)
-        {
-            delete grid_[col][row];
-        }
-    }
-}
-
-RAMCell* RAMCellGrid::getCell(int col, int row)
+const std::shared_ptr<RAMCell>& RAMCellGrid::getCell(int col, int row)
 {
    return grid_[col][row];
 }
@@ -75,7 +59,7 @@ RAMCell* RAMCellGrid::getCell(int col, int row)
 // IRAM
 // 
 
-IRAM::IRAM(Bus *systemBus) 
+IRAM::IRAM(const std::shared_ptr<Bus>& systemBus) 
 {
     systemBus_ = systemBus;
 }
@@ -97,22 +81,17 @@ std::string IRAM::toString(const std::vector<bool>& v)
 // RAM256
 // 
 
-RAM256::RAM256(Bus *systemBus, Register* MAR, const Byte& defaultValue) : 
+RAM256::RAM256(const std::shared_ptr<Bus>& systemBus, const std::shared_ptr<Register>& MAR, const Byte& defaultValue) : 
     IRAM(systemBus), IBusNode("RAM256"), control::IControllableUnit("RAM256")
 {
     MAROutputBus_ = MAR->getOutputBus();
     MAR_ = MAR;
-    cellGrid_ = new RAMCellGrid(systemBus_, 16, defaultValue);
-}
-
-RAM256::~RAM256()
-{    
-    delete cellGrid_;
+    cellGrid_ = std::make_unique<RAMCellGrid>(systemBus_, 16, defaultValue);
 }
 
 void RAM256::enable(const bool e)
 {
-    RAMCell* cell = getSelectedCell();
+    std::shared_ptr<RAMCell> cell = getSelectedCell();
 
     cell->update();
     cell->enable(e);
@@ -121,14 +100,14 @@ void RAM256::enable(const bool e)
 
 void RAM256::set(const bool s)
 {
-    RAMCell* cell = getSelectedCell();
+    std::shared_ptr<RAMCell> cell = getSelectedCell();
 
     cell->update();
     cell->set(s);
     cell->update(false, false);
 }
 
-RAMCell* RAM256::getSelectedCell()
+const std::shared_ptr<RAMCell>& RAM256::getSelectedCell()
 {
     // get MAR content (the 'address')
     MAR_->enable();
@@ -173,7 +152,7 @@ void RAM256::signal(const control::signalType type, const control::SignalCollect
 // RAM65K
 // 
 
-RAM65K::RAM65K(Bus *bus) : IRAM(bus), IBusNode("RAM65K")
+RAM65K::RAM65K(const std::shared_ptr<Bus>& bus) : IRAM(bus), IBusNode("RAM65K")
 {
     MAROutputBus0_ = std::make_unique<Bus>("MAR0_out"); 
     MAROutputBus0_->subscribe(this);
@@ -181,16 +160,9 @@ RAM65K::RAM65K(Bus *bus) : IRAM(bus), IBusNode("RAM65K")
     MAROutputBus1_ = std::make_unique<Bus>("MAR1_out"); 
     MAROutputBus1_->subscribe(this);
 
-    MAR0_ = new Register("MAR0", systemBus_, MAROutputBus0_.get()); 
-    MAR1_ = new Register("MAR1", systemBus_, MAROutputBus1_.get()); 
-    cellGrid_ = new RAMCellGrid(systemBus_, 256);
-}
-
-RAM65K::~RAM65K()
-{    
-    delete MAR0_;
-    delete MAR1_;
-    delete cellGrid_;
+    MAR0_ = std::make_unique<Register>("MAR0", systemBus_, MAROutputBus0_); 
+    MAR1_ = std::make_unique<Register>("MAR1", systemBus_, MAROutputBus1_); 
+    cellGrid_ = std::make_unique<RAMCellGrid>(systemBus_, 256);
 }
 
 void RAM65K::setS0(const bool s0)
@@ -207,7 +179,7 @@ void RAM65K::setS1(const bool s1)
 
 void RAM65K::enable(const bool e)
 {
-    RAMCell* cell = getSelectedCell();
+    std::shared_ptr<RAMCell> cell = getSelectedCell();
 
     cell->update();
     cell->enable(e);
@@ -216,14 +188,14 @@ void RAM65K::enable(const bool e)
 
 void RAM65K::set(const bool s)
 {
-    RAMCell* cell = getSelectedCell();
+    std::shared_ptr<RAMCell> cell = getSelectedCell();
 
     cell->update();
     cell->set(s);
     cell->update(false, false);    
 }
 
-RAMCell* RAM65K::getSelectedCell()
+const std::shared_ptr<RAMCell>& RAM65K::getSelectedCell()
 {
     // get MAR0 content 
     MAR0_->enable();
