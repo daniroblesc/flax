@@ -21,66 +21,7 @@ protected:
     void TearDown() override 
     {}    
 
-    void selectCMP()
-    {
-        // CMP = 000
-        op_[0].update(0);
-        op_[1].update(0);
-        op_[2].update(0);
-    }
-
-    void selectOR()
-    {
-        // OR = 001
-        op_[0].update(1);
-        op_[1].update(0);
-        op_[2].update(0);
-    }
-
-    void selectAND()
-    {
-        // OR = 010
-        op_[0].update(0);
-        op_[1].update(1);
-        op_[2].update(0);
-    }
-
-    void selectNOT()
-    {
-        // NOT = 011
-        op_[0].update(1);
-        op_[1].update(1);
-        op_[2].update(0);
-    }
-
-    void selectSHL()
-    {
-        // SHL = 100
-        op_[0].update(0);
-        op_[1].update(0);
-        op_[2].update(1);        
-    }
-
-    void selectSHR()
-    {
-        // SHR = 101
-        op_[0].update(1);
-        op_[1].update(0);
-        op_[2].update(1);
-    }
-
-    void selectADD()
-    {
-        // ADD = 110
-        op_[0].update(0);
-        op_[1].update(1);
-        op_[2].update(1);
-    }
-
-
     bool carryIn_ = false;
-
-    Wire op_[3]; // selected ALU's operation
     
     // buses
     std::unique_ptr<Bus> inputBusA_;
@@ -96,9 +37,8 @@ TEST_F(ALUTest, ComparatorAGreaterThanB)
 {
     inputBusA_->write(0xA1);   
     inputBusB_->write(0x02);   
-
-    selectCMP();
-    alu_->update(carryIn_, op_);
+    
+    alu_->update(carryIn_, ALU::OP_CODE_CMP);
 
     bool carryOut, equal, a_larger, zero;
     alu_->output(carryOut, equal, a_larger, zero);
@@ -113,8 +53,7 @@ TEST_F(ALUTest, ComparatorBGreaterThanA)
     inputBusA_->write(0x31);   
     inputBusB_->write(0xE2);   
 
-    selectCMP();
-    alu_->update(carryIn_, op_);
+    alu_->update(carryIn_, ALU::OP_CODE_CMP);
 
     Byte c;
     bool carryOut, equal, a_larger, zero;
@@ -130,8 +69,7 @@ TEST_F(ALUTest, ComparatorAEqualB)
     inputBusA_->write(0x31);   
     inputBusB_->write(0x31);   
 
-    selectCMP();
-    alu_->update(carryIn_, op_);
+    alu_->update(carryIn_, ALU::OP_CODE_CMP);
 
     bool carryOut, equal, a_larger, zero;
     alu_->output(carryOut, equal, a_larger, zero);
@@ -146,8 +84,7 @@ TEST_F(ALUTest, OR)
     inputBusA_->write(0xAA); // 1010 1010
     inputBusB_->write(0xEB); // 1110 1011
     
-    selectOR();
-    alu_->update(carryIn_, op_);
+    alu_->update(carryIn_, ALU::OP_CODE_OR);
 
     bool carryOut, equal, a_larger, zero;
     alu_->output(carryOut, equal, a_larger, zero);
@@ -160,8 +97,7 @@ TEST_F(ALUTest, AND)
     inputBusA_->write(0xAA); // 1010 1010
     inputBusB_->write(0xEB); // 1110 1011
 
-    selectAND();
-    alu_->update(carryIn_, op_);
+    alu_->update(carryIn_, ALU::OP_CODE_AND);
 
     bool carryOut, equal, a_larger, zero;
     alu_->output(carryOut, equal, a_larger, zero);
@@ -174,8 +110,7 @@ TEST_F(ALUTest, NOT)
     inputBusA_->write(0xBB); // 1011 1011
     inputBusB_->write(0xBB); // 1011 1011
 
-    selectNOT();
-    alu_->update(carryIn_, op_);
+    alu_->update(carryIn_, ALU::OP_CODE_NOT);
 
     bool carryOut, equal, a_larger, zero;
     alu_->output(carryOut, equal, a_larger, zero);
@@ -192,8 +127,7 @@ TEST_F(ALUTest, SHRWithShiftOutFalse)
     inputBusB_->write(0x42);
     carryIn_ = false;
 
-    selectSHR();
-    alu_->update(carryIn_, op_);
+    alu_->update(carryIn_, ALU::OP_CODE_SHR);
 
     bool carryOut, equal, a_larger, zero;
     alu_->output(carryOut, equal, a_larger, zero);
@@ -210,8 +144,7 @@ TEST_F(ALUTest, SHRWithShiftOutTrue)
     inputBusB_->write(0x43);
     carryIn_ = false;
 
-    selectSHR();
-    alu_->update(carryIn_, op_);
+    alu_->update(carryIn_, ALU::OP_CODE_SHR);
 
     bool carryOut, equal, a_larger, zero;
     alu_->output(carryOut, equal, a_larger, zero);
@@ -229,8 +162,7 @@ TEST_F(ALUTest, SHRWithShiftInTrue)
     inputBusB_->write(0x42);
     carryIn_ = true;
 
-    selectSHR();
-    alu_->update(carryIn_, op_);
+    alu_->update(carryIn_, ALU::OP_CODE_SHR);
 
     bool carryOut, equal, a_larger, zero;
     alu_->output(carryOut, equal, a_larger, zero);
@@ -248,8 +180,7 @@ TEST_F(ALUTest, SHLWithShiftOutFalse)
     inputBusB_->write(0x42);
     carryIn_ = false;
 
-    selectSHL();
-    alu_->update(carryIn_, op_);
+    alu_->update(carryIn_, ALU::OP_CODE_SHL);
 
     bool carryOut, equal, a_larger, zero;
     alu_->output(carryOut, equal, a_larger, zero);
@@ -267,8 +198,7 @@ TEST_F(ALUTest, SHLWithShiftOutTrue)
     inputBusB_->write(0xC2);
     carryIn_ = false;
 
-    selectSHL();
-    alu_->update(carryIn_, op_);
+    alu_->update(carryIn_, ALU::OP_CODE_SHL);
 
     bool carryOut, equal, a_larger, zero;
     alu_->output(carryOut, equal, a_larger, zero);
@@ -286,8 +216,7 @@ TEST_F(ALUTest, SHLWithShiftInTrue)
     inputBusB_->write(0x42);
     carryIn_ = true;
 
-    selectSHL();
-    alu_->update(carryIn_, op_);
+    alu_->update(carryIn_, ALU::OP_CODE_SHL);
 
     bool carryOut, equal, a_larger, zero;
     alu_->output(carryOut, equal, a_larger, zero);
@@ -298,15 +227,13 @@ TEST_F(ALUTest, SHLWithShiftInTrue)
 
 TEST_F(ALUTest, ADDCalcDoubleWithOutCarryOut) 
 {
-    selectADD();
-
     for (int a = 0x00; a < 0x7F; ++a)
     {
         inputBusA_->write(Byte(a));
         inputBusB_->write(Byte(a));
 
         carryIn_ = false;
-        alu_->update(carryIn_, op_);
+        alu_->update(carryIn_, ALU::OP_CODE_ADD);
 
         bool carryOut, equal, a_larger, zero;
         alu_->output(carryOut, equal, a_larger, zero);
@@ -320,8 +247,6 @@ TEST_F(ALUTest, ADDCalcDoubleWithOutCarryOut)
 
 TEST_F(ALUTest, ADDWithOutCarryOut) 
 {
-    selectADD();
-
     for (int a = 0x00; a < 0x7F; ++a)
     {
         for (int b = 0x7f; b >= 0x00; --b)
@@ -330,7 +255,7 @@ TEST_F(ALUTest, ADDWithOutCarryOut)
             inputBusB_->write(Byte(b));
 
             carryIn_ = false;
-            alu_->update(carryIn_, op_);
+            alu_->update(carryIn_, ALU::OP_CODE_ADD);
 
             bool carryOut, equal, a_larger, zero;
             alu_->output(carryOut, equal, a_larger, zero);
@@ -345,14 +270,12 @@ TEST_F(ALUTest, ADDWithOutCarryOut)
 
 TEST_F(ALUTest, ADDWithCarryOut) 
 {
-    selectADD();
-
     carryIn_ = false;
 
     inputBusA_->write(Byte(0xF1));
     inputBusB_->write(Byte(0xF1));
 
-    alu_->update(carryIn_, op_);
+    alu_->update(carryIn_, ALU::OP_CODE_ADD);
 
     bool carryOut, equal, a_larger, zero;
     alu_->output(carryOut, equal, a_larger, zero);

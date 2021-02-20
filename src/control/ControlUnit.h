@@ -4,8 +4,10 @@
 #include "control/Clock.h"
 #include "control/Stepper.h"
 #include "circuit/Bus.h"
+#include "misc/Logger.h"
 #include <map>
 #include <memory>
+
 
 namespace control
 {
@@ -61,13 +63,13 @@ private:
  *  It directs the flow of data between the CPU and the other devices.
  *
  */
-class ControlUnit : public IClockSubscriber
+class ControlUnit : public IClockSubscriber, public Logger
 {
 public:
     /** Constructor
      *  @param [in] inputBus  the input bus (from IR)
      */
-    ControlUnit(Bus* inputBus);
+    ControlUnit(Bus* inputBus, Logger::LogLevel logLevel = ERROR);
 
     /** Destructor
      */
@@ -111,6 +113,8 @@ private:
         STEP6
     };
 
+    const char* className_;
+
     Bus* inputBus_;     ///< input bus
 
     std::unique_ptr<control::Clock> clock_; ///< The internal clock
@@ -126,6 +130,8 @@ private:
     void sendSignal(const std::string& id, const signalType type, const SignalCollection& sigValue);    
 
     int getCurrentStep();
+    void log(const char *fmt, ...);
+
 };
 
 

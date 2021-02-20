@@ -1,5 +1,4 @@
 #include "Clock.h"
-#include <iostream>       // std::cout
 #include <chrono>         // std::chrono::seconds
 #include <math.h>         /* pow */
 
@@ -14,7 +13,6 @@ Clock::Clock(const double freq)
     cycleTime_ = static_cast<int64_t>(pow(freq, -1) * MILLISECS_PER_SEC);
     halfCycleTime_ = (cycleTime_* MICROSECS_PER_MILLISEC) / 2;
     quarterCycleTime_ = halfCycleTime_ / 2;
-    //std::cout << "cycleTime_: " << cycleTime_ << " halfCycleTime_: "<< halfCycleTime_ << " quarterCycleTime_: " << quarterCycleTime_ << std::endl;
 }
 
 Clock::~Clock()

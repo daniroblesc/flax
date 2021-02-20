@@ -12,8 +12,8 @@ class RegisterTest : public testing::Test
 protected:    
     void SetUp() override 
     {
-        inputBus_ = std::make_unique<Bus>("in",Bus::VERBOSE);
-        outputBus_ = std::make_unique<Bus>("out",Bus::VERBOSE);
+        inputBus_ = std::make_unique<Bus>("in",Logger::VERBOSE);
+        outputBus_ = std::make_unique<Bus>("out",Logger::VERBOSE);
     }
 
     void TearDown() override 

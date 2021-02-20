@@ -7,7 +7,6 @@
 
 void CompGate::update(const bool a, const bool b, const bool equal, const bool a_larger)
 {
-    //std::cout << "a: " << a << " b: " << b << std::endl;
     a_.update(a);
     b_.update(b);    
     allBitsAboveAreEqual_.update(equal);

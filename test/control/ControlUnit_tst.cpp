@@ -71,7 +71,7 @@ protected:
         createBuses();
 
         // Create the control unit
-        controlUnit_ = std::make_unique<control::ControlUnit>(buses_["CU_in"].get());  
+        controlUnit_ = std::make_unique<control::ControlUnit>(buses_["CU_in"].get(), Logger::VERBOSE);  
 
         initializeRegisters();
 
@@ -130,14 +130,6 @@ protected:
     std::unique_ptr<ALU> ALU_;
     std::unique_ptr<Bus1> BUS1_;
 };
-/*
-TEST_F(ControlUnitTest, add) 
-{
-    controlUnit_->start();
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    EXPECT_TRUE(R0_->output() == 0x7);
-}
-*/
 
 /* get the @ in IAR over to MAR */
 TEST_F(ControlUnitTest, step1) 
@@ -170,4 +162,21 @@ TEST_F(ControlUnitTest, step2)
 
     // Assert
     EXPECT_TRUE(IR_->output() == 69);
+}
+
+/* we need to finish updating IAR: we added 1 to it in step1, but
+the answer is still in ACC. It needs to be moved to IAR before the
+beginning of the next instruction cycle.  */
+TEST_F(ControlUnitTest, step3) 
+{
+    // Arrange
+    defaultValues_["IAR"] = 3;
+    initializeControlUnit();
+
+    // Act
+    int cycles = 3;
+    cycleControlUnit(cycles);
+
+    // Assert
+    EXPECT_TRUE(IAR_->output() == 4);
 }

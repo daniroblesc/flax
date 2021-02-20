@@ -1,5 +1,6 @@
 #include "Bus.h"
 #include <iostream>
+#include <typeinfo>
 
 IBusNode::IBusNode(const std::string& id)
 {
@@ -11,10 +12,10 @@ std::string IBusNode::getId() const
     return id_;
 }
 
-Bus::Bus(const std::string& id, LogLevel logLevel)
+Bus::Bus(const std::string& id, Logger::LogLevel logLevel) : Logger(logLevel)
 {
+    className_ = __func__;
     id_ = id;
-    logLevel_ = logLevel;
 }
 
 void Bus::subscribe(IBusNode* subscriber)
@@ -35,10 +36,8 @@ void Bus::write(IBusNode* busNode, const Byte& value)
 {
     mtxBusAccess_.lock();
     value_ = value;
-    if (logLevel_ == VERBOSE)
-    {
-        std::cout << "Bus(" << id_ << ") write [" << busNode->getId()  << "] " <<  value_.toInt() << "\n";
-    }
+    logVerbose("%s::%s( %s writes %x in *%s*)\n", className_, __func__,
+        busNode->getId().c_str(), value_.toInt(), id_.c_str() );
     mtxBusAccess_.unlock();       
 }
 
@@ -46,10 +45,8 @@ void Bus::write(const Byte& value)
 {
     mtxBusAccess_.lock();
     value_ = value;
-    if (logLevel_ == VERBOSE)
-    {
-        std::cout << "Bus(" << id_ << ") write [?] " <<  value_.toInt() << "\n";
-    }
+    logVerbose("%s::%s( ? writes %x in *%s*)\n", className_,__func__,
+        value_.toInt(), id_.c_str());
     mtxBusAccess_.unlock();       
 }
 
@@ -57,10 +54,8 @@ Byte Bus::read(IBusNode* busNode)
 {
     mtxBusAccess_.lock();
     Byte value = value_;
-    if (logLevel_ == VERBOSE)
-    {
-        std::cout << "Bus(" << id_ << ") read [" << busNode->getId()  << "] " <<  value_.toInt() << "\n";
-    }    
+    logVerbose("%s::%s( %s reads %x in *%s*)\n",className_,__func__,
+        busNode->getId().c_str(), value_.toInt(), id_.c_str());
     mtxBusAccess_.unlock();
     return value;
 }
@@ -69,10 +64,8 @@ Byte Bus::read()
 {
     mtxBusAccess_.lock();
     Byte value = value_;
-    if (logLevel_ == VERBOSE)
-    {
-        std::cout << "Bus(" << id_ << ") read [?] " <<  value_.toInt() << "\n";
-    }
+    logVerbose("%s::%s( ? reads %x in *%s*)\n",className_,__func__,
+        value_.toInt(), id_.c_str());
     mtxBusAccess_.unlock();
     return value;
 }

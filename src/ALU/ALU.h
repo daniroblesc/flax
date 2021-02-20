@@ -20,10 +20,32 @@
  *  of the performed operation. In many designs, the ALU also has status inputs or 
  *  outputs, or both, which convey information about a previous operation or the 
  *  current operation, respectively, between the ALU and external status registers.
+ * 
+ *  Operations code:
+ *      000: ADD
+ *      001: SHR
+ *      010: SHL
+ *      011: NOT
+ *      100: AND
+ *      101: OR
+ *      110: XOR
+ *      111: CMP
  */ 
 class ALU : public control::IControllableUnit, public IBusNode
 {
 public:
+    typedef enum OpCode
+    {
+        OP_CODE_ADD = 0,
+        OP_CODE_SHR,
+        OP_CODE_SHL,
+        OP_CODE_NOT,
+        OP_CODE_AND,
+        OP_CODE_OR,
+        OP_CODE_XOR,
+        OP_CODE_CMP,
+    } OpCode;
+
 
     /** Constructor
      *  @param [in] inputBusA  the input bus A
@@ -38,9 +60,20 @@ public:
     
     /** Update inputs
      *  @param [in] carryIn bit carried in from the previous less-signficant stage
-     *  @param [in] op 3 input bits indicating the operation to be performed
+     *  @param [in] op code indicating the operation to be performed
      */
-    void update(const bool carryIn, const Wire* op);
+    void update(const bool carryIn, const OpCode op);
+
+    /** Update inputs
+     *  @param [in]  carryIn bit carried in from the previous less-signficant stage
+     *  @param [in]  op code indicating the operation to be performed
+     *  @param [out] carryOut bit of the leftmost column will turn on if the sum of the 
+     *                        two numbers is greater than 255
+     *  @param [out] equal is set to true if inputs are equal, otherwise is set to false
+     *  @param [out] a_larger is set to true if 'a' is larger than 'b' 
+     *  @param [out] zero is set to true if the output is zero
+     */
+    void update(const bool carryIn, const OpCode op,bool &carryOut, bool& equal, bool& a_larger, bool& zero);
 
     /** Update outputs
      *  @param [out] carryOut bit of the leftmost column will turn on if the sum of the 
@@ -50,8 +83,6 @@ public:
      *  @param [out] zero is set to true if the output is zero
      */
     void output(bool &carryOut, bool& equal, bool& a_larger, bool& zero);
-
-    void update(const bool carryIn, const Wire* op,bool &carryOut, bool& equal, bool& a_larger, bool& zero);
 
     /** implements control::IControllableUnit method
      *  Signal received from the Control Unit
@@ -78,7 +109,7 @@ private:
     Byte a_;
     Byte b_;
     bool carryIn_;
-    Wire op_[3];
+    OpCode op_;
 
     Bus* inputBusA_;     ///< input bus A
     Bus* inputBusB_;     ///< input bus B
