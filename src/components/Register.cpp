@@ -2,19 +2,23 @@
 #include <assert.h>     /* assert */
 #include <iostream>
 
-Register::Register(const std::string& id, const std::shared_ptr<Bus>& bus, const Byte& defaultValue) : 
+Register::Register(const std::string& id, const std::shared_ptr<Bus>& bus, const Byte& defaultValue, const Logger::LogLevel logLevel) : 
     control::IControllableUnit(id),
-    IBusNode(id)
+    IBusNode(id),
+    Logger(logLevel)
 {
+    className_ = __func__;
     inputBus_ = outputBus_ = bus;
     bus->subscribe(this);
     setDefaultValue(defaultValue);
 }
 
-Register::Register(const std::string& id, const std::shared_ptr<Bus>& inputBus, const std::shared_ptr<Bus>& outputBus, const Byte& defaultValue) : 
+Register::Register(const std::string& id, const std::shared_ptr<Bus>& inputBus, const std::shared_ptr<Bus>& outputBus, const Byte& defaultValue, const Logger::LogLevel logLevel) : 
     control::IControllableUnit(id),
-    IBusNode(id)
+    IBusNode(id),
+    Logger(logLevel)
 {
+    className_ = __func__;
     inputBus_ = inputBus;
     outputBus_ = outputBus;
     inputBus_->subscribe(this);
@@ -39,6 +43,8 @@ void Register::setDefaultValue(const Byte& defaultValue)
 
 void Register::enable(const bool e)
 {
+    logVerbose("%s::%s( e = %d )\n", IControllableUnit::getId().c_str() , __func__, e);
+
     if (e == false) 
     {
         return;
@@ -54,6 +60,8 @@ void Register::enable(const bool e)
 
 void Register::set(const bool s)
 {
+    logVerbose("%s::%s( s = %d )\n", IControllableUnit::getId().c_str(), __func__, s);
+
     if (s == false) 
     {
         return;

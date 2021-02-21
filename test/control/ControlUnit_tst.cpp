@@ -181,3 +181,148 @@ TEST_F(ControlUnitTest, step3)
     // Assert
     EXPECT_TRUE(IAR_->output() == 4);
 }
+
+////
+// ControlGPRegisters
+////
+
+class ControlGPRegistersTest : public ::testing::TestWithParam<std::tuple<int, std::string>>
+{
+protected:   
+    void initializeRegisters()
+    {
+        registers_["R0"] = std::make_unique<Register>("R0",  buses_["system"], defaultValues_["R0"], Logger::VERBOSE);
+        registers_["R1"] = std::make_unique<Register>("R1",  buses_["system"], defaultValues_["R1"], Logger::VERBOSE);
+        registers_["R2"] = std::make_unique<Register>("R2",  buses_["system"], defaultValues_["R2"], Logger::VERBOSE);
+        registers_["R3"] = std::make_unique<Register>("R3",  buses_["system"], defaultValues_["R3"], Logger::VERBOSE);
+
+        controlGPRegisters_->connect(registers_["R0"]);
+        controlGPRegisters_->connect(registers_["R1"]);
+        controlGPRegisters_->connect(registers_["R2"]);
+        controlGPRegisters_->connect(registers_["R3"]);
+    }
+
+    void initializeDefaultValues()
+    {
+        defaultValues_["R0"] = 0;
+        defaultValues_["R1"] = 0;
+        defaultValues_["R2"] = 0;
+        defaultValues_["R3"] = 0;
+    }
+
+    void createBuses()
+    {
+        buses_["system"] = std::make_unique<Bus>("system", Bus::VERBOSE);
+        buses_["CU_in"] = std::make_unique<Bus>("CU_in", Bus::VERBOSE);
+    }
+
+    void initializeControlGPRegisters()
+    {       
+        RegA_ = std::make_unique<Wire>();
+        RegB_ = std::make_unique<Wire>();
+
+        createBuses();
+
+        // Create the control unit
+        controlGPRegisters_ = std::make_unique<control::ControlGPRegisters>(buses_["CU_in"], RegA_, RegB_);  
+
+        initializeRegisters();
+    }
+
+    void SetUp() override 
+    {
+        initializeDefaultValues();         
+    }
+
+    void TearDown() override 
+    { 
+    }
+
+
+    // the code under test.
+    std::unique_ptr<control::ControlGPRegisters> controlGPRegisters_;
+
+    std::map<std::string, std::shared_ptr<Register>> registers_;
+
+
+    std::shared_ptr<Wire> RegA_;
+    std::shared_ptr<Wire> RegB_;
+
+    typedef std::map<std::string, Byte> DefaultValuesCollection;
+    DefaultValuesCollection defaultValues_;
+
+    typedef std::map<std::string, std::shared_ptr<Bus>> BusCollection;
+    BusCollection buses_;
+};
+
+class ControlGPRegistersSetTest : public ControlGPRegistersTest
+{
+};
+
+TEST_P(ControlGPRegistersSetTest, set) 
+{
+    // Arrange
+    initializeControlGPRegisters();
+
+    RegB_->update(true);
+    buses_["system"]->write(0xBB);
+
+    Byte ir(std::get<0>(GetParam()));
+    buses_["CU_in"]->write(ir); 
+
+    // Act
+    controlGPRegisters_->onClkS(true);
+
+    // Assert
+    std::string reg = std::get<1>(GetParam());
+    EXPECT_TRUE(registers_[reg]->output() == 0xBB);
+}
+
+INSTANTIATE_TEST_CASE_P(
+        set,
+        ControlGPRegistersSetTest,
+        ::testing::Values(
+                //             input output
+                //----------------------------
+                std::make_tuple(0xC0, "R3"),
+                std::make_tuple(0x80, "R2"),
+                std::make_tuple(0x40, "R1"),
+                std::make_tuple(0x00, "R0")
+        ));
+
+class ControlGPRegistersEnableTest : public ControlGPRegistersTest
+{
+};
+
+
+TEST_P(ControlGPRegistersEnableTest, enable) 
+{
+    std::string reg = std::get<1>(GetParam());
+    Byte ir(std::get<0>(GetParam()));
+
+    // Arrange
+    defaultValues_[reg] = 3;
+    initializeControlGPRegisters();
+   
+    RegA_->update(true);
+    buses_["system"]->write(0xBB);
+    buses_["CU_in"]->write(ir); 
+ 
+    // Act
+    controlGPRegisters_->onClkE(true);
+
+    // Assert
+    EXPECT_TRUE(buses_["system"]->read() == 3);
+}
+
+INSTANTIATE_TEST_CASE_P(
+        enable,
+        ControlGPRegistersEnableTest,
+        ::testing::Values(
+                //             input output
+                //----------------------------
+                std::make_tuple(0x30, "R3"),
+                std::make_tuple(0x20, "R2"),
+                std::make_tuple(0x10, "R1"),
+                std::make_tuple(0x00, "R0")
+        ));

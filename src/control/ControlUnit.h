@@ -53,7 +53,28 @@ private:
     std::string id_;    ///< The identifier
 };
 
-typedef std::map< std::string, std::shared_ptr<IControllableUnit> > ControllableUnitCollection;
+
+/** @struct ControllableUnitInfo
+ *  This is a struct to save information for those clients connected
+ *  to the Control Unit
+ *
+ *  @var ControllableUnitInfo::e
+ *    identifier for the connection between the signal and enable slot
+ *  @var ControllableUnitInfo::s
+ *    identifier for the connection between the signal and set slot
+ *  @var ControllableUnitInfo::o
+ *    (unused field)
+ *  @var ControllableUnitInfo::ptr
+ *    pointer to the controllable unit
+ */
+typedef struct 	
+{ 
+    int e; 
+    int s; 
+    std::shared_ptr<IControllableUnit> ptr;
+} ControllableUnitInfo;	
+
+typedef std::map<std::string, ControllableUnitInfo> ControllableUnitCollection;
 
 /*! \class The ControlGPRegisters class
  *  \brief  
@@ -94,14 +115,21 @@ public:
 private:
 
     std::map<std::string, std::shared_ptr<ORGate>>  orGates_;
-    std::map<std::string, std::shared_ptr<ANDGate>> setGates_;
-    Decoder2X4 decoders2x4_[3];
+    
+    typedef struct 	
+    {
+        Decoder2X4 decoders2x4;
+        std::map<std::string, std::shared_ptr<ANDGate>> andGates;
+    } RegisterSelectionBlockControl;	
+    std::map<int, RegisterSelectionBlockControl> block_;
+
+
+    Signal<const bool> OnEnable; ///< object to trigger the enable signal
+    Signal<const bool> OnSet;    ///< object to trigger the set signal
 
     std::shared_ptr<Bus> inputBus_;     ///< input bus
     std::shared_ptr<Wire> RegA_;
     std::shared_ptr<Wire> RegB_;
-    bool clkE_ = false;
-    bool clkS_ = false;
 
     ControllableUnitCollection controllableUnits_; ///< The collection of general purposes registers
 };
@@ -183,27 +211,7 @@ private:
         STEP6
     };
 
-    /** @struct ControllableUnitInfo
-     *  This is a struct to save information for those clients connected
-     *  to the Control Unit
-     *
-     *  @var ControllableUnitInfo::e
-     *    identifier for the connection between the signal and enable slot
-     *  @var ControllableUnitInfo::s
-     *    identifier for the connection between the signal and set slot
-     *  @var ControllableUnitInfo::o
-     *    (unused field)
-     *  @var ControllableUnitInfo::ptr
-     *    pointer to the controllable unit
-    */
-    typedef struct 	
-    { 
-        int e; 
-        int s; 
-        std::shared_ptr<IControllableUnit> ptr;
-    } ControllableUnitInfo;	
-
-    std::map<std::string, ControllableUnitInfo> controllableUnits_; ///< the collection of controllable units
+    ControllableUnitCollection controllableUnits_; ///< the collection of controllable units
 
     const char* className_; ///< the class name (for logging messages)
     std::shared_ptr<Bus> inputBus_; ///< the input bus
@@ -213,6 +221,8 @@ private:
     
     Signal<const bool> OnEnable; ///< object to trigger the enable signal
     Signal<const bool> OnSet;    ///< object to trigger the set signal
+    Signal<const bool> OnClkE;  ///< object to trigger the clkE signal
+    Signal<const bool> OnClkS;  ///< object to trigger the clkS signal
 
     std::map<std::string, std::shared_ptr<ANDGate>> allEnableGates_;
     std::map<std::string, std::shared_ptr<ANDGate>> allSetGates_;

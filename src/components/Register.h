@@ -5,12 +5,13 @@
 #include "memory/MemoryByte.h"
 #include "circuit/Bus.h"
 #include "control/ControlUnit.h"
+#include "misc/Logger.h"
 
 
 /*! \class Register
  *  \brief A register is a quickly accessible location available to a computer's processor.
  */
-class Register : public control::IControllableUnit, public IBusNode
+class Register : public control::IControllableUnit, public IBusNode, public Logger
 {
 public:
 
@@ -18,16 +19,18 @@ public:
      *  @param [in] id register's id
      *  @param [in] bus the input/output bus
      *  @param [in] defaultValue the default value 
+     *  @param [in] logLevel log level for log messages
      */
-    Register(const std::string& id, const std::shared_ptr<Bus>& bus, const Byte& defaultValue = 0);
+    Register(const std::string& id, const std::shared_ptr<Bus>& bus, const Byte& defaultValue = 0, const Logger::LogLevel logLevel = ERROR);
 
     /** Constructor
      *  @param [in] id register's id
      *  @param [in] inputBus  the input bus
      *  @param [in] outputBus the output bus
      *  @param [in] defaultValue the default value 
+     *  @param [in] logLevel log level for log messages
      */
-    Register(const std::string& id, const std::shared_ptr<Bus>& inputBus, const std::shared_ptr<Bus>& outputBus, const Byte& defaultValue = 0);
+    Register(const std::string& id, const std::shared_ptr<Bus>& inputBus, const std::shared_ptr<Bus>& outputBus, const Byte& defaultValue = 0, const Logger::LogLevel logLevel = ERROR);
 
     /** Destructor
      */
@@ -56,6 +59,8 @@ public:
     Byte output();
 
 private:
+
+    const char* className_;
 
     Enabler enabler_; ///< The enabler
     MemoryByte memoryByte_; ///< the byte memory

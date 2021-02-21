@@ -34,16 +34,64 @@ ControlGPRegisters::ControlGPRegisters(const std::shared_ptr<Bus>& inputBus, con
     inputBus_ = inputBus;
     RegA_ = RegA;
     RegB_ = RegB;
+
+    for (size_t i = 0; i < 3; ++i)
+    {
+        RegisterSelectionBlockControl block;
+        block.andGates["R0"] = std::make_shared<ANDGate>();
+        block.andGates["R1"] = std::make_shared<ANDGate>();
+        block.andGates["R2"] = std::make_shared<ANDGate>();
+        block.andGates["R3"] = std::make_shared<ANDGate>();
+        block_[i] = block;
+    }
+
+    orGates_["R0"] = std::make_shared<ORGate>();
+    orGates_["R1"] = std::make_shared<ORGate>();
+    orGates_["R2"] = std::make_shared<ORGate>();
+    orGates_["R3"] = std::make_shared<ORGate>();
 }
 
 void ControlGPRegisters::onClkE(const bool clkE)
 {
-    clkE_ = clkE;    
+    Byte IR = inputBus_->read();
+
+    block_[1].decoders2x4.update(IR[6], IR[7]);    
+    block_[1].andGates["R0"]->update(clkE, RegB_->output(), block_[1].decoders2x4.output(0));
+    block_[1].andGates["R1"]->update(clkE, RegB_->output(), block_[1].decoders2x4.output(1));
+    block_[1].andGates["R2"]->update(clkE, RegB_->output(), block_[1].decoders2x4.output(2));
+    block_[1].andGates["R3"]->update(clkE, RegB_->output(), block_[1].decoders2x4.output(3));
+
+    block_[2].decoders2x4.update(IR[4], IR[5]);    
+    block_[2].andGates["R0"]->update(clkE, RegA_->output(), block_[2].decoders2x4.output(0));
+    block_[2].andGates["R1"]->update(clkE, RegA_->output(), block_[2].decoders2x4.output(1));
+    block_[2].andGates["R2"]->update(clkE, RegA_->output(), block_[2].decoders2x4.output(2));
+    block_[2].andGates["R3"]->update(clkE, RegA_->output(), block_[2].decoders2x4.output(3));
+
+    orGates_["R0"]->update( block_[1].andGates["R0"]->output(), block_[2].andGates["R0"]->output() );
+    orGates_["R1"]->update( block_[1].andGates["R1"]->output(), block_[2].andGates["R1"]->output() );
+    orGates_["R2"]->update( block_[1].andGates["R2"]->output(), block_[2].andGates["R2"]->output() );
+    orGates_["R3"]->update( block_[1].andGates["R3"]->output(), block_[2].andGates["R3"]->output() );
+
+    OnEnable.emit_for(controllableUnits_["R0"].s, orGates_["R0"]->output());
+    OnEnable.emit_for(controllableUnits_["R1"].s, orGates_["R1"]->output());
+    OnEnable.emit_for(controllableUnits_["R2"].s, orGates_["R2"]->output());
+    OnEnable.emit_for(controllableUnits_["R3"].s, orGates_["R3"]->output());
 }
 
 void ControlGPRegisters::onClkS(const bool clkS)
 {
-    clkS_ = clkS;
+    Byte IR = inputBus_->read();
+    block_[0].decoders2x4.update(IR[6], IR[7]);
+
+    block_[0].andGates["R0"]->update(clkS, RegB_->output(), block_[0].decoders2x4.output(0));
+    block_[0].andGates["R1"]->update(clkS, RegB_->output(), block_[0].decoders2x4.output(1));
+    block_[0].andGates["R2"]->update(clkS, RegB_->output(), block_[0].decoders2x4.output(2));
+    block_[0].andGates["R3"]->update(clkS, RegB_->output(), block_[0].decoders2x4.output(3));
+        
+    OnSet.emit_for(controllableUnits_["R0"].s, block_[0].andGates["R0"]->output());
+    OnSet.emit_for(controllableUnits_["R1"].s, block_[0].andGates["R1"]->output());
+    OnSet.emit_for(controllableUnits_["R2"].s, block_[0].andGates["R2"]->output());
+    OnSet.emit_for(controllableUnits_["R3"].s, block_[0].andGates["R3"]->output());
 }
 
 void ControlGPRegisters::connect(const std::shared_ptr<IControllableUnit>& controllableUnit)
@@ -52,9 +100,13 @@ void ControlGPRegisters::connect(const std::shared_ptr<IControllableUnit>& contr
     ControllableUnitCollection::iterator it = controllableUnits_.find(id);
     if (it == controllableUnits_.end())
     {
-        controllableUnits_[id] = controllableUnit;
-        orGates_[id] = std::make_shared<ORGate>();
-        setGates_[id] = std::make_shared<ANDGate>();
+        ControllableUnitInfo cuInfo;
+        cuInfo.ptr = controllableUnit;
+        cuInfo.e = OnEnable.connect_member(controllableUnit.get(), &IControllableUnit::enable);
+        cuInfo.s = OnSet.connect_member(controllableUnit.get(), &IControllableUnit::set);
+        controllableUnits_[id] = cuInfo;
+
+        
     }
 }
 
@@ -73,6 +125,8 @@ ControlUnit::ControlUnit(const std::shared_ptr<Bus>& inputBus, const std::shared
     RegB_ = std::make_shared<Wire>();
 
     controlGPRegisters_ = std::make_unique<ControlGPRegisters>(inputBus, RegA_, RegB_);    
+    OnClkE.connect_member(controlGPRegisters_.get(), &ControlGPRegisters::onClkE);
+    OnClkS.connect_member(controlGPRegisters_.get(), &ControlGPRegisters::onClkS);
 }
 
 void ControlUnit::start()
@@ -96,7 +150,7 @@ bool ControlUnit::isGPRegister(const std::string& id)
 void ControlUnit::connect(const std::shared_ptr<IControllableUnit>& controllableUnit)
 {
     std::string id = controllableUnit->getId();
-    std::map<std::string, ControllableUnitInfo>::iterator it = controllableUnits_.find(id);
+    ControllableUnitCollection::iterator it = controllableUnits_.find(id);
     if (it == controllableUnits_.end())
     {
         ControllableUnitInfo cuInfo;
@@ -148,6 +202,7 @@ int ControlUnit::getCurrentStep()
 void ControlUnit::onClkE(const bool clkE)
 {  
     logVerbose("%s::%s( clkE: %d STEP%d )\n", className_, __func__, clkE, getCurrentStep());
+    OnClkE.emit(clkE);
 
     if (stepper_.output(STEP1))
     {
@@ -174,6 +229,7 @@ void ControlUnit::onClkE(const bool clkE)
 void ControlUnit::onClkS(const bool clkS)
 {
     logVerbose("%s::%s( clkS: %d STEP%d )\n", className_, __func__, clkS, getCurrentStep());
+    OnClkS.emit(clkS);
 
     if (stepper_.output(STEP1))
     {
