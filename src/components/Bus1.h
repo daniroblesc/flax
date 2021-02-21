@@ -30,14 +30,7 @@ public:
      *  If 'bus1'=1,then the input byte is ignored and the output byte will be 1.
      *  @param [in] bus1 The 'bus1' bit 
      */
-    void enable(const bool bus1 = true);  
-
-    /** implements control::IControllableUnit method
-     *  Signal received from the Control Unit
-     *  @param [in] type signal's type
-     *  @param [in] value signal value
-     */
-    void signal(const control::signalType type, const control::SignalCollection& value) override;
+    void enable(const bool bus1 = true) override;  
 
 private:
 

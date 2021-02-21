@@ -70,17 +70,18 @@ protected:
     {        
         createBuses();
 
+        // Create ALU
+        ALU_ = std::make_unique<ALU>(buses_["system"], buses_["ALU_in_b"], buses_["ALU_out"]);
+
         // Create the control unit
-        controlUnit_ = std::make_unique<control::ControlUnit>(buses_["CU_in"], Logger::VERBOSE);  
+        controlUnit_ = std::make_unique<control::ControlUnit>(buses_["CU_in"], ALU_, Logger::VERBOSE);  
 
         initializeRegisters();
 
         // Initialize other controllable items:
-        ALU_ = std::make_unique<ALU>(buses_["system"], buses_["ALU_in_b"], buses_["ALU_out"]);
         RAM_ = std::make_unique<RAM256>(buses_["system"], MAR_, defaultValues_["RAM256"]);
         BUS1_ = std::make_unique<Bus1>("BUS1",buses_["TMP_out"],buses_["ALU_in_b"]);
 
-        controlUnit_->connect(ALU_);
         controlUnit_->connect(RAM_);
         controlUnit_->connect(BUS1_);
     }

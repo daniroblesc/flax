@@ -42,20 +42,13 @@ public:
      *  Writes reg's content to the bus when 'e' bit is ON
      *  @param [in] e 'e' bit 
      */
-    void enable(const bool e = true);   
+    void enable(const bool e = true) override;   
     
     /** Update the "set" bit 
      *  Writes bus content to the reg when 's' bit is ON
      *  @param [in] s 's' bit 
      */
-    void set(const bool s = true);  
-
-    /** implements control::IControllableUnit method
-     *  Signal received from the Control Unit
-     *  @param [in] type signal's type
-     *  @param [in] value signal value
-     */
-    void signal(const control::signalType type, const control::SignalCollection& value) override;
+    void set(const bool s = true) override;  
 
     /** Get register output (for debugging purposes)
      *  @return the saved byte

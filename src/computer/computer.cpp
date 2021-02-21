@@ -18,10 +18,6 @@ void Computer::initialize()
     buses_["CU_in"] = std::make_unique<Bus>("CU_in");
     buses_["MAR_out"] = std::make_unique<Bus>("MAR_out");
 
-    // Create the control unit
-    //
-    controlUnit_ = std::make_unique<control::ControlUnit>(buses_["CU_in"]);
-
     // Create controllable items
     // 
     R0_  = std::make_unique<Register>("R0", buses_["system"]);
@@ -33,9 +29,15 @@ void Computer::initialize()
     IAR_ = std::make_unique<Register>("IAR", buses_["system"]);
     IR_  = std::make_unique<Register>("IR", buses_["system"], buses_["CU_in"]);
     MAR_ = std::make_unique<Register>("MAR", buses_["system"], buses_["MAR_out"]);
-
-    ALU_ = std::make_unique<ALU>(buses_["system"], buses_["ALU_in_b"], buses_["ALU_out"]);
     RAM_ = std::make_unique<RAM256>(buses_["system"], MAR_);
+
+    // Create ALU
+    //
+    ALU_ = std::make_unique<ALU>(buses_["system"], buses_["ALU_in_b"], buses_["ALU_out"]);
+
+    // Create the control unit
+    //
+    controlUnit_ = std::make_unique<control::ControlUnit>(buses_["CU_in"], ALU_);
 
     // Connect items to the Control Unit
     //
@@ -48,8 +50,6 @@ void Computer::initialize()
     controlUnit_->connect(IAR_);
     controlUnit_->connect(IR_);
     controlUnit_->connect(MAR_);
-
-    controlUnit_->connect(ALU_);
     controlUnit_->connect(RAM_);
 }
 

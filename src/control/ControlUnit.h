@@ -6,22 +6,15 @@
 #include "circuit/Bus.h"
 #include "circuit/Wire.h"
 #include "misc/Logger.h"
+#include "misc/Signal.h"
 #include "components/Decoder.h"
+#include "ALU/ALU.h"
+
 #include <map>
 #include <memory>
 
-
 namespace control
 {
-
-enum signalType
-{
-    SIG_ENABLE,
-    SIG_SET,
-    SIG_OP
-};
-
-typedef std::vector<bool> SignalCollection;
 
 /*! \class The IControllableUnit interface
  *  \brief It is the interface for all those objects that needs to be 
@@ -38,11 +31,17 @@ public:
 
     /** Destructor
      */
-    virtual ~IControllableUnit();
+    virtual ~IControllableUnit() = default;
 
-    /** Signal to the controllable units
-     */ 
-    virtual void signal(const signalType type, const SignalCollection& value) = 0;
+    /** Update the "enable" bit 
+     *  @param [in] e 'e' bit 
+     */
+    virtual void enable(const bool e = true);
+    
+    /** Update the "set" bit 
+     *  @param [in] s 's' bit 
+     */
+    virtual void set(const bool s = true);
 
     /** Get the controllable unit identifier
      *  @return The identifier
@@ -65,8 +64,16 @@ class ControlGPRegisters
 {
 public:
 
-    ControlGPRegisters(const std::shared_ptr<Wire>& RegA, 
+    /** Constructor
+     *  @param [in] inputBus  the input bus (from IR)
+     *  @param [in] RegA
+     *  @param [in] RegB
+     */
+    ControlGPRegisters(const std::shared_ptr<Bus>& inputBus,
+                       const std::shared_ptr<Wire>& RegA, 
                        const std::shared_ptr<Wire>& RegB);
+
+    ~ControlGPRegisters() = default;
 
     /** Connect a controllable unit (like a register) 
      *  The control unit will update controllable unit enable/set bits 
@@ -90,6 +97,7 @@ private:
     std::map<std::string, std::shared_ptr<ANDGate>> setGates_;
     Decoder2X4 decoders2x4_[3];
 
+    std::shared_ptr<Bus> inputBus_;     ///< input bus
     std::shared_ptr<Wire> RegA_;
     std::shared_ptr<Wire> RegB_;
     bool clkE_ = false;
@@ -115,11 +123,13 @@ public:
     /** Constructor
      *  @param [in] inputBus  the input bus (from IR)
      */
-    ControlUnit(const std::shared_ptr<Bus>& inputBus, Logger::LogLevel logLevel = ERROR);
+    ControlUnit(const std::shared_ptr<Bus>& inputBus, 
+                const std::shared_ptr<ALU>& ALU,
+                Logger::LogLevel logLevel = ERROR);
 
     /** Destructor
      */
-    ~ControlUnit();
+    ~ControlUnit() = default;
 
     /** Inject an external clock (for debugging purposes)
      *  @param [in] clk the clock signal
@@ -142,13 +152,27 @@ public:
      */
     void connect(const std::shared_ptr<IControllableUnit>& controllableUnit);
 
-    // IClockSubscriber methods
+    /** Receives clk notification from Clock
+     *  IClockSubscriber callback
+     *  @param [in] clk the clk signal
+     */
     void onClk(const bool clk);
+
+    /** Receives clkE notification from Clock
+     *  IClockSubscriber callback
+     *  @param [in] clkE the clkE signal
+     */
     void onClkE(const bool clkE);
+
+    /** Receives clkS notification from Clock
+     *  IClockSubscriber callback
+     *  @param [in] clkS the clkS signal
+     */
     void onClkS(const bool clkS);
 
 private:
 
+    //! steps from Stepper
     enum step
     {
         STEP1 = 0,
@@ -159,27 +183,46 @@ private:
         STEP6
     };
 
-    const char* className_;
+    /** @struct ControllableUnitInfo
+     *  This is a struct to save information for those clients connected
+     *  to the Control Unit
+     *
+     *  @var ControllableUnitInfo::e
+     *    identifier for the connection between the signal and enable slot
+     *  @var ControllableUnitInfo::s
+     *    identifier for the connection between the signal and set slot
+     *  @var ControllableUnitInfo::o
+     *    (unused field)
+     *  @var ControllableUnitInfo::ptr
+     *    pointer to the controllable unit
+    */
+    typedef struct 	
+    { 
+        int e; 
+        int s; 
+        std::shared_ptr<IControllableUnit> ptr;
+    } ControllableUnitInfo;	
 
-    std::shared_ptr<Bus> inputBus_;     ///< input bus
+    std::map<std::string, ControllableUnitInfo> controllableUnits_; ///< the collection of controllable units
 
-    std::unique_ptr<control::Clock> clock_; ///< The internal clock
-    control::Stepper stepper_; ///< The stepper
+    const char* className_; ///< the class name (for logging messages)
+    std::shared_ptr<Bus> inputBus_; ///< the input bus
+    std::shared_ptr<ALU> ALU_; ///< the ALU
+    std::unique_ptr<control::Clock> clock_; ///< the internal clock
+    control::Stepper stepper_; ///< the stepper
     
-    ControllableUnitCollection controllableUnits_; ///< The collection of controllabe units
+    Signal<const bool> OnEnable; ///< object to trigger the enable signal
+    Signal<const bool> OnSet;    ///< object to trigger the set signal
 
     std::map<std::string, std::shared_ptr<ANDGate>> allEnableGates_;
     std::map<std::string, std::shared_ptr<ANDGate>> allSetGates_;
     std::shared_ptr<Wire> RegA_;
     std::shared_ptr<Wire> RegB_;
-
-    void sendSignal(const std::string& id, const signalType type, const bool sigValue);
-    void sendSignal(const std::string& id, const signalType type, const SignalCollection& sigValue);    
+    std::unique_ptr<ControlGPRegisters> controlGPRegisters_;
 
     int getCurrentStep();
     bool isGPRegister(const std::string& id);
 
-    std::unique_ptr<ControlGPRegisters> controlGPRegisters_;
 };
 
 

@@ -33,20 +33,3 @@ void Bus1::enable(const bool bus1)
     // save output to the bus
     outputBus_->write(this, output);
 }
-
-void Bus1::signal(const control::signalType type, const control::SignalCollection& value)
-{
-    assert(value.size()==1);
-
-    switch (type)
-    {
-    case control::SIG_ENABLE:
-        enable(value[0]);
-        break;
-    
-    default:
-        assert(0);
-        break;
-    }
-
-}

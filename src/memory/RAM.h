@@ -168,13 +168,6 @@ public:
      */
     void set(const bool s = true); 
 
-    /** implements control::IControllableUnit method
-     *  Signal received from the Control Unit
-     *  @param [in] type signal's type
-     *  @param [in] value signal value
-     */
-    void signal(const control::signalType type, const control::SignalCollection& value) override;
-
 private:
     
     std::shared_ptr<Bus> MAROutputBus_;   ///< bus from MAR's output

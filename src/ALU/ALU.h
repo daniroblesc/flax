@@ -9,7 +9,8 @@
 #include "components/Comparator.h"
 #include "components/Adder.h"
 #include "circuit/Bus.h"
-#include "control/ControlUnit.h"
+
+#include <memory>
 
 /*! \class ALU
  *  \brief This class implements an arithmetic logic unit (ALU) that performs 
@@ -31,10 +32,12 @@
  *      110: XOR
  *      111: CMP
  */ 
-class ALU : public control::IControllableUnit, public IBusNode
+class ALU : public IBusNode
 {
 public:
-    typedef enum OpCode
+
+    //! ALU operation codes
+    typedef enum ALUOpCode
     {
         OP_CODE_ADD = 0,
         OP_CODE_SHR,
@@ -44,8 +47,7 @@ public:
         OP_CODE_OR,
         OP_CODE_XOR,
         OP_CODE_CMP,
-    } OpCode;
-
+    } ALUOpCode;
 
     /** Constructor
      *  @param [in] inputBusA  the input bus A
@@ -62,7 +64,7 @@ public:
      *  @param [in] carryIn bit carried in from the previous less-signficant stage
      *  @param [in] op code indicating the operation to be performed
      */
-    void update(const bool carryIn, const OpCode op);
+    void update(const bool carryIn, const ALUOpCode op);
 
     /** Update inputs
      *  @param [in]  carryIn bit carried in from the previous less-signficant stage
@@ -73,7 +75,7 @@ public:
      *  @param [out] a_larger is set to true if 'a' is larger than 'b' 
      *  @param [out] zero is set to true if the output is zero
      */
-    void update(const bool carryIn, const OpCode op,bool &carryOut, bool& equal, bool& a_larger, bool& zero);
+    void update(const bool carryIn, const ALUOpCode op,bool &carryOut, bool& equal, bool& a_larger, bool& zero);
 
     /** Update outputs
      *  @param [out] carryOut bit of the leftmost column will turn on if the sum of the 
@@ -84,12 +86,7 @@ public:
      */
     void output(bool &carryOut, bool& equal, bool& a_larger, bool& zero);
 
-    /** implements control::IControllableUnit method
-     *  Signal received from the Control Unit
-     *  @param [in] type signal's type
-     *  @param [in] value signal value
-     */
-    void signal(const control::signalType type, const control::SignalCollection& value) override;
+    void operation(const ALUOpCode op);
 
 private:
     /// internal devices
@@ -109,7 +106,7 @@ private:
     Byte a_;
     Byte b_;
     bool carryIn_;
-    OpCode op_;
+    ALUOpCode op_;
 
     std::shared_ptr<Bus> inputBusA_;     ///< input bus A
     std::shared_ptr<Bus> inputBusB_;     ///< input bus B

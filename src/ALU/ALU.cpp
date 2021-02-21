@@ -3,7 +3,6 @@
 #include <assert.h>     /* assert */
 
 ALU::ALU(const std::shared_ptr<Bus>& inputBusA, const std::shared_ptr<Bus>& inputBusB, const std::shared_ptr<Bus>& outputBus) : 
-    control::IControllableUnit("ALU"),
     IBusNode("ALU")
 {
     inputBusA_ = inputBusA;
@@ -13,39 +12,20 @@ ALU::ALU(const std::shared_ptr<Bus>& inputBusA, const std::shared_ptr<Bus>& inpu
     inputBusB_->subscribe(this);
     outputBus_->subscribe(this);
 }
-
-void ALU::signal(const control::signalType type, const control::SignalCollection& value)
+void ALU::operation(const ALUOpCode op)
 {
-    assert(value.size()==3);
-    
-    switch (type)
-    {
-    case control::SIG_OP:
-    {
-        bool carryIn = false;
-        Byte b;
-        b.set(0, value[0]);  
-        b.set(1, value[1]);  
-        b.set(2, value[2]);  
-        OpCode op = static_cast<OpCode>(b.toInt());
-        bool carryOut, equal, a_larger, zero;
-        update(carryIn, op, carryOut, equal, a_larger, zero);
-    }
-    break;
-
-    default:
-        assert(0);
-        break;
-    };
+    bool carryIn = false;
+    bool carryOut, equal, a_larger, zero;
+    update(carryIn, op, carryOut, equal, a_larger, zero);
 }
 
-void ALU::update(const bool carryIn, const OpCode op,bool &carryOut, bool& equal, bool& a_larger, bool& zero)
+void ALU::update(const bool carryIn, const ALUOpCode op,bool &carryOut, bool& equal, bool& a_larger, bool& zero)
 {
     update(carryIn, op);
     output(carryOut, equal, a_larger, zero);
 }
 
-void ALU::update(const bool carryIn, const OpCode op)
+void ALU::update(const bool carryIn, const ALUOpCode op)
 {
     a_ = inputBusA_->read(this);
     b_ = inputBusB_->read(this);

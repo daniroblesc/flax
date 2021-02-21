@@ -128,26 +128,6 @@ const std::shared_ptr<RAMCell>& RAM256::getSelectedCell()
     return cellGrid_->getCell(selectedCol, selectedRow);
 }
 
-void RAM256::signal(const control::signalType type, const control::SignalCollection& value)
-{
-    assert(value.size()==1);
-
-    switch (type)
-    {
-    case control::SIG_ENABLE:
-        enable(value[0]);
-        break;
-    
-    case control::SIG_SET:
-        set(value[0]);
-        break;
-
-    default:
-        assert(0);
-        break;
-    }    
-}
-
 // 
 // RAM65K
 // 

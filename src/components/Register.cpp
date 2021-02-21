@@ -37,26 +37,6 @@ void Register::setDefaultValue(const Byte& defaultValue)
     enabler_.update(memoryByte_.output());
 }
 
-void Register::signal(const control::signalType type, const control::SignalCollection& value)
-{
-    assert(value.size()==1);
-
-    switch (type)
-    {
-    case control::SIG_ENABLE:
-        enable(value[0]);
-        break;
-    
-    case control::SIG_SET:
-        set(value[0]);
-        break;
-
-    default:
-        assert(0);
-        break;
-    }
-}
-
 void Register::enable(const bool e)
 {
     if (e == false) 
