@@ -49,6 +49,12 @@ private:
 class NOTGate
 {
 public:
+
+    NOTGate();
+    NOTGate(const pWire& a);
+
+    ~NOTGate() = default;
+
     /** Update gate's inputs
      *  @param [in] a value for input a
      */
@@ -61,6 +67,9 @@ public:
 
 private:
     Wire a_;    ///< input wire a   
+    bool new_ = false;
+
+    pWire input_;
 };
 
 /*! \class ANDGate

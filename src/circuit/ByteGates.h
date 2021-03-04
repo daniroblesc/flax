@@ -2,6 +2,7 @@
 #define BYTE_GATES_H_
 
 #include "misc/Byte.h"
+#include "circuit/Wire.h"
 #include "BitGates.h"
 #include <vector>
 
@@ -18,7 +19,8 @@ class NOTter
 public:
 
     NOTter();
-    ~NOTter();
+    NOTter(const pWireCollection& inputs);
+    ~NOTter() = default;
 
     /** Update device input
      *  @param [in] a value for device input
@@ -34,6 +36,9 @@ private:
 
     Byte a_;    ///< input byte
     std::vector<NOTGate> not_;  ///< NOT gates
+
+    pWireCollection inputs_;
+    bool new_ = false;
 };
 
 /*! \class ANDer

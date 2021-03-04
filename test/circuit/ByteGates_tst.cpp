@@ -4,6 +4,7 @@
 #include "circuit/ByteGates.h"
 
 #include <iostream>
+#include <memory>
 
 using ::testing::Return;
 
@@ -17,6 +18,15 @@ TEST_F(ByteGatesTest, NOTter)
     Byte input = 0xBB; // 1011 1011
     inverter.update(input);
 
+    Byte output = inverter.output();
+    EXPECT_EQ(output, 0x44);
+}
+
+TEST_F(ByteGatesTest, NOTter2) 
+{
+    std::shared_ptr<WireCollection> wires = std::make_shared<WireCollection>(0xbb);
+
+    NOTter inverter(wires);
     Byte output = inverter.output();
     EXPECT_EQ(output, 0x44);
 }

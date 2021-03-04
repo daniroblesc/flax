@@ -10,9 +10,14 @@ NOTter::NOTter()
     not_.resize(Byte::NUM_BITS);
 }
 
-NOTter::~NOTter()
-{}
+NOTter::NOTter(const pWireCollection& inputs)
+{
+    not_.resize(Byte::NUM_BITS);
 
+    new_ = true;
+    inputs_ = inputs;
+    assert(inputs_);
+}
 
 void NOTter::update(const Byte& a)
 {
@@ -24,7 +29,14 @@ Byte NOTter::output()
     Byte output;
     for ( int i = 0; i < Byte::NUM_BITS; ++i )
     {
-        not_[i].update(a_[i]);
+        if (!new_)
+            not_[i].update(a_[i]);
+        else
+        {
+            bool value = inputs_->output(i);
+            not_[i].update(value);
+        }
+            
         output.set(i, not_[i].output());
     }
 

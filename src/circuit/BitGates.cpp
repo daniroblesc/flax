@@ -26,6 +26,17 @@ bool NANDGate::output()
 // NOTGate implementation
 //
 
+NOTGate::NOTGate()
+{
+
+}
+
+NOTGate::NOTGate(const pWire& a)
+{
+    input_ = a;
+    new_=true;
+}
+
 void NOTGate::update(const bool a)
 {
     a_.update(a);
@@ -33,12 +44,21 @@ void NOTGate::update(const bool a)
 
 bool NOTGate::output()
 {
-    if (a_.output())
+    if (!new_)
     {
-        return false;  
+        if (a_.output())
+        {
+            return false;  
+        }
+
+        return true;
     }
 
+    if(input_->get())
+        return false;
+    
     return true;
+
 }
 
 //

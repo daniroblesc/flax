@@ -35,6 +35,18 @@ class NOTGateTest : public testing::Test
 {
 };
 
+TEST_F(NOTGateTest, theNew)
+{
+  pWire input = std::make_shared<Wire>();
+  NOTGate Not(input);
+
+  input->high();
+  EXPECT_FALSE(Not.output());
+
+  input->low();
+  EXPECT_TRUE(Not.output());
+}
+
 TEST_F(NOTGateTest, execute) 
 {
   NOTGate Not;
