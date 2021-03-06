@@ -22,15 +22,6 @@ TEST_F(ByteGatesTest, NOTter)
     EXPECT_EQ(output, 0x44);
 }
 
-TEST_F(ByteGatesTest, NOTter2) 
-{
-    std::shared_ptr<WireCollection> wires = std::make_shared<WireCollection>(0xbb);
-
-    NOTter inverter(wires);
-    Byte output = inverter.output();
-    EXPECT_EQ(output, 0x44);
-}
-
 TEST_F(ByteGatesTest, ANDer) 
 {
     ANDer ANDer;

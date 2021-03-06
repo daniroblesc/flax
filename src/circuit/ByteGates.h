@@ -19,7 +19,6 @@ class NOTter
 public:
 
     NOTter();
-    NOTter(const pWireCollection& inputs);
     ~NOTter() = default;
 
     /** Update device input
@@ -36,9 +35,6 @@ private:
 
     Byte a_;    ///< input byte
     std::vector<NOTGate> not_;  ///< NOT gates
-
-    pWireCollection inputs_;
-    bool new_ = false;
 };
 
 /*! \class ANDer
