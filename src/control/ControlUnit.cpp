@@ -72,10 +72,10 @@ void ControlGPRegisters::onClkE(const bool clkE)
     orGates_["R2"]->update( block_[1].andGates["R2"]->output(), block_[2].andGates["R2"]->output() );
     orGates_["R3"]->update( block_[1].andGates["R3"]->output(), block_[2].andGates["R3"]->output() );
 
-    OnEnable.emit_for(controllableUnits_["R0"].s, orGates_["R0"]->output());
-    OnEnable.emit_for(controllableUnits_["R1"].s, orGates_["R1"]->output());
-    OnEnable.emit_for(controllableUnits_["R2"].s, orGates_["R2"]->output());
-    OnEnable.emit_for(controllableUnits_["R3"].s, orGates_["R3"]->output());
+    OnEnable.emit_for(controllableUnits_["R0"].e, orGates_["R0"]->output());
+    OnEnable.emit_for(controllableUnits_["R1"].e, orGates_["R1"]->output());
+    OnEnable.emit_for(controllableUnits_["R2"].e, orGates_["R2"]->output());
+    OnEnable.emit_for(controllableUnits_["R3"].e, orGates_["R3"]->output());
 }
 
 void ControlGPRegisters::onClkS(const bool clkS)
